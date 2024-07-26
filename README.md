@@ -13,3 +13,9 @@ A flawed architecture that in no way implies normal use of `@` properties, meani
 ## 🥀 And what's new won't there be? 🥀
 
 Probably not anymore. My dementia is progressing much faster than all my attempts at development.
+
+## 😌 Fortunately, there is some good news. 😌
+
+I'm moving some usable parts of my given library into separate components of another sub-project.
+
+- 🏅 [Unite.JS](https://github.com/BZ-0/unite.js) 🏅 - everything what I using on my projects...
