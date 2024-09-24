@@ -1,4 +1,4 @@
-import UUIDMap from "../Import/utils/UUIDMap";
+import UUIDMap from "../Utils/UUIDMap";
 
 //
 export default class ObjectPool {

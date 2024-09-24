@@ -1,38 +1,40 @@
-export default class ObjectPoolMemberHandler {
+import ObjectProxy from "../Instruction/ObjectProxy.ts";
+import DataHandler from "./DataHandler.ts";
+
+//
+export default class ObjectPoolMemberHandler extends DataHandler {
     #memoryPoolHandler: any;
 
     //
     constructor(memoryPoolHandler){
+        super();
         this.#memoryPoolHandler = memoryPoolHandler;
     }
 
     //
-    #deferOp(target, cb) {
-        if (target?.then != null) {
-            return target?.then?.(cb);
-        } else {
-            return cb(target);
-        }
-    }
-
-    //
     #data(target) {
-        return this.#deferOp(target, (t)=>{
+        return this.$deferOp(target, (t)=>{
             const wrap = t["@data"] ?? t;
-            return t ? wrap?.["@uuid"] : this.#memoryPoolHandler.get(wrap?.["@uuid"])?.defer?.();
+            return wrap?.["@uuid"] ? this.#memoryPoolHandler.get(wrap?.["@uuid"])?.defer?.() : null;
         });
     }
 
     //
-    $handle(cmd, meta, ...args) {
-        const ref = this.#data(meta);
-        return this.#deferOp(ref, (data)=>{
+    $handle(cmd, ref, ...args) {
+        return this.$deferOp(ref, (data)=>{
+            const ref = this.#data(data);
             /*switch(cmd) {
                 switch("get") {
                 }
                 default:
             }*/
-            return Reflect[cmd](data, ...args);
+            if (cmd == "access") return ref;
+            return Reflect[cmd](ref, ...args);
         });
     }
+}
+
+//
+export const wrapLocalReference = (localReference, handler: ObjectPoolMemberHandler)=>{
+    return new Proxy(localReference, new ObjectProxy(handler))
 }
