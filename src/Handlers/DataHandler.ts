@@ -1,4 +1,4 @@
-import ObjectProxy from "../Instruction/ObjectProxy.ts";
+//import ObjectProxy from "../Instruction/ObjectProxy.ts";
 
 //
 export default class DataHandler {
@@ -45,6 +45,6 @@ export default class DataHandler {
 }
 
 //
-export const wrapObject = (promise)=>{
+/*export const wrapObject = (promise)=>{
     return new Proxy(promise, new ObjectProxy(new DataHandler()))
-}
+}*/

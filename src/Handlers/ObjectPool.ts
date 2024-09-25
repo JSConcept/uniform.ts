@@ -1,4 +1,4 @@
-import ObjectProxy from "../Instruction/ObjectProxy.ts";
+//import ObjectProxy from "../Instruction/ObjectProxy.ts";
 import DataHandler from "./DataHandler.ts";
 
 //
@@ -11,11 +11,12 @@ export default class ObjectPoolMemberHandler extends DataHandler {
         this.#memoryPool = memoryPool;
     }
 
-    //
+    // there is may not be meta object
     $data(target) {
         return this.$deferOp(target, (t)=>{
             const wrap = t["@data"] ?? t;
-            return wrap?.["@uuid"] ? this.#memoryPool.get(wrap?.["@uuid"])?.defer?.() : null;
+            const weak = (wrap?.["@uuid"] ? this.#memoryPool.get(wrap?.["@uuid"]) : wrap);
+            return weak?.deref?.() ?? weak;
         });
     }
 
@@ -24,6 +25,6 @@ export default class ObjectPoolMemberHandler extends DataHandler {
 }
 
 //
-export const wrapLocal = (meta, handler: ObjectPoolMemberHandler)=>{
+/*export const wrapLocal = (meta, handler: ObjectPoolMemberHandler)=>{
     return new Proxy(meta, new ObjectProxy(handler))
-}
+}*/

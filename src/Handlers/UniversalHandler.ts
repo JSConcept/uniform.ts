@@ -29,6 +29,6 @@ export default class UniversalHandler extends DataHandler {
 }
 
 //
-export const wrapMetaHandle = (meta, handler: UniversalHandler)=>{
+export const wrapMeta = (meta, handler: UniversalHandler)=>{
     return new Proxy(meta, new ObjectProxy(handler))
 }

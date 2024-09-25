@@ -1,4 +1,4 @@
-import ObjectProxy from "../Instruction/ObjectProxy.ts";
+//import ObjectProxy from "../Instruction/ObjectProxy.ts";
 import DataHandler from "./DataHandler.ts";
 
 //
@@ -31,6 +31,6 @@ export default class RemoteReferenceHandler extends DataHandler {
 }
 
 //
-export const wrapRemote = (meta, handler: RemoteReferenceHandler)=>{
+/*export const wrapRemote = (meta, handler: RemoteReferenceHandler)=>{
     return new Proxy(meta, new ObjectProxy(handler))
-}
+}*/
