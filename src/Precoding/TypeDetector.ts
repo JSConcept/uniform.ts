@@ -54,12 +54,17 @@ export default class TypeDetector {
     }
 
     // [is organic, defined type]
-    detectType(data) {
+    detectType(data, transfer: any[] = []) {
         // are data meta type, skip definition
         const organic = extract(data) ?? data;
         if (organic?.["@data"] || organic?.["@meta"] || organic?.["@type"]) {
             const meta = organic?.["@data"] || organic?.["@meta"] || organic;
             return [true, meta?.["@type"]];
+        }
+
+        //
+        if (transfer.indexOf(data) >= 0) {
+            return [false, "transfer"];
         }
 
         // other data are primitives
