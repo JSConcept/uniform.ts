@@ -1,3 +1,5 @@
+import { extract } from "../Handlers/UniversalHandler";
+
 export default class TypeDetector {
     detection: Map<string, (d:any)=>boolean> = new Map<string, (d:any)=>boolean>();
 
@@ -54,8 +56,9 @@ export default class TypeDetector {
     // [is organic, defined type]
     detectType(data) {
         // are data meta type, skip definition
-        if (data?.["@data"] || data?.["@meta"] || data?.["@type"]) {
-            const meta = data?.["@data"] || data?.["@meta"] || data;
+        const organic = extract(data) ?? data;
+        if (organic?.["@data"] || organic?.["@meta"] || organic?.["@type"]) {
+            const meta = organic?.["@data"] || organic?.["@meta"] || organic;
             return [true, meta?.["@type"]];
         }
 

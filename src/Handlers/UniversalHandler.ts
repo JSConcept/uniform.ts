@@ -29,6 +29,21 @@ export default class UniversalHandler extends DataHandler {
 }
 
 //
+const wrapWeakMap = new WeakMap([]);
+
+//
 export const wrapMeta = (meta, handler: UniversalHandler)=>{
-    return new Proxy(meta, new ObjectProxy(handler))
+    const wrap = new Proxy(meta, new ObjectProxy(handler));
+    wrapWeakMap.set(wrap, meta);
+    return wrap;
+}
+
+//
+export const redirect = (wrap)=>{
+    return (wrapWeakMap.get(wrap) ?? wrap);
+}
+
+//
+export const extract = (wrap)=>{
+    return (wrapWeakMap.get(wrap) ?? wrap);
 }

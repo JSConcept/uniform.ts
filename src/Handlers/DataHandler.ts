@@ -1,3 +1,5 @@
+import ObjectProxy from "../Instruction/ObjectProxy";
+
 //
 export default class DataHandler {
     constructor() {
@@ -6,7 +8,7 @@ export default class DataHandler {
     //
     $deferOp(target, cb) {
         if (target?.then != null) {
-            return target?.then?.(cb);
+            return new Proxy(target?.then?.(cb), new ObjectProxy(this));
         } else {
             return cb(target);
         }
