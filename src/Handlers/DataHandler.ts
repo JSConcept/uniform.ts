@@ -1,5 +1,3 @@
-//import ObjectProxy from "../Instruction/ObjectProxy.ts";
-
 //
 export default class DataHandler {
     constructor() {
@@ -24,17 +22,18 @@ export default class DataHandler {
         return this.$deferOp(meta, (data)=>{
             const ref = this.$data(data);
 
-            //
-            if (cmd == "access") {
-                return ref;
-            }
-
-            //
+            // needs to return itself
+            if (cmd == "access") { return ref; }
             try {
-                return Reflect?.[cmd]?.(ref, ...args);
+                const gt = Reflect?.[cmd]?.(ref, ...args);
+                if (typeof gt == "function") {
+                    // may be organic or context detached
+                    return gt?.bind?.(ref) ?? gt;
+                }
             } catch(e) {
-                console.error("Wrong op: " + e.message);
-                console.trace(e);
+                const err = e as Error;
+                console.error("Wrong op: " + err.message);
+                console.trace(err);
             }
             return null;
         });
@@ -43,8 +42,3 @@ export default class DataHandler {
     //
     $get(uuid) { return null; };
 }
-
-//
-/*export const wrapObject = (promise)=>{
-    return new Proxy(promise, new ObjectProxy(new DataHandler()))
-}*/

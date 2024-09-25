@@ -1,19 +1,25 @@
-import PromiseStack from '../utils/PromiseStack';
+import PromiseStack from '../Utils/PromiseStack.ts';
+
+// @ts-ignore
+type WorkerContext = Worker | WorkerGlobalScope;
 
 // FLOW - is web worker library core (low-level)...
 export default class FLOW {
-    #worker: Worker | WorkerGlobalScope | null = null;//new Worker("./FLOW-Unit.ts");
+    #worker: WorkerContext | null = null;//new Worker("./FLOW-Unit.ts");
     #promiseStack: PromiseStack = new PromiseStack();
     #imports = {};
 
     //
-    constructor(worker: WorkerGlobalScope | Worker | null = null) {
+    constructor(
+        worker: WorkerContext | null = null,
+        promiseStack: PromiseStack = new PromiseStack()
+    ) {
         this.#worker = worker || new Worker(new URL("./FLOW-Unit.ts", import.meta.url).href);
-        this.#promiseStack = new PromiseStack();
+        this.#promiseStack = promiseStack ?? new PromiseStack();
         this.#imports = {};
 
         //
-        const self: WorkerGlobalScope | Worker | null = this.#worker;
+        const self: WorkerContext | null = this.#worker;
         self?.addEventListener("message", (ev)=>{
             const {cmd, uuid, dir} = ev.data;
             if (dir == "req") {
@@ -26,11 +32,17 @@ export default class FLOW {
                 } else
                 if (cmd == "call") {
                     // call with FLOW "this" context
-                    const syncOrAsync = this.#imports[ev.data.name]?.apply(self, ev.data.args);
+                    const syncOrAsync = this.#imports[ev.data.handler]?.apply?.(self, ev.data) ?? ev.data.args;
                     const resolveWith = (pass)=>{
                         const [result, transfer] = pass;
                         // @ts-ignore
-                        self?.postMessage({ cmd, uuid, dir: "res", result }, [...new Set(transfer||[])] as StructuredSerializeOptions);
+                        self?.postMessage({
+                            resolver: "$resolver",
+                            cmd,
+                            uuid,
+                            dir: "res",
+                            result
+                        }, [...new Set(transfer||[])] as StructuredSerializeOptions);
                     }
 
                     //
@@ -42,7 +54,8 @@ export default class FLOW {
                 }
             } else
             if (dir == "res") {
-                this.#promiseStack?.resolveBy?.(uuid, ev.data.result);
+                const resolved = this.#imports[ev.data.resolver]?.apply(self, ev.data) ?? (ev.data.result);
+                this.#promiseStack?.resolveBy?.(uuid, resolved);
             }
         });
     }
@@ -58,6 +71,7 @@ export default class FLOW {
         const pair = this.#promiseStack?.create();
         // @ts-ignore
         this.#worker?.postMessage?.({
+            handler: "$import",
             cmd: "import",
             dir: "req",
             uuid: pair?.[0] || "",
@@ -71,6 +85,7 @@ export default class FLOW {
         const pair = this.#promiseStack?.create();
         // @ts-ignore
         this.#worker?.postMessage?.({
+            handler: "$handler",
             cmd: "call",
             dir: "req",
             uuid: pair?.[0] || "",

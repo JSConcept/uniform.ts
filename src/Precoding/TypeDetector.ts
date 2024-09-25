@@ -51,20 +51,20 @@ export default class TypeDetector {
         ]);
     }
 
-    //
+    // [is organic, defined type]
     detectType(data) {
         // are data meta type, skip definition
         if (data?.["@data"] || data?.["@meta"] || data?.["@type"]) {
             const meta = data?.["@data"] || data?.["@meta"] || data;
-            return meta?.["@type"]
+            return [true, meta?.["@type"]];
         }
 
         // other data are primitives
         for (const [type, def] of this.detection) {
-            if (def(data)) return type;
+            if (def(data)) return [false, type];
         }
 
         //
-        return "unknown";
+        return [false, "unknown"];
     }
 }

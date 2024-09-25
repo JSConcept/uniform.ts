@@ -1,4 +1,3 @@
-//import ObjectProxy from "../Instruction/ObjectProxy.ts";
 import DataHandler from "./DataHandler.ts";
 
 //
@@ -15,7 +14,7 @@ export default class RemoteReferenceHandler extends DataHandler {
     $data(target) {
         return this.$deferOp(target, (t)=>{
             const wrap = t["@data"] ?? t;
-            return wrap?.["@uuid"];//wrap?.["@uuid"] ? this.#exhcnager.get(wrap?.["@uuid"])?.defer?.() : null;
+            return wrap?.["@uuid"];
         });
     }
 
@@ -29,8 +28,3 @@ export default class RemoteReferenceHandler extends DataHandler {
     //
     $get(uuid) { return null; };
 }
-
-//
-/*export const wrapRemote = (meta, handler: RemoteReferenceHandler)=>{
-    return new Proxy(meta, new ObjectProxy(handler))
-}*/

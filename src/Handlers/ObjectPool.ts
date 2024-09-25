@@ -1,9 +1,9 @@
-//import ObjectProxy from "../Instruction/ObjectProxy.ts";
+import type UUIDMap from "../Utils/UUIDMap.ts";
 import DataHandler from "./DataHandler.ts";
 
 //
 export default class ObjectPoolMemberHandler extends DataHandler {
-    #memoryPool: any;
+    #memoryPool: UUIDMap;
 
     //
     constructor(memoryPool){
@@ -23,8 +23,3 @@ export default class ObjectPoolMemberHandler extends DataHandler {
     //
     $get(uuid) { return uuid ? this.#memoryPool.get(uuid)?.defer?.() : null; };
 }
-
-//
-/*export const wrapLocal = (meta, handler: ObjectPoolMemberHandler)=>{
-    return new Proxy(meta, new ObjectProxy(handler))
-}*/
