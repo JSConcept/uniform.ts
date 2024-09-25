@@ -1,4 +1,4 @@
-import type UUIDMap from "../Utils/UUIDMap.ts";
+import UUIDMap from "../Utils/UUIDMap.ts";
 import DataHandler from "./DataHandler.ts";
 
 //
@@ -6,7 +6,7 @@ export default class ObjectPoolMemberHandler extends DataHandler {
     #memoryPool: UUIDMap;
 
     //
-    constructor(memoryPool){
+    constructor(memoryPool = new UUIDMap()){
         super();
         this.#memoryPool = memoryPool;
     }

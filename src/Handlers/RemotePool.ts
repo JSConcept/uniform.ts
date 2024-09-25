@@ -1,8 +1,9 @@
+import ExChanger from "../FLOW/ExChanger.ts";
 import DataHandler from "./DataHandler.ts";
 
 //
 export default class RemoteReferenceHandler extends DataHandler {
-    #exChanger: any;
+    #exChanger: ExChanger;
 
     //
     constructor(exChanger){

@@ -1,7 +1,7 @@
 // Will be used when result are predictable in the pools or return results
 import UniversalHandler, { redirect, wrapMeta } from "../Handlers/UniversalHandler";
 import UUIDMap from "../Utils/UUIDMap";
-import TypeDetector from "./TypeDetector";
+import TypeDetector from "./TypeDetector.ts";
 
 //
 export default class PreCoding {
@@ -54,6 +54,8 @@ export default class PreCoding {
         ]);
     }
 
+
+
     //
     $decode(target, transfer = []) {
         const [t, o] = this.typeDetector.detectType(target, transfer);
@@ -64,21 +66,22 @@ export default class PreCoding {
     }
 
     //
-    decode(target, transfer = []) {
-        if (target instanceof Promise || typeof target?.then == "function") {
-            return target?.then((e)=>this.$decode(target, transfer));
-        }
-        return this.$decode(target, transfer);
-    }
-
-
-    //
     $encode(target, transfer = []) {
         const [t, o] = this.typeDetector.detectType(target, transfer);
         if (this.encoder.has(t)) {
             return this.encoder.get(t)?.(o, target, transfer);
         }
         return target;
+    }
+
+
+
+    //
+    decode(target, transfer = []) {
+        if (target instanceof Promise || typeof target?.then == "function") {
+            return target?.then((e)=>this.$decode(target, transfer));
+        }
+        return this.$decode(target, transfer);
     }
 
     //

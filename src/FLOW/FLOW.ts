@@ -1,13 +1,19 @@
 import PromiseStack from '../Utils/PromiseStack.ts';
+import UUIDMap from "../Utils/UUIDMap";
 
 // @ts-ignore
-type WorkerContext = Worker | WorkerGlobalScope;
+export type WorkerContext = Worker | WorkerGlobalScope;
 
 // FLOW - is web worker library core (low-level)...
 export default class FLOW {
     #worker: WorkerContext | null = null;//new Worker("./FLOW-Unit.ts");
     #promiseStack: PromiseStack = new PromiseStack();
-    #imports = {};
+    #imports: any = {};
+
+    //
+    $memoryPool() {
+        return this.#imports?.$memoryPool?.() ?? new UUIDMap();
+    }
 
     //
     constructor(
@@ -32,7 +38,7 @@ export default class FLOW {
                 } else
                 if (cmd == "call") {
                     // call with FLOW "this" context
-                    const syncOrAsync = this.#imports[ev.data.handler]?.apply?.(self, ev.data) ?? ev.data.args;
+                    const syncOrAsync = this.#imports[ev.data.handler]?.apply?.(self, ev.data.args) ?? ev.data.args;
                     const resolveWith = (pass)=>{
                         const [result, transfer] = pass;
                         // @ts-ignore
@@ -81,7 +87,7 @@ export default class FLOW {
     }
 
     //
-    callTask(args = [], transfer = []) {
+    callTask(args: any[] = [], transfer = []) {
         const pair = this.#promiseStack?.create();
         // @ts-ignore
         this.#worker?.postMessage?.({

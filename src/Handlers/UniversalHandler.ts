@@ -1,5 +1,6 @@
 import ObjectProxy from "../Instruction/ObjectProxy.ts";
 import DataHandler from "./DataHandler.ts";
+import { MakeReference } from "../Instruction/InstructionType.ts";
 
 //
 // $detectDataType has types:
@@ -21,6 +22,11 @@ export default class UniversalHandler extends DataHandler {
     }
 
     //
+    $addHandler(name: string, handler: DataHandler) {
+        this.#dataHandler.set(name, handler);
+    }
+
+    //
     $handle(name = "access", target, ...args) {
         return this.$deferOp(target, (t: any)=>{
             return this.#dataHandler?.get($detectDataType(t, this.#dataHandler))?.$handle?.(name, t, args);
@@ -32,8 +38,8 @@ export default class UniversalHandler extends DataHandler {
 const wrapWeakMap = new WeakMap([]);
 
 //
-export const wrapMeta = (meta, handler: UniversalHandler)=>{
-    const wrap = new Proxy(meta, new ObjectProxy(handler));
+export const wrapMeta = (meta, handler: UniversalHandler = new UniversalHandler())=>{
+    const wrap = new Proxy(MakeReference(meta), new ObjectProxy(handler));
     wrapWeakMap.set(wrap, meta);
     return wrap;
 }
