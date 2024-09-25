@@ -1,3 +1,5 @@
+//! TODO: needs CBOR-X coding tools
+
 /*
  * Note about:
  * 0...3 byte: semaphore value

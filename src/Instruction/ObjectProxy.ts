@@ -22,6 +22,11 @@ export default class ObjectProxy {
     }
 
     //
+    has(target, ...args) {
+        return this.#handlerUtils.$handle("has", target, ...args);
+    }
+
+    //
     call(target, ...args) {
         return this.#handlerUtils.$handle("call", target, ...args);
     }
