@@ -1,5 +1,6 @@
 import UUIDMap from "../Utils/UUIDMap.ts";
 import DataHandler from "./DataHandler.ts";
+import {$data} from "../Instruction/InstructionType.ts"
 
 //
 export default class ObjectPoolMemberHandler extends DataHandler {
@@ -14,7 +15,7 @@ export default class ObjectPoolMemberHandler extends DataHandler {
     // there is may not be meta object
     $data(target) {
         return this.$deferOp(target, (t)=>{
-            const wrap = t["@data"] ?? t;
+            const wrap = t[$data] ?? t;
             const weak = (wrap?.["@uuid"] ? this.#memoryPool.get(wrap?.["@uuid"]) : wrap);
             return weak?.deref?.() ?? weak;
         });

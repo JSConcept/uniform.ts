@@ -1,5 +1,6 @@
 import ExChanger from "../FLOW/ExChanger.ts";
 import DataHandler from "./DataHandler.ts";
+import {$data} from "../Instruction/InstructionType.ts"
 
 //
 export default class RemoteReferenceHandler extends DataHandler {
@@ -14,7 +15,7 @@ export default class RemoteReferenceHandler extends DataHandler {
     //
     $data(target) {
         return this.$deferOp(target, (t)=>{
-            const wrap = t["@data"] ?? t;
+            const wrap = t[$data] ?? t;
             return wrap?.["@uuid"];
         });
     }

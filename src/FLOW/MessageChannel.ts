@@ -19,7 +19,13 @@ export default class MessageChannel {
 
     //
     $handler(command) {
-        const {cmd, uuid, dir, args: [[target, ...args], transfer]} = command;
+        const {cmd: nac, uuid, dir, args: [cmd, target, ...args]} = command;
+
+        //
+        let transfer: any[] = [];
+        if (cmd == "apply" && args.length >= 3) {
+            transfer.push(...args[3]);
+        }
 
         // before you needs decode its
         const result = this.#dataHandler.$handle(cmd, target, transfer);

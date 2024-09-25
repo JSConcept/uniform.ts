@@ -29,8 +29,17 @@ export default class ExChanger {
     }
 
     //
+    get $imports() {
+        return this.#flow?.$imports || {};
+    }
+
+    //
     $request(cmd: string, meta: any, ...args : any[]) {
         const result = this.#flow?.callTask?.([cmd, meta, ...args], []);
         return wrapMeta(result, this.#handler || new UniversalHandler());
     }
+
+    //
+    $importToUnit(source) { return this.#flow?.importToUnit(source); }
+    $importToSelf(module) { return this.#flow?.importToSelf(module); }
 }

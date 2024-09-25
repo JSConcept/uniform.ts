@@ -2,6 +2,7 @@
 import UniversalHandler, { redirect, wrapMeta } from "../Handlers/UniversalHandler";
 import UUIDMap from "../Utils/UUIDMap";
 import TypeDetector from "./TypeDetector.ts";
+import {$data} from "../Instruction/InstructionType.ts"
 
 //
 export default class PreCoding {
@@ -18,6 +19,12 @@ export default class PreCoding {
             ["array", (organic, target, transfer = [])=>{
                 const encoded = Array.from(target).map((e)=>this.encode(e, transfer));
                 return (encoded.some((e)=>e instanceof Promise || typeof e?.then == "function")) ? Promise.all(encoded) : encoded;
+            }],
+
+            //
+            ["transfer", (organic, target: any, transfer: any[] = [])=>{
+                if (transfer.indexOf(target) < 0) { transfer.push(target); };
+                return target;
             }],
 
             //
@@ -45,7 +52,7 @@ export default class PreCoding {
             //
             ["reference", (organic, target, transfer = [])=>{
                 if (organic) {
-                    const exists = this?.memoryPool?.get(target?.["@uuid"] ?? target?.["@data"]?.["@uuid"]);
+                    const exists = this?.memoryPool?.get(target?.["@uuid"] ?? target?.[$data]?.["@uuid"]);
                     return exists ?? wrapMeta(target, this.handler);
                 }
                 // unusual
@@ -57,7 +64,7 @@ export default class PreCoding {
 
 
     //
-    $decode(target, transfer = []) {
+    $decode(target, transfer: any[] = []) {
         const [t, o] = this.typeDetector.detectType(target, transfer);
         if (this.decoder.has(t)) {
             return this.decoder.get(t)?.(o, target, transfer);
@@ -66,7 +73,7 @@ export default class PreCoding {
     }
 
     //
-    $encode(target, transfer = []) {
+    $encode(target, transfer: any[] = []) {
         const [t, o] = this.typeDetector.detectType(target, transfer);
         if (this.encoder.has(t)) {
             return this.encoder.get(t)?.(o, target, transfer);
@@ -77,7 +84,7 @@ export default class PreCoding {
 
 
     //
-    decode(target, transfer = []) {
+    decode(target, transfer: any[] = []) {
         if (target instanceof Promise || typeof target?.then == "function") {
             return target?.then((e)=>this.$decode(target, transfer));
         }
@@ -85,7 +92,7 @@ export default class PreCoding {
     }
 
     //
-    encode(target, transfer = []) {
+    encode(target, transfer: any[] = []) {
         if (target instanceof Promise || typeof target?.then == "function") {
             return target?.then((e)=>this.$encode(target, transfer));
         }

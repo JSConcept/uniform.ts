@@ -11,16 +11,11 @@ export default class FLOW {
     #imports: any = {};
 
     //
-    $memoryPool() {
-        return this.#imports?.$memoryPool?.() ?? new UUIDMap();
-    }
-
-    //
     constructor(
         worker: WorkerContext | null = null,
         promiseStack: PromiseStack = new PromiseStack()
     ) {
-        this.#worker = worker || new Worker(new URL("./FLOW-Unit.ts", import.meta.url).href);
+        this.#worker = worker || new Worker(new URL("./ExChangerUnit.ts", import.meta.url).href);
         this.#promiseStack = promiseStack ?? new PromiseStack();
         this.#imports = {};
 
@@ -43,7 +38,7 @@ export default class FLOW {
                         const [result, transfer] = pass;
                         // @ts-ignore
                         self?.postMessage({
-                            resolver: "$resolver",
+                            handler: "$resolver",
                             cmd,
                             uuid,
                             dir: "res",
@@ -60,10 +55,20 @@ export default class FLOW {
                 }
             } else
             if (dir == "res") {
-                const resolved = this.#imports[ev.data.resolver]?.apply(self, ev.data) ?? (ev.data.result);
+                const resolved = this.#imports[ev.data.handler]?.apply(self, ev.data) ?? (ev.data.result);
                 this.#promiseStack?.resolveBy?.(uuid, resolved);
             }
         });
+    }
+
+    //
+    get $imports() {
+        return this.#imports;
+    }
+
+    //
+    $memoryPool() {
+        return this.#imports?.$memoryPool?.() ?? new UUIDMap();
     }
 
     //

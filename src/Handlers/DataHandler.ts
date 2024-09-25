@@ -1,4 +1,5 @@
 import ObjectProxy from "../Instruction/ObjectProxy";
+import {$data} from "../Instruction/InstructionType.ts"
 
 //
 export default class DataHandler {
@@ -16,7 +17,7 @@ export default class DataHandler {
 
     //
     $data(target) {
-        return this.$deferOp(target, (e)=>e);
+        return this.$deferOp(target, (e)=>(e[$data] ?? e));
     }
 
     //
