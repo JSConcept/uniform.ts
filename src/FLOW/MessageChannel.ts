@@ -24,7 +24,7 @@ export default class MessageChannel {
         //
         let transfer: any[] = [];
         if (cmd == "apply" && args.length >= 3) {
-            transfer.push(...args[3]);
+            transfer.push(...args.splice(2));
         }
 
         // before you needs decode its
