@@ -3,38 +3,27 @@ import DataHandler from "./DataHandler.ts";
 
 //
 export default class ObjectPoolMemberHandler extends DataHandler {
-    #memoryPoolHandler: any;
+    #memoryPool: any;
 
     //
-    constructor(memoryPoolHandler){
+    constructor(memoryPool){
         super();
-        this.#memoryPoolHandler = memoryPoolHandler;
+        this.#memoryPool = memoryPool;
     }
 
     //
-    #data(target) {
+    $data(target) {
         return this.$deferOp(target, (t)=>{
             const wrap = t["@data"] ?? t;
-            return wrap?.["@uuid"] ? this.#memoryPoolHandler.get(wrap?.["@uuid"])?.defer?.() : null;
+            return wrap?.["@uuid"] ? this.#memoryPool.get(wrap?.["@uuid"])?.defer?.() : null;
         });
     }
 
     //
-    $handle(cmd, ref, ...args) {
-        return this.$deferOp(ref, (data)=>{
-            const ref = this.#data(data);
-            /*switch(cmd) {
-                switch("get") {
-                }
-                default:
-            }*/
-            if (cmd == "access") return ref;
-            return Reflect[cmd](ref, ...args);
-        });
-    }
+    $get(uuid) { return uuid ? this.#memoryPool.get(uuid)?.defer?.() : null; };
 }
 
 //
-export const wrapLocalReference = (localReference, handler: ObjectPoolMemberHandler)=>{
-    return new Proxy(localReference, new ObjectProxy(handler))
+export const wrapLocal = (meta, handler: ObjectPoolMemberHandler)=>{
+    return new Proxy(meta, new ObjectProxy(handler))
 }

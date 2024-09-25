@@ -12,17 +12,8 @@ export default class RemoteReferenceHandler extends DataHandler {
     }
 
     //
-    #deferOp(target, cb) {
-        if (target?.then != null) {
-            return target?.then?.(cb);
-        } else {
-            return cb(target);
-        }
-    }
-
-    //
-    #data(target) {
-        return this.#deferOp(target, (t)=>{
+    $data(target) {
+        return this.$deferOp(target, (t)=>{
             const wrap = t["@data"] ?? t;
             return wrap?.["@uuid"];//wrap?.["@uuid"] ? this.#exhcnager.get(wrap?.["@uuid"])?.defer?.() : null;
         });
@@ -30,14 +21,16 @@ export default class RemoteReferenceHandler extends DataHandler {
 
     //
     $handle(cmd, meta, ...args) {
-        //const ref = this.#data(meta);
-        return this.#deferOp(meta, (data)=>{
-            return this.#exChanger.$request(cmd, this.#data(data), ...args);
+        return this.$deferOp(meta, (data)=>{
+            return this.#exChanger.$request(cmd, this.$data(data), ...args);
         });
     }
+
+    //
+    $get(uuid) { return null; };
 }
 
 //
-export const wrapRemoteReference = (reference, handler: RemoteReferenceHandler)=>{
-    return new Proxy(reference, new ObjectProxy(handler))
+export const wrapRemote = (meta, handler: RemoteReferenceHandler)=>{
+    return new Proxy(meta, new ObjectProxy(handler))
 }

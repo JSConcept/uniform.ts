@@ -1,4 +1,7 @@
-import {UUIDv4} from "./Utils.ts";
+//
+export const UUIDv4 = () => {
+    return crypto?.randomUUID ? crypto?.randomUUID() : "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c => (+c ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (+c / 4)))).toString(16));
+};
 
 //
 export type dT = object | Function;
@@ -7,14 +10,14 @@ export type rT = WeakRef<dT>;
 //
 export default class UUIDMap<T=dT> {
     #weakMap = new WeakMap<dT, string>();
-    #registry = new FinalizationRegistry<dT>((_: string) => {});
+    #registry = new FinalizationRegistry<string>((_: string) => {});
     #refMap = new Map<string, rT>();
 
     //
     constructor() {
         this.#weakMap = new WeakMap<dT, string>();
         this.#refMap = new Map<string, rT>();
-        this.#registry = new FinalizationRegistry<dT>((key: string) => {
+        this.#registry = new FinalizationRegistry<string>((key: string) => {
             this.#refMap.delete(key);
         });
     }

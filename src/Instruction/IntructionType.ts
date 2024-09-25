@@ -4,3 +4,16 @@ export const MakeReference = (data = {}): Function => {
     fx.stringify = ()=>{ return JSON.stringify(data || "{}"); }
     return fx;
 }
+
+// any meta contains, and can't to be primitive or array directly
+// only constructor, function, or object
+
+/*
+ * Internal types of meta
+ * ["@meta"|"@data"]: {
+ *   "@type": string, // interpretation type (how will resolved)
+ *   "@uuid": string, // located in remote storage pool
+ *   "@payload": any, // additional descriptions
+ *   "@index": number // located in transferable list
+ * }
+ */

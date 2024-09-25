@@ -5,7 +5,8 @@ import DataHandler from "./DataHandler.ts";
 // $detectDataType has types:
 // local (memory pool)
 // remote (reference)
-const $detectDataType = (t: any): string => {
+const $detectDataType = (t: any, pool: any | null): string => {
+    if (pool?.$get(t?.["@uuid"])) return "local";
     return "remote";
 }
 
@@ -21,22 +22,13 @@ export default class UniversalHandler extends DataHandler {
 
     //
     $handle(name = "access", target, ...args) {
-        return this.#deferOp(target, (t: any)=>{
-            return this.#dataHandler?.get($detectDataType(t))?.$handle?.(name, t, args);
+        return this.$deferOp(target, (t: any)=>{
+            return this.#dataHandler?.get($detectDataType(t, this.#dataHandler))?.$handle?.(name, t, args);
         });
-    }
-
-    //
-    #deferOp(target, cb) {
-        if (target?.then != null) {
-            return target?.then?.(cb);
-        } else {
-            return cb(target);
-        }
     }
 }
 
 //
-export const wrapUnhandledReference = (localReference, handler: UniversalHandler)=>{
-    return new Proxy(localReference, new ObjectProxy(handler))
+export const wrapMetaHandle = (meta, handler: UniversalHandler)=>{
+    return new Proxy(meta, new ObjectProxy(handler))
 }
