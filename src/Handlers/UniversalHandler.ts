@@ -30,7 +30,7 @@ export default class UniversalHandler extends DataHandler {
     $handle(cmd = "access", meta, ...args) {
         return this.$unwrap(meta, (t)=>{
             const local = this.$get(t);
-            const tp = (local && (typeof local != "string")) ? "local" : (typeof t?.["@uuid"] == "string" ? "remote" : "promise");
+            const tp    = (local && (typeof local != "string")) ? "local" : (typeof t?.["@uuid"] == "string" ? "remote" : "promise");
             return this.#dataHandler?.get(tp)?.$handle?.(cmd, t, ...args);
         });
     }

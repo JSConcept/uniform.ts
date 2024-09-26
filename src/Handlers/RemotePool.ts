@@ -15,16 +15,24 @@ export default class RemoteReferenceHandler extends DataHandler {
     //
     $data(t) {
         const wrap = t[$data] ?? t;
-        return wrap?.["@uuid"] ?? (typeof wrap == "string" ? wrap : null);
+        return wrap?.["@uuid"] ? wrap : null;
     }
 
     //
     $handle(cmd, meta, ...args) {
-        if (cmd == "get" && ["then", "catch", "finally"].indexOf(args[0]) >= 0) {
+        if (cmd == "get" && [
+            "then", "catch", "finally", // promise forbidden
+            "@uuid", "@type", "@payload", $data // organic forbidden
+        ].indexOf(args[0]) >= 0) {
             return null;
         }
+
+        //
         return this.$unwrap(meta, (ref)=>{
-            return this.#exChanger.$request(cmd, ref, ...args);
+            if (ref) {
+                return this.#exChanger.$request(cmd, ref, ...args);
+            }
+            return null;
         });
     }
 

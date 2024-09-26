@@ -18,7 +18,7 @@ export default class PreCoding {
         this.encoder = new Map<string, any>([
             ["array", (organic, target, transfer = [])=>{
                 const encoded = Array.from(target).map((e)=>this.encode(e, transfer));
-                return (encoded.some((e)=>e instanceof Promise || typeof e?.then == "function")) ? Promise.all(encoded) : encoded;
+                return (encoded.some((e)=>(e instanceof Promise || typeof e?.then == "function"))) ? Promise.all(encoded) : encoded;
             }],
 
             //

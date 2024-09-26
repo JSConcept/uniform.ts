@@ -4,12 +4,14 @@ import RemoteReferenceHandler from "../Handlers/RemotePool";
 import ObjectPoolMemberHandler from "../Handlers/ObjectPool";
 import DataHandler from "../Handlers/DataHandler";
 import UUIDMap from "../Utils/UUIDMap";
+import PreCoding from "../PreCoding/PreCoding";
 
 //
 export default class ExChanger {
     #flow: FLOW | null = null;
     #handler: UniversalHandler | null;
     #memoryPool = new UUIDMap();
+    #coder = new PreCoding();
 
     //
     constructor(context: WorkerContext, handler: UniversalHandler = new UniversalHandler()){
@@ -23,6 +25,7 @@ export default class ExChanger {
         await this.#flow?.importToSelf(import("./MessageChannel.ts"));
 
         //
+        this.#coder   = this.#flow?.$imports?.$coders;
         this.#handler = this.#flow?.$imports?.$dataHandler ?? this.#handler;
         this.#handler?.$addHandler("local", new ObjectPoolMemberHandler(this.#memoryPool = this.#flow?.$imports?.$memoryPool ?? this.#memoryPool));
         this.#handler?.$addHandler("remote", new RemoteReferenceHandler(this));
@@ -36,7 +39,7 @@ export default class ExChanger {
 
     //
     $request(cmd: string, meta: any, ...args : any[]) {
-        const result = this.#flow?.callTask?.([cmd, meta, ...args], []);
+        const result = this.#flow?.callTask?.([cmd, this.#coder.encode(meta), ...this.#coder.encode(args)], []);
         return wrapMeta(result, this.#handler || new UniversalHandler());
     }
 
