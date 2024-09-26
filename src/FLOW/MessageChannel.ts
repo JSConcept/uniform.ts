@@ -19,7 +19,7 @@ export const $handler = (command) => {
     }
 
     // before you needs decode its
-    const result = $dataHandler.$handle(cmd, target, ...args);
+    const result = $dataHandler?.$getHandler?.("promise")?.$handle?.(cmd, target, ...args);
     return [$coders.encode(result, transfer), transfer] // also, needs to recode back
 }
 

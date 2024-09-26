@@ -4,6 +4,15 @@ import UUIDMap from "../Utils/UUIDMap";
 // @ts-ignore
 export type WorkerContext = Worker | WorkerGlobalScope;
 
+//
+export const runAsync = (prom, cb)=>{
+    if (prom?.then == "function" || prom instanceof Promise) {
+        return prom?.then?.(cb);
+    } else {
+        return cb(prom);
+    }
+}
+
 // FLOW - is web worker library core (low-level)...
 export default class FLOW {
     #worker: WorkerContext | null = null;//new Worker("./FLOW-Unit.ts");
@@ -22,6 +31,10 @@ export default class FLOW {
         //
         const self: WorkerContext | null = this.#worker;
         self?.addEventListener("message", (ev)=>{
+            if (!ev.data) {
+                console.log(ev.data);
+                return;
+            }
             const {cmd, uuid, dir} = ev.data;
             if (dir == "req") {
                 if (cmd == "import") {
@@ -35,15 +48,17 @@ export default class FLOW {
                     // call with FLOW "this" context
                     const syncOrAsync = this.#imports[ev.data.handler]?.apply?.(self, [ev.data]) ?? ev.data.args;
                     const resolveWith = (pass)=>{
-                        const [result, transfer] = pass;
-                        // @ts-ignore
-                        self?.postMessage({
-                            handler: "$resolver",
-                            cmd,
-                            uuid,
-                            dir: "res",
-                            result
-                        }, [...new Set(Array.from(transfer||[]))] as StructuredSerializeOptions);
+                        const [$r, transfer] = pass;
+                        runAsync($r, (result)=>{
+                            // @ts-ignore
+                            self?.postMessage({
+                                handler: "$resolver",
+                                cmd,
+                                uuid,
+                                dir: "res",
+                                result
+                            }, [...new Set(Array.from(transfer||[]))] as StructuredSerializeOptions);
+                        });
                     }
 
                     //
@@ -75,7 +90,6 @@ export default class FLOW {
     //
     importToUnit(source) {
         const pair = this.#promiseStack?.create();
-        // @ts-ignore
         this.#worker?.postMessage?.({
             handler: "$import",
             cmd: "import",
@@ -87,16 +101,17 @@ export default class FLOW {
     }
 
     //
-    callTask(args: any[] = [], transfer = []) {
+    callTask($args: any[] = [], transfer = []) {
         const pair = this.#promiseStack?.create();
-        // @ts-ignore
-        this.#worker?.postMessage?.({
-            handler: "$handler",
-            cmd: "call",
-            dir: "req",
-            uuid: pair?.[0] || "",
-            args
-        }, [...new Set(transfer||[])] as StructuredSerializeOptions);
+        runAsync($args, (args)=>{
+            this.#worker?.postMessage?.({
+                handler: "$handler",
+                cmd: "call",
+                dir: "req",
+                uuid: pair?.[0] || "",
+                args
+            }, [...new Set(transfer||[])] as StructuredSerializeOptions);
+        });
         return pair?.[1];
     }
 }

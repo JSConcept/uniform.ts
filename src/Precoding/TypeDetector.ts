@@ -19,6 +19,11 @@ export default class TypeDetector {
             //}],
 
             //
+            ["array", (a:any):boolean=>{
+                return Array.isArray(a);
+            }],
+
+            //
             ["arraybuffer", (a:any):boolean=>{
                 return (a instanceof ArrayBuffer /*|| a instanceof SharedArrayBuffer*/);
             }],
@@ -26,11 +31,6 @@ export default class TypeDetector {
             //
             ["typedarray", (a:any):boolean=>{
                 return (a?.buffer instanceof ArrayBuffer /*|| a?.buffer instanceof SharedArrayBuffer*/);
-            }],
-
-            //
-            ["array", (a:any):boolean=>{
-                return Array.isArray(a);
             }],
 
             //
@@ -59,12 +59,10 @@ export default class TypeDetector {
     detectType(data, transfer: any[] = []) {
         // are data meta type, skip definition
         const organic = extract(data) ?? data;
-        if (organic?.[$data] || organic?.["@type"]) {
+        if (organic?.[$data] || (organic?.["@type"] || organic?.["@uuid"])) {
             const meta = organic?.[$data] || organic;
             return [true, meta?.["@type"]];
-        }
-
-        //
+        } else
         if (transfer.indexOf(data) >= 0) {
             return [false, "transfer"];
         }

@@ -39,8 +39,8 @@ export default class ExChanger {
 
     //
     $request(cmd: string, meta: any, ...args : any[]) {
-        const result = this.#flow?.callTask?.([cmd, this.#coder.encode(meta), ...this.#coder.encode(args)], []);
-        return wrapMeta(result, this.#handler || new UniversalHandler());
+        const result = this.#flow?.callTask?.(this.#coder.encode([cmd, meta, this.#coder.encode(args)]), []);
+        return wrapMeta(result, this.#handler?.$getHandler?.("promise") || new DataHandler());
     }
 
     //

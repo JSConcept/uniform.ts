@@ -1,6 +1,7 @@
 import ObjectProxy from "../Instruction/ObjectProxy.ts";
 import DataHandler from "./DataHandler.ts";
 import { MakeReference } from "../Instruction/InstructionType.ts";
+import type RemoteReferenceHandler from "./RemotePool";
 
 //
 // $detectDataType has types:
@@ -27,6 +28,11 @@ export default class UniversalHandler extends DataHandler {
     }
 
     //
+    $getHandler(name: string) {
+        return this.#dataHandler.get(name);
+    }
+
+    //
     $handle(cmd = "access", meta, ...args) {
         return this.$unwrap(meta, (t)=>{
             const local = this.$get(t);
@@ -40,12 +46,18 @@ export default class UniversalHandler extends DataHandler {
 }
 
 //
-const wrapWeakMap = new WeakMap([]);
+export const wrapWeakMap = new WeakMap([]);
+export const metaWeakMap = new WeakMap([]);
 
 //
-export const wrapMeta = (meta, handler: UniversalHandler = new UniversalHandler())=>{
+export const wrapMeta = (meta, handler: UniversalHandler | DataHandler | RemoteReferenceHandler = new UniversalHandler())=>{
+    //
+    if (metaWeakMap.has(meta)) { return metaWeakMap.get(meta); }
+
+    //
     const wrap = new Proxy(MakeReference(meta), new ObjectProxy(handler));
     wrapWeakMap.set(wrap, meta);
+    metaWeakMap.set(meta, wrap);
     return wrap;
 }
 

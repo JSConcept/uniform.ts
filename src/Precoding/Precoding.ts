@@ -1,8 +1,9 @@
 // Will be used when result are predictable in the pools or return results
-import UniversalHandler, { redirect, wrapMeta } from "../Handlers/UniversalHandler";
+import UniversalHandler, { redirect, wrapMeta, wrapWeakMap } from "../Handlers/UniversalHandler";
 import UUIDMap from "../Utils/UUIDMap";
 import TypeDetector from "./TypeDetector.ts";
 import {$data} from "../Instruction/InstructionType.ts"
+import RemoteReferenceHandler from "../Handlers/RemotePool";
 
 //
 export default class PreCoding {
@@ -17,43 +18,59 @@ export default class PreCoding {
         this.memoryPool = memoryPool;
         this.encoder = new Map<string, any>([
             ["array", (organic, target, transfer = [])=>{
-                const encoded = Array.from(target).map((e)=>this.encode(e, transfer));
-                return (encoded.some((e)=>(e instanceof Promise || typeof e?.then == "function"))) ? Promise.all(encoded) : encoded;
+                if (!organic) {
+                    const encoded = Array.from(target).map((e)=>this.encode(e, transfer));
+                    return (encoded.some((e)=>(e instanceof Promise || typeof e?.then == "function"))) ? Promise.all(encoded) : encoded;
+                }
+                return target;
             }],
 
             //
             ["transfer", (organic, target: any, transfer: any[] = [])=>{
-                if (transfer.indexOf(target) < 0) { transfer.push(target); };
+                if (!organic) {
+                    if (transfer.indexOf(target) < 0) { transfer.push(target); };
+                }
                 return target;
             }],
 
             //
             ["reference", (organic, target, transfer = [])=>{
-                if (organic) {
-                    return redirect(target);
-                } else {
-                    // make as temporary reference for usage
-                    return {
-                        "@type": "reference",
-                        "@uuid": this.memoryPool.add(target)
-                    };
-                }
+                //console.log(wrapWeakMap.get(target), organic, target);
+                //console.log((wrapWeakMap.get(target) || organic) ? (wrapWeakMap.get(target) ?? target) : {
+                //    "@type": "reference",
+                //    "@uuid": this.memoryPool.add(target)
+                //})
+
+                //
+                const exists = this?.memoryPool?.get(target?.["@uuid"] ?? target?.[$data]?.["@uuid"])?.deref?.();
+                return organic ? (wrapWeakMap.get(target) ?? target) : {
+                    "@type": "reference",
+                    "@uuid": this.memoryPool.add(exists)
+                };
             }]
         ]);
 
         //
         this.decoder = new Map<string, any>([
             ["array", (organic, target, transfer = [])=>{
-                const isPromised = (target.some((e)=>e instanceof Promise || typeof e?.then == "function"));
-                const encoded = Array.from(target).map((e)=>this.decode(e, transfer));
-                return isPromised ? Promise.all(encoded) : encoded;
+                if (organic) {
+                    const isPromised = (target.some((e)=>e instanceof Promise || typeof e?.then == "function"));
+                    const encoded = Array.from(target).map((e)=>this.decode(e, transfer));
+                    return isPromised ? Promise.all(encoded) : encoded;
+                }
+                // unusual
+                return target;
             }],
 
             //
             ["reference", (organic, target, transfer = [])=>{
-                if (organic) {
-                    const exists = this?.memoryPool?.get(target?.["@uuid"] ?? target?.[$data]?.["@uuid"]);
-                    return exists ?? wrapMeta(target, this.handler);
+                if (organic || wrapWeakMap.get(target)) {
+                    const exists = this?.memoryPool?.get(target?.["@uuid"] ?? target?.[$data]?.["@uuid"])?.deref?.();
+                    if (exists) { return exists; }
+
+                    //
+                    const handler = this.handler?.$getHandler?.("remote");
+                    if (handler) { return wrapMeta(target, handler); }
                 }
                 // unusual
                 return target;

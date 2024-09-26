@@ -31,7 +31,7 @@ export default class DataHandler {
             if (cmd == "access") { return ref; }
             try {
                 const gt = Reflect?.[cmd]?.(ref, ...args);
-                if (typeof gt == "function") {
+                if (typeof gt == "function" && typeof gt?.bind == "function") {
                     // may be organic or context detached
                     return gt?.bind?.(ref) ?? gt;
                 }
