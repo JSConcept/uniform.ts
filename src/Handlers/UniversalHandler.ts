@@ -2,6 +2,7 @@ import ObjectProxy from "../Instruction/ObjectProxy.ts";
 import DataHandler from "./DataHandler.ts";
 import { MakeReference } from "../Instruction/InstructionType.ts";
 import type RemoteReferenceHandler from "./RemotePool";
+import { $data } from "../Instruction/InstructionType.ts";
 
 //
 // $detectDataType has types:
@@ -47,26 +48,39 @@ export default class UniversalHandler extends DataHandler {
 
 //
 export const wrapWeakMap = new WeakMap([]);
-export const metaWeakMap = new WeakMap([]);
+
+//
+const doOnlyAfterResolve = (meta, cb)=>{
+    if (typeof meta?.then == "function" || meta instanceof Promise) {
+        return meta?.then(cb);
+    }
+    return cb(meta);
+}
 
 //
 export const wrapMeta = (meta, handler: UniversalHandler | DataHandler | RemoteReferenceHandler = new UniversalHandler())=>{
     //
-    if (metaWeakMap.has(meta)) { return metaWeakMap.get(meta); }
+    const wrap = new Proxy(MakeReference(meta), new ObjectProxy(handler));
+    doOnlyAfterResolve(meta, (m)=>{
+        doOnlyAfterResolve(wrap, (w)=>{
+            wrapWeakMap.set(w, m);
+        });
+    });
 
     //
-    const wrap = new Proxy(MakeReference(meta), new ObjectProxy(handler));
-    wrapWeakMap.set(wrap, meta);
-    metaWeakMap.set(meta, wrap);
     return wrap;
 }
 
 //
 export const redirect = (wrap)=>{
-    return (wrapWeakMap.get(wrap) ?? wrap);
+    if (wrap?.[$data]) return wrap?.[$data];
+    const organic = wrapWeakMap.get(wrap);
+    return organic?.[$data] ?? organic;
 }
 
 //
 export const extract = (wrap)=>{
-    return (wrapWeakMap.get(wrap) ?? wrap);
+    if (wrap?.[$data]) return wrap?.[$data];
+    const organic = wrapWeakMap.get(wrap);
+    return organic?.[$data] ?? organic;
 }

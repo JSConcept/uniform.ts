@@ -6,6 +6,11 @@ import {$data} from "../Instruction/InstructionType.ts"
 import RemoteReferenceHandler from "../Handlers/RemotePool";
 
 //
+const getOrganic = (meta)=>{
+    return (meta?.[$data]?.["@uuid"] ?? meta?.["@uuid"]) ? (meta?.[$data] ?? meta) : null;
+}
+
+//
 export default class PreCoding {
     encoder = new Map<string, any>();
     decoder = new Map<string, any>();
@@ -35,18 +40,13 @@ export default class PreCoding {
 
             //
             ["reference", (organic, target, transfer = [])=>{
-                //console.log(wrapWeakMap.get(target), organic, target);
-                //console.log((wrapWeakMap.get(target) || organic) ? (wrapWeakMap.get(target) ?? target) : {
-                //    "@type": "reference",
-                //    "@uuid": this.memoryPool.add(target)
-                //})
-
-                //
-                const exists = this?.memoryPool?.get(target?.["@uuid"] ?? target?.[$data]?.["@uuid"])?.deref?.();
-                return organic ? (wrapWeakMap.get(target) ?? target) : {
+                const meta   = wrapWeakMap.get(target) ?? getOrganic(target);
+                const exists = this?.memoryPool?.get(meta?.["@uuid"])?.deref?.();
+                const result = (exists ? {
                     "@type": "reference",
                     "@uuid": this.memoryPool.add(exists)
-                };
+                } : meta);
+                return result;
             }]
         ]);
 
@@ -64,7 +64,7 @@ export default class PreCoding {
 
             //
             ["reference", (organic, target, transfer = [])=>{
-                if (organic || wrapWeakMap.get(target)) {
+                if (organic) {
                     const exists = this?.memoryPool?.get(target?.["@uuid"] ?? target?.[$data]?.["@uuid"])?.deref?.();
                     if (exists) { return exists; }
 

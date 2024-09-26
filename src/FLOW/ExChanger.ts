@@ -9,14 +9,13 @@ import PreCoding from "../PreCoding/PreCoding";
 //
 export default class ExChanger {
     #flow: FLOW | null = null;
-    #handler: UniversalHandler | null;
-    #memoryPool = new UUIDMap();
-    #coder = new PreCoding();
+    #handler: UniversalHandler | null = null;
+    #memoryPool: UUIDMap | null = null;
+    #coder: PreCoding | null = null;
 
     //
-    constructor(context: WorkerContext, handler: UniversalHandler = new UniversalHandler()){
+    constructor(context: WorkerContext) {
         this.#flow = new FLOW(context);
-        this.#handler = handler;
     }
 
     //
@@ -25,9 +24,10 @@ export default class ExChanger {
         await this.#flow?.importToSelf(import("./MessageChannel.ts"));
 
         //
-        this.#coder   = this.#flow?.$imports?.$coders;
-        this.#handler = this.#flow?.$imports?.$dataHandler ?? this.#handler;
-        this.#handler?.$addHandler("local", new ObjectPoolMemberHandler(this.#memoryPool = this.#flow?.$imports?.$memoryPool ?? this.#memoryPool));
+        this.#coder      = this.#flow?.$imports?.$coders;
+        this.#handler    = this.#flow?.$imports?.$dataHandler;
+        this.#memoryPool = this.#flow?.$imports?.$memoryPool;
+        this.#handler?.$addHandler("local", new ObjectPoolMemberHandler());
         this.#handler?.$addHandler("remote", new RemoteReferenceHandler(this));
         this.#handler?.$addHandler("promise", new DataHandler());
     }
@@ -39,7 +39,7 @@ export default class ExChanger {
 
     //
     $request(cmd: string, meta: any, ...args : any[]) {
-        const result = this.#flow?.callTask?.(this.#coder.encode([cmd, meta, this.#coder.encode(args)]), []);
+        const result = this.#flow?.callTask?.(this.#coder?.encode([cmd, meta, ...args]), []);
         return wrapMeta(result, this.#handler?.$getHandler?.("promise") || new DataHandler());
     }
 

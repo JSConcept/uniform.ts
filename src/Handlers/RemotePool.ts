@@ -20,6 +20,11 @@ export default class RemoteReferenceHandler extends DataHandler {
 
     //
     $handle(cmd, meta, ...args) {
+        if (cmd == "get" && args[0] == $data) {
+            return meta?.[$data];
+        }
+
+        //
         if (cmd == "get" && [
             "then", "catch", "finally", // promise forbidden
             "@uuid", "@type", "@payload", $data // organic forbidden
