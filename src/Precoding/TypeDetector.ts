@@ -20,12 +20,12 @@ export default class TypeDetector {
 
             //
             ["arraybuffer", (a:any):boolean=>{
-                return (a instanceof ArrayBuffer || a instanceof SharedArrayBuffer);
+                return (a instanceof ArrayBuffer /*|| a instanceof SharedArrayBuffer*/);
             }],
 
             //
             ["typedarray", (a:any):boolean=>{
-                return (a?.buffer instanceof ArrayBuffer || a?.buffer instanceof SharedArrayBuffer);
+                return (a?.buffer instanceof ArrayBuffer /*|| a?.buffer instanceof SharedArrayBuffer*/);
             }],
 
             //
@@ -45,12 +45,7 @@ export default class TypeDetector {
 
             //
             ["symbol", (a:any):boolean=>{
-                const valid = typeof Symbol.iterator === "symbol";
-                if (valid) {
-                    console.warn("Potentially invalid type");
-                    console.trace(a);
-                }
-                return valid;
+                return typeof a === 'symbol' || typeof a === 'object' && Object.prototype.toString.call (a) === '[object Symbol]';
             }],
 
             // may needs to save into temp object pool for remote access

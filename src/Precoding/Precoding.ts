@@ -65,7 +65,7 @@ export default class PreCoding {
 
     //
     $decode(target, transfer: any[] = []) {
-        const [t, o] = this.typeDetector.detectType(target, transfer);
+        const [o, t] = this.typeDetector.detectType(target, transfer);
         if (this.decoder.has(t)) {
             return this.decoder.get(t)?.(o, target, transfer);
         }
@@ -74,7 +74,7 @@ export default class PreCoding {
 
     //
     $encode(target, transfer: any[] = []) {
-        const [t, o] = this.typeDetector.detectType(target, transfer);
+        const [o, t] = this.typeDetector.detectType(target, transfer);
         if (this.encoder.has(t)) {
             return this.encoder.get(t)?.(o, target, transfer);
         }
@@ -86,7 +86,7 @@ export default class PreCoding {
     //
     decode(target, transfer: any[] = []) {
         if (target instanceof Promise || typeof target?.then == "function") {
-            return target?.then((e)=>this.$decode(target, transfer));
+            return target?.then((e)=>this.$decode(e, transfer));
         }
         return this.$decode(target, transfer);
     }
@@ -94,7 +94,7 @@ export default class PreCoding {
     //
     encode(target, transfer: any[] = []) {
         if (target instanceof Promise || typeof target?.then == "function") {
-            return target?.then((e)=>this.$encode(target, transfer));
+            return target?.then((e)=>this.$encode(e, transfer));
         }
         return this.$encode(target, transfer);
     }

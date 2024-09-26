@@ -7,24 +7,26 @@ export default class DataHandler {
     }
 
     //
-    $deferOp(target, cb) {
-        if (target?.then != null) {
-            return new Proxy(target?.then?.(cb), new ObjectProxy(this));
-        } else {
-            return cb(target);
-        }
+    $data(target) {
+        return (target[$data] ?? target);
     }
 
     //
-    $data(target) {
-        return this.$deferOp(target, (e)=>(e[$data] ?? e));
+    $deferOp(target, cb = (e)=>e) {
+        if (target?.then != null && target?.then == "function" || target instanceof Promise) {
+            return new Proxy(target?.then?.(cb), new ObjectProxy(this));
+        }
+        return cb(target);
+    }
+
+    //
+    $unwrap(m, cb = (e)=>e) {
+        return this.$deferOp(m, (e)=>this.$deferOp(this.$data(e), cb));
     }
 
     //
     $handle(cmd, meta, ...args) {
-        return this.$deferOp(meta, (data)=>{
-            const ref = this.$data(data);
-
+        return this.$unwrap(meta, (ref)=>{
             // needs to return itself
             if (cmd == "access") { return ref; }
             try {
@@ -43,5 +45,5 @@ export default class DataHandler {
     }
 
     //
-    $get(uuid) { return null; };
+    $get(uuid): any { return null; };
 }

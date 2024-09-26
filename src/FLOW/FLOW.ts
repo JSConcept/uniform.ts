@@ -15,7 +15,7 @@ export default class FLOW {
         worker: WorkerContext | null = null,
         promiseStack: PromiseStack = new PromiseStack()
     ) {
-        this.#worker = worker || new Worker(new URL("./ExChangerUnit.ts", import.meta.url).href);
+        this.#worker = worker || new Worker(new URL("./ExChangerUnit.ts", import.meta.url).href, {type: "module"});
         this.#promiseStack = promiseStack ?? new PromiseStack();
         this.#imports = {};
 
@@ -26,14 +26,14 @@ export default class FLOW {
             if (dir == "req") {
                 if (cmd == "import") {
                     import(ev.data.source).then((m)=>{
-                        Object.assign(this.#imports, m);
+                        Object.assign(this.#imports, (m.default ?? m));
                         // @ts-ignore
                         self?.postMessage({ cmd, uuid, dir: "res", result: "ok" });
                     });
                 } else
                 if (cmd == "call") {
                     // call with FLOW "this" context
-                    const syncOrAsync = this.#imports[ev.data.handler]?.apply?.(self, ev.data.args) ?? ev.data.args;
+                    const syncOrAsync = this.#imports[ev.data.handler]?.apply?.(self, [ev.data]) ?? ev.data.args;
                     const resolveWith = (pass)=>{
                         const [result, transfer] = pass;
                         // @ts-ignore
@@ -43,7 +43,7 @@ export default class FLOW {
                             uuid,
                             dir: "res",
                             result
-                        }, [...new Set(transfer||[])] as StructuredSerializeOptions);
+                        }, [...new Set(Array.from(transfer||[]))] as StructuredSerializeOptions);
                     }
 
                     //
@@ -55,7 +55,7 @@ export default class FLOW {
                 }
             } else
             if (dir == "res") {
-                const resolved = this.#imports[ev.data.handler]?.apply(self, ev.data) ?? (ev.data.result);
+                const resolved = this.#imports[ev.data.handler]?.apply(self, [ev.data]) ?? (ev.data.result);
                 this.#promiseStack?.resolveBy?.(uuid, resolved);
             }
         });
@@ -67,13 +67,8 @@ export default class FLOW {
     }
 
     //
-    $memoryPool() {
-        return this.#imports?.$memoryPool?.() ?? new UUIDMap();
-    }
-
-    //
-    importToSelf(module) {
-        Object.assign(this.#imports, module);
+    async importToSelf(module) {
+        Object.assign(this.#imports, ((await module)?.default ?? (await module)));
         return this;
     }
 

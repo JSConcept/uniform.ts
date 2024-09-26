@@ -13,14 +13,22 @@ export default class ObjectPoolMemberHandler extends DataHandler {
     }
 
     // there is may not be meta object
-    $data(target) {
-        return this.$deferOp(target, (t)=>{
-            const wrap = t[$data] ?? t;
-            const weak = (wrap?.["@uuid"] ? this.#memoryPool.get(wrap?.["@uuid"]) : wrap);
+    $data(t) {
+        const wrap = t[$data] ?? t;
+        if (typeof (wrap?.["@uuid"] ?? wrap) == "string") {
+            const weak = this.#memoryPool.get(wrap?.["@uuid"] ?? wrap);
             return weak?.deref?.() ?? weak;
-        });
+        }
+        return wrap;
     }
 
     //
-    $get(uuid) { return uuid ? this.#memoryPool.get(uuid)?.defer?.() : null; };
+    $get(t): any {
+        const wrap = t[$data] ?? t;
+        if (typeof (wrap?.["@uuid"] ?? wrap) == "string") {
+            const weak = this.#memoryPool.get(wrap?.["@uuid"] ?? wrap);
+            return weak?.deref?.() ?? weak;
+        }
+        return null;
+    };
 }

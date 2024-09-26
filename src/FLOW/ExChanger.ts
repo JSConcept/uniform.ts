@@ -20,10 +20,11 @@ export default class ExChanger {
     //
     async initialize() {
         await this.#flow?.importToUnit("./MessageChannel.ts");
-        await this.#flow?.importToSelf(import("./MessageChannel"));
+        await this.#flow?.importToSelf(import("./MessageChannel.ts"));
 
         //
-        this.#handler?.$addHandler("local", new ObjectPoolMemberHandler(this.#memoryPool = this.#flow?.$memoryPool()));
+        this.#handler = this.#flow?.$imports?.$dataHandler ?? this.#handler;
+        this.#handler?.$addHandler("local", new ObjectPoolMemberHandler(this.#memoryPool = this.#flow?.$imports?.$memoryPool ?? this.#memoryPool));
         this.#handler?.$addHandler("remote", new RemoteReferenceHandler(this));
         this.#handler?.$addHandler("promise", new DataHandler());
     }
@@ -42,4 +43,14 @@ export default class ExChanger {
     //
     $importToUnit(source) { return this.#flow?.importToUnit(source); }
     $importToSelf(module) { return this.#flow?.importToSelf(module); }
+
+    //
+    register(object: any, name = "") {
+        return this.#memoryPool?.add?.(object, name);
+    }
+
+    //
+    access(name = "") {
+        return this.$request("access", {"@uuid": name, "@type": "reference"}, []);
+    }
 }
