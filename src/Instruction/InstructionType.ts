@@ -1,5 +1,8 @@
 export const $data = Symbol("@data");
 export const MakeReference = (data = {}): Function => {
+    if (typeof data == "function" && data[$data]) { return data; }
+
+    //
     const fx = function() { this[$data] = data; }
     fx.prototype.stringify = function (){ return JSON.stringify(this[$data] || "{}"); }
     fx.stringify = ()=>{ return JSON.stringify(data || "{}"); }

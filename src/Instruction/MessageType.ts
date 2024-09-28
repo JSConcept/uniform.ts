@@ -3,7 +3,7 @@
  * {
  *   "@ID": "@UUIDv4",
  *   "@type": ["request"|"response"],
- *   "@cmd": ["access", "get", "set", "call", "construct", "deleteProperty", "has"]
+ *   "@cmd": ["access", "get", "set", "apply", "construct", "deleteProperty", "has"]
  *   "@payload": [...'@payloadType'],
  *   "@result": '@payloadType' // will resolved into any promise
  * }

@@ -33,10 +33,11 @@ export default class PreCoding {
 
             //
             ["reference", (organic, target, transfer = [])=>{
-                return {
+                const meta = {
                     "@type": "reference",
                     "@uuid": this.memoryPool.add(target, extract(target)?.["@uuid"])
-                }
+                };
+                return meta;
             }]
         ]);
 

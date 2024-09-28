@@ -1,5 +1,5 @@
 import ObjectProxy from "../Instruction/ObjectProxy";
-import {$data} from "../Instruction/InstructionType.ts"
+import {$data, MakeReference} from "../Instruction/InstructionType.ts"
 import { extract } from "./UniversalHandler";
 
 //
@@ -20,36 +20,35 @@ export default class DataHandler {
     //
     $deferOp(target, cb = (e)=>e) {
         if (isPromise(target)) {
-            return new Proxy(target?.then?.(cb), new ObjectProxy(this));
+            return (target?.then?.(cb) ?? cb(target) ?? target);
         }
-        return cb(target);
+        return cb(target) ?? target;
     }
 
     //
-    $unwrap(m, cb = (e)=>e) {
-        return this.$deferOp(m, (e)=>this.$deferOp(this.$data(e), cb));
+    $wrapPromise(result) {
+        if (isPromise(result)) {
+            return new Proxy(MakeReference(result), new ObjectProxy(this));
+        }
+        return result;
     }
 
     //
     $handle(cmd, meta, ...args) {
+        const data = this.$data(meta);
+
         //
-        if (cmd == "get" && ["then", "catch", "finally"].indexOf(args[0]) >= 0) {
-            const ref = this.$data(meta);
-            const gt = Reflect?.[cmd]?.(ref, ...args);
-            if (typeof gt == "function" && typeof gt?.bind == "function") {
+        if (cmd == "get" && ["then", "catch", "finally", $data].indexOf(args[0]) >= 0) {
+            const gt = Reflect?.[cmd]?.(data, ...args);
+            if (cmd == "get" && typeof gt == "function" && typeof gt?.bind == "function") {
                 // may be organic or context detached
-                return gt?.bind?.(ref) ?? gt;
+                return gt?.bind?.(data) ?? gt;
             }
-            if (gt != null) {  return gt; }
+            if (gt != null) { return gt; }
         }
 
         //
-        return this.$unwrap(meta, (ref)=>{
-            /*if (extract(ref)?.["@uuid"]) {
-                console.warn("Wrong type passed, probably organic...");
-                return null;
-            }*/
-
+        return this.$wrapPromise(this.$deferOp(data, (ref)=> {
             // any illegal is illegal (after 'then' or defer operation)...
             if (ref == null || (typeof ref != "object" && typeof ref != "function")) { return ref; }
 
@@ -57,10 +56,6 @@ export default class DataHandler {
             if (cmd == "access") { return ref; }
             try {
                 const gt = Reflect?.[cmd]?.(ref, ...args);
-                if (typeof gt == "function" && typeof gt?.bind == "function") {
-                    // may be organic or context detached
-                    return gt?.bind?.(ref) ?? gt;
-                }
                 if (gt != null) { return gt; }
             } catch(e) {
                 const err = e as Error;
@@ -68,7 +63,7 @@ export default class DataHandler {
                 console.trace(err);
             }
             return null;
-        });
+        }));
     }
 
     //

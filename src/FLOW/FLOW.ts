@@ -5,12 +5,16 @@ import UUIDMap from "../Utils/UUIDMap";
 export type WorkerContext = Worker | WorkerGlobalScope;
 
 //
-export const runAsync = (prom, cb)=>{
-    if (prom?.then == "function" || prom instanceof Promise) {
-        return prom?.then?.(cb);
-    } else {
-        return cb(prom);
+export const isPromise = (target)=>{
+    return target?.then != null && typeof target?.then == "function" || target instanceof Promise;
+}
+
+//
+export const doOnlyAfterResolve = (meta, cb)=>{
+    if (isPromise(meta)) {
+        return meta?.then(cb) ?? cb(meta);
     }
+    return cb(meta);
 }
 
 // FLOW - is web worker library core (low-level)...
@@ -46,10 +50,10 @@ export default class FLOW {
                 } else
                 if (cmd == "call") {
                     // call with FLOW "this" context
-                    runAsync(this.#imports[ev.data.handler]?.apply?.(self, [ev.data]) ?? ev.data.args, (syncOrAsync)=>{
-                        runAsync(syncOrAsync, (pass)=>{
+                    doOnlyAfterResolve(this.#imports[ev.data.handler]?.apply?.(self, [ev.data]) ?? ev.data.args, (syncOrAsync)=>{
+                        doOnlyAfterResolve(syncOrAsync, (pass)=>{
                             const [$r, transfer] = pass;
-                            runAsync($r, (result)=>{
+                            doOnlyAfterResolve($r, (result)=>{
                                 // @ts-ignore
                                 self?.postMessage({
                                     handler: "$resolver",
@@ -97,7 +101,7 @@ export default class FLOW {
     //
     callTask($args: any[] = [], transfer = []) {
         const pair = this.#promiseStack?.create();
-        runAsync($args, (args)=>{
+        doOnlyAfterResolve($args, (args)=>{
             this.#worker?.postMessage?.({
                 handler: "$handler",
                 cmd: "call",

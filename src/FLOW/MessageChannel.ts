@@ -8,9 +8,14 @@ export const $memoryPool  = $coders.memoryPool;
 export const $dataHandler = $coders.handler;
 
 //
+export const isPromise = (target)=>{
+    return target?.then != null && typeof target?.then == "function" || target instanceof Promise;
+}
+
+//
 export const doOnlyAfterResolve = (meta, cb)=>{
-    if (typeof meta?.then == "function" || meta instanceof Promise) {
-        return meta?.then(cb);
+    if (isPromise(meta)) {
+        return meta?.then(cb) ?? cb(meta);
     }
     return cb(meta);
 }

@@ -50,7 +50,8 @@ export default class TypeDetector {
 
             // may needs to save into temp object pool for remote access
             ["reference", (a:any):boolean=>{
-                return (typeof a == "object" || typeof a == "function");
+                const fx = (typeof a == "object" || typeof a == "function");
+                return fx;
             }]
         ]);
     }

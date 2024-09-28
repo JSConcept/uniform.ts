@@ -10,4 +10,8 @@ console.log(Tungst);
 
 console.log(await Tungst.lab);
 
-console.log(await new Tungst());
+const tgn = (new Tungst());
+console.log(tgn);
+
+
+console.log( tgn.callback(6));

@@ -5,6 +5,21 @@ import ObjectPoolMemberHandler from "../Handlers/ObjectPool";
 import DataHandler from "../Handlers/DataHandler";
 import UUIDMap from "../Utils/UUIDMap";
 import PreCoding from "../PreCoding/PreCoding";
+import { MakeReference } from "../Instruction/InstructionType";
+import ObjectProxy from "../Instruction/ObjectProxy";
+
+//
+export const isPromise = (target)=>{
+    return target?.then != null && typeof target?.then == "function" || target instanceof Promise;
+}
+
+//
+export const doOnlyAfterResolve = (meta, cb)=>{
+    if (isPromise(meta)) {
+        return meta?.then(cb) ?? cb(meta);
+    }
+    return cb(meta);
+}
 
 //
 export default class ExChanger {
@@ -41,7 +56,7 @@ export default class ExChanger {
     $request(cmd: string, meta: any, ...args : any[]) {
         const encoded = this.#coder?.encode([cmd, meta, ...args]);
         const result = this.#flow?.callTask?.(encoded, []);
-        return wrapMeta(result, this.#handler?.$getHandler?.("promise") || new DataHandler());
+        return this.#handler?.$wrapPromise(result);
     }
 
     //
