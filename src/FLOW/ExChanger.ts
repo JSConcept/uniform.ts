@@ -27,7 +27,7 @@ export default class ExChanger {
         this.#coder      = this.#flow?.$imports?.$coders;
         this.#handler    = this.#flow?.$imports?.$dataHandler;
         this.#memoryPool = this.#flow?.$imports?.$memoryPool;
-        this.#handler?.$addHandler("local", new ObjectPoolMemberHandler());
+        this.#handler?.$addHandler("local", new ObjectPoolMemberHandler(this.#memoryPool));
         this.#handler?.$addHandler("remote", new RemoteReferenceHandler(this));
         this.#handler?.$addHandler("promise", new DataHandler());
     }
@@ -39,7 +39,8 @@ export default class ExChanger {
 
     //
     $request(cmd: string, meta: any, ...args : any[]) {
-        const result = this.#flow?.callTask?.(this.#coder?.encode([cmd, meta, ...args]), []);
+        const encoded = this.#coder?.encode([cmd, meta, ...args]);
+        const result = this.#flow?.callTask?.(encoded, []);
         return wrapMeta(result, this.#handler?.$getHandler?.("promise") || new DataHandler());
     }
 

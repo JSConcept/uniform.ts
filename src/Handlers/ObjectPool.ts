@@ -1,33 +1,35 @@
 import UUIDMap from "../Utils/UUIDMap.ts";
 import DataHandler from "./DataHandler.ts";
-import {$data} from "../Instruction/InstructionType.ts"
+import { extract } from "./UniversalHandler";
 
 //
 export default class ObjectPoolMemberHandler extends DataHandler {
-    #memoryPool: UUIDMap;
+    #memoryPool: UUIDMap | null;
 
     //
-    constructor(memoryPool = new UUIDMap()){
+    constructor(memoryPool: UUIDMap | null = new UUIDMap()){
         super();
         this.#memoryPool = memoryPool;
     }
 
     // there is may not be meta object
     $data(t) {
-        const wrap = t[$data] ?? t;
-        if (typeof (wrap?.["@uuid"] ?? wrap) == "string") {
-            const weak = this.#memoryPool.get(wrap?.["@uuid"] ?? wrap);
-            return weak?.deref?.() ?? weak;
+        const wrap = extract(t) ?? t;
+        const uuid = wrap?.["@uuid"] ?? wrap;
+        if (typeof uuid == "string") {
+            const weak: any = this.#memoryPool?.get(uuid);
+            return (weak?.deref?.() ?? weak) ?? t;
         }
-        return wrap;
+        return t;
     }
 
     //
     $get(t): any {
-        const wrap = t[$data] ?? t;
-        if (typeof (wrap?.["@uuid"] ?? wrap) == "string") {
-            const weak = this.#memoryPool.get(wrap?.["@uuid"] ?? wrap);
-            return weak?.deref?.() ?? weak;
+        const wrap = extract(t) ?? t;
+        const uuid = wrap?.["@uuid"] ?? wrap;
+        if (typeof uuid == "string") {
+            const weak: any = this.#memoryPool?.get(uuid);
+            return weak?.deref?.() ?? weak ?? null;
         }
         return null;
     };

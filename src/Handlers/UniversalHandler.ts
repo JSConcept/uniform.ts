@@ -36,14 +36,17 @@ export default class UniversalHandler extends DataHandler {
     //
     $handle(cmd = "access", meta, ...args) {
         return this.$unwrap(meta, (t)=>{
-            const local = this.$get(t);
-            const tp    = (local && (typeof local != "string")) ? "local" : (typeof t?.["@uuid"] == "string" ? "remote" : "promise");
+            const meta  = extract(t);
+            const local = this.$get(meta);
+            const tp    = (local && (typeof local != "string")) ? "local" : (typeof meta?.["@uuid"] == "string" ? "remote" : "promise");
             return this.#dataHandler?.get(tp)?.$handle?.(cmd, t, ...args);
         });
     }
 
     //
-    $get(uuid) { return this.#dataHandler.get("local")?.$get(uuid["@uuid"] ?? uuid); };
+    $get(uuid) {
+        return this.#dataHandler.get("local")?.$get?.(uuid);
+    };
 }
 
 //
@@ -63,7 +66,9 @@ export const wrapMeta = (meta, handler: UniversalHandler | DataHandler | RemoteR
     const wrap = new Proxy(MakeReference(meta), new ObjectProxy(handler));
     doOnlyAfterResolve(meta, (m)=>{
         doOnlyAfterResolve(wrap, (w)=>{
-            wrapWeakMap.set(w, m);
+            if (typeof w == "object" || typeof w == "function") {
+                wrapWeakMap.set(w, m);
+            }
         });
     });
 
@@ -71,16 +76,22 @@ export const wrapMeta = (meta, handler: UniversalHandler | DataHandler | RemoteR
     return wrap;
 }
 
+
 //
-export const redirect = (wrap)=>{
+export const prepare = (wrap)=>{
     if (wrap?.[$data]) return wrap?.[$data];
-    const organic = wrapWeakMap.get(wrap);
+    const organic = wrapWeakMap.get(wrap) ?? wrap;
     return organic?.[$data] ?? organic;
 }
 
 //
+export const redirect = (wrap)=>{
+    const pt = prepare(wrap);
+    return (pt?.["@uuid"]||pt?.["@type"])?pt:null;
+}
+
+//
 export const extract = (wrap)=>{
-    if (wrap?.[$data]) return wrap?.[$data];
-    const organic = wrapWeakMap.get(wrap);
-    return organic?.[$data] ?? organic;
+    const pt = prepare(wrap);
+    return (pt?.["@uuid"]||pt?.["@type"])?pt:null;
 }

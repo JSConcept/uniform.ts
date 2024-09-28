@@ -2,18 +2,23 @@ import ObjectProxy from "../Instruction/ObjectProxy";
 import {$data} from "../Instruction/InstructionType.ts"
 
 //
+const isPromise = (target)=>{
+    return target?.then != null && typeof target?.then == "function" || target instanceof Promise;
+}
+
+//
 export default class DataHandler {
     constructor() {
     }
 
     //
     $data(target) {
-        return (target[$data] ?? target);
+        return (isPromise(target?.[$data]) ? target?.[$data] : target) ?? target;
     }
 
     //
     $deferOp(target, cb = (e)=>e) {
-        if (target?.then != null && target?.then == "function" || target instanceof Promise) {
+        if (isPromise(target)) {
             return new Proxy(target?.then?.(cb), new ObjectProxy(this));
         }
         return cb(target);
@@ -26,7 +31,22 @@ export default class DataHandler {
 
     //
     $handle(cmd, meta, ...args) {
+        //
+        if (cmd == "get" && ["then", "catch", "finally"].indexOf(args[0]) >= 0) {
+            const ref = this.$data(meta);
+            const gt = Reflect?.[cmd]?.(ref, ...args);
+            if (typeof gt == "function" && typeof gt?.bind == "function") {
+                // may be organic or context detached
+                return gt?.bind?.(ref) ?? gt;
+            }
+            if (gt != null) {  return gt; }
+        }
+
+        //
         return this.$unwrap(meta, (ref)=>{
+            // any illegal is illegal (after 'then' or defer operation)...
+            if (ref == null || (typeof ref != "object" && typeof ref != "function")) { return ref; }
+
             // needs to return itself
             if (cmd == "access") { return ref; }
             try {
@@ -35,6 +55,7 @@ export default class DataHandler {
                     // may be organic or context detached
                     return gt?.bind?.(ref) ?? gt;
                 }
+                if (gt != null) { return gt; }
             } catch(e) {
                 const err = e as Error;
                 console.error("Wrong op: " + err.message);

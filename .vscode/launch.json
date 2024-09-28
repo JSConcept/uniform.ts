@@ -9,14 +9,15 @@
             "port": 9222,
             "request": "attach",
             "type": "chrome",
-            "webRoot": "${workspaceFolder}",
+            "webRoot": "${workspaceFolder}"
         },
         {
             "type": "chrome",
             "request": "launch",
-            "name": "Launch Chrome against localhost",
+            "name": "Debug in Chrome",
             "url": "http://localhost:5173/",
             "webRoot": "${workspaceFolder}",
+            "port": 9222,
             "runtimeExecutable": "C:/Users/AdminX/AppData/Local/Yandex/YandexBrowser/Application/browser.exe",
             "runtimeArgs": ["--headless", "--disable-gpu", "--remote-debugging-port=9222"]
         }

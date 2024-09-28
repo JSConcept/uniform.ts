@@ -1,6 +1,7 @@
 import ExChanger from "../FLOW/ExChanger.ts";
 import DataHandler from "./DataHandler.ts";
 import {$data} from "../Instruction/InstructionType.ts"
+import { extract } from "./UniversalHandler";
 
 //
 export default class RemoteReferenceHandler extends DataHandler {
@@ -13,16 +14,9 @@ export default class RemoteReferenceHandler extends DataHandler {
     }
 
     //
-    $data(t) {
-        const wrap = t[$data] ?? t;
-        return wrap?.["@uuid"] ? wrap : null;
-    }
-
-    //
+    $data(t) { return extract(t); }
     $handle(cmd, meta, ...args) {
-        if (cmd == "get" && args[0] == $data) {
-            return meta?.[$data];
-        }
+        if (cmd == "get" && args[0] == $data) { return extract(meta); }
 
         //
         if (cmd == "get" && [

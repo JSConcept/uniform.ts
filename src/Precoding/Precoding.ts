@@ -1,14 +1,9 @@
 // Will be used when result are predictable in the pools or return results
-import UniversalHandler, { redirect, wrapMeta, wrapWeakMap } from "../Handlers/UniversalHandler";
+import UniversalHandler, { extract, redirect, wrapMeta, wrapWeakMap } from "../Handlers/UniversalHandler";
 import UUIDMap from "../Utils/UUIDMap";
 import TypeDetector from "./TypeDetector.ts";
 import {$data} from "../Instruction/InstructionType.ts"
 import RemoteReferenceHandler from "../Handlers/RemotePool";
-
-//
-const getOrganic = (meta)=>{
-    return (meta?.[$data]?.["@uuid"] ?? meta?.["@uuid"]) ? (meta?.[$data] ?? meta) : null;
-}
 
 //
 export default class PreCoding {
@@ -32,21 +27,17 @@ export default class PreCoding {
 
             //
             ["transfer", (organic, target: any, transfer: any[] = [])=>{
-                if (!organic) {
-                    if (transfer.indexOf(target) < 0) { transfer.push(target); };
-                }
+                if (!organic) { if (transfer.indexOf(target) < 0) { transfer.push(target); }; }
                 return target;
             }],
 
             //
             ["reference", (organic, target, transfer = [])=>{
-                const meta   = wrapWeakMap.get(target) ?? getOrganic(target);
-                const exists = this?.memoryPool?.get(meta?.["@uuid"])?.deref?.();
-                const result = (exists ? {
+                if (organic) { return extract(target); }
+                return {
                     "@type": "reference",
-                    "@uuid": this.memoryPool.add(exists)
-                } : meta);
-                return result;
+                    "@uuid": this.memoryPool.add(target)
+                }
             }]
         ]);
 
@@ -54,9 +45,8 @@ export default class PreCoding {
         this.decoder = new Map<string, any>([
             ["array", (organic, target, transfer = [])=>{
                 if (organic) {
-                    const isPromised = (target.some((e)=>e instanceof Promise || typeof e?.then == "function"));
-                    const encoded = Array.from(target).map((e)=>this.decode(e, transfer));
-                    return isPromised ? Promise.all(encoded) : encoded;
+                    const decoded = Array.from(target).map((e)=>this.decode(e, transfer));
+                    return (decoded.some((e)=>e instanceof Promise || typeof e?.then == "function")) ? Promise.all(decoded) : decoded;
                 }
                 // unusual
                 return target;
@@ -65,12 +55,13 @@ export default class PreCoding {
             //
             ["reference", (organic, target, transfer = [])=>{
                 if (organic) {
-                    const exists = this?.memoryPool?.get(target?.["@uuid"] ?? target?.[$data]?.["@uuid"])?.deref?.();
+                    const org    = extract(target);
+                    const exists = this?.memoryPool?.get(org?.["@uuid"])?.deref?.();
                     if (exists) { return exists; }
 
                     //
                     const handler = this.handler?.$getHandler?.("remote");
-                    if (handler) { return wrapMeta(target, handler); }
+                    if (handler) { return wrapMeta(org, handler); }
                 }
                 // unusual
                 return target;
