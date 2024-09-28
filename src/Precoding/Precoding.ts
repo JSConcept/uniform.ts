@@ -2,8 +2,8 @@
 import UniversalHandler, { extract, redirect, wrapMeta, wrapWeakMap } from "../Handlers/UniversalHandler";
 import UUIDMap from "../Utils/UUIDMap";
 import TypeDetector from "./TypeDetector.ts";
-import {$data} from "../Instruction/InstructionType.ts"
-import RemoteReferenceHandler from "../Handlers/RemotePool";
+//import {$data} from "../Instruction/InstructionType.ts"
+//import RemoteReferenceHandler from "../Handlers/RemotePool";
 
 //
 export default class PreCoding {
@@ -33,10 +33,9 @@ export default class PreCoding {
 
             //
             ["reference", (organic, target, transfer = [])=>{
-                if (organic) { return extract(target); }
                 return {
                     "@type": "reference",
-                    "@uuid": this.memoryPool.add(target)
+                    "@uuid": this.memoryPool.add(target, extract(target)?.["@uuid"])
                 }
             }]
         ]);

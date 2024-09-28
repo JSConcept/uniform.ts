@@ -27,7 +27,7 @@ export default class UUIDMap<T=dT> {
         if (!(typeof obj == "object" || typeof obj == "function")) return obj;
 
         // never override already added
-        if (id && this.#refMap.has(id)) {id = UUIDv4();}
+        if (id && this.#refMap.has(id)) {return id; id = UUIDv4();}
 
         //
         if (this.#weakMap.has(obj)) {
