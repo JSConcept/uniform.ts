@@ -44,7 +44,7 @@ export default class PreCoding {
         //
         this.decoder = new Map<string, any>([
             ["array", (organic, target, transfer = [])=>{
-                if (organic) {
+                if (!organic) {
                     const decoded = Array.from(target).map((e)=>this.decode(e, transfer));
                     return (decoded.some((e)=>e instanceof Promise || typeof e?.then == "function")) ? Promise.all(decoded) : decoded;
                 }

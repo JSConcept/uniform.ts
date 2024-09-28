@@ -5,15 +5,6 @@ import type RemoteReferenceHandler from "./RemotePool";
 import { $data } from "../Instruction/InstructionType.ts";
 
 //
-// $detectDataType has types:
-// local (memory pool)
-// remote (reference)
-const $detectDataType = (t: any, pool: any | null): string => {
-    if (pool?.$get(t?.["@uuid"])) return "local";
-    return "remote";
-}
-
-//
 export default class UniversalHandler extends DataHandler {
     #dataHandler: Map<string, DataHandler>;
 
@@ -51,9 +42,7 @@ export default class UniversalHandler extends DataHandler {
 
 //
 export const wrapWeakMap = new WeakMap([]);
-
-//
-const doOnlyAfterResolve = (meta, cb)=>{
+export const doOnlyAfterResolve = (meta, cb)=>{
     if (typeof meta?.then == "function" || meta instanceof Promise) {
         return meta?.then(cb);
     }
@@ -64,9 +53,11 @@ const doOnlyAfterResolve = (meta, cb)=>{
 export const wrapMeta = (meta, handler: UniversalHandler | DataHandler | RemoteReferenceHandler = new UniversalHandler())=>{
     //
     const wrap = new Proxy(MakeReference(meta), new ObjectProxy(handler));
+
+    //
     doOnlyAfterResolve(meta, (m)=>{
         doOnlyAfterResolve(wrap, (w)=>{
-            if (typeof w == "object" || typeof w == "function") {
+            if (w != null && (typeof w == "object" || typeof w == "function")) {
                 wrapWeakMap.set(w, m);
             }
         });
@@ -76,22 +67,27 @@ export const wrapMeta = (meta, handler: UniversalHandler | DataHandler | RemoteR
     return wrap;
 }
 
-
 //
-export const prepare = (wrap)=>{
-    if (wrap?.[$data]) return wrap?.[$data];
-    const organic = wrapWeakMap.get(wrap) ?? wrap;
-    return organic?.[$data] ?? organic;
+export const prepare = (w)=>{
+    return doOnlyAfterResolve(w, (wrap)=>{
+        if (wrap?.[$data]) return wrap?.[$data];
+        const organic = wrapWeakMap.get(wrap) ?? wrap;
+        return organic?.[$data] ?? organic;
+    });
 }
 
 //
-export const redirect = (wrap)=>{
-    const pt = prepare(wrap);
-    return (pt?.["@uuid"]||pt?.["@type"])?pt:null;
+export const redirect = (w)=>{
+    return doOnlyAfterResolve(w, (wrap)=>{
+        const pt = prepare(wrap);
+        return (pt?.["@uuid"]||pt?.["@type"])?pt:null;
+    });
 }
 
 //
-export const extract = (wrap)=>{
-    const pt = prepare(wrap);
-    return (pt?.["@uuid"]||pt?.["@type"])?pt:null;
+export const extract = (w)=>{
+    return doOnlyAfterResolve(w, (wrap)=>{
+        const pt = prepare(wrap);
+        return (pt?.["@uuid"]||pt?.["@type"])?pt:null;
+    });
 }

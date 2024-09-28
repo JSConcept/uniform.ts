@@ -46,27 +46,21 @@ export default class FLOW {
                 } else
                 if (cmd == "call") {
                     // call with FLOW "this" context
-                    const syncOrAsync = this.#imports[ev.data.handler]?.apply?.(self, [ev.data]) ?? ev.data.args;
-                    const resolveWith = (pass)=>{
-                        const [$r, transfer] = pass;
-                        runAsync($r, (result)=>{
-                            // @ts-ignore
-                            self?.postMessage({
-                                handler: "$resolver",
-                                cmd,
-                                uuid,
-                                dir: "res",
-                                result
-                            }, [...new Set(Array.from(transfer||[]))] as StructuredSerializeOptions);
+                    runAsync(this.#imports[ev.data.handler]?.apply?.(self, [ev.data]) ?? ev.data.args, (syncOrAsync)=>{
+                        runAsync(syncOrAsync, (pass)=>{
+                            const [$r, transfer] = pass;
+                            runAsync($r, (result)=>{
+                                // @ts-ignore
+                                self?.postMessage({
+                                    handler: "$resolver",
+                                    cmd,
+                                    uuid,
+                                    dir: "res",
+                                    result
+                                }, [...new Set(Array.from(transfer||[]))] as StructuredSerializeOptions);
+                            });
                         });
-                    }
-
-                    //
-                    if (syncOrAsync instanceof Promise || typeof syncOrAsync?.then == "function") {
-                        syncOrAsync.then(resolveWith);
-                    } else {
-                        resolveWith(syncOrAsync);
-                    }
+                    });
                 }
             } else
             if (dir == "res") {

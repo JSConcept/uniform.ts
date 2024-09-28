@@ -8,6 +8,14 @@ export const $memoryPool  = $coders.memoryPool;
 export const $dataHandler = $coders.handler;
 
 //
+export const doOnlyAfterResolve = (meta, cb)=>{
+    if (typeof meta?.then == "function" || meta instanceof Promise) {
+        return meta?.then(cb);
+    }
+    return cb(meta);
+}
+
+//
 export const $handler = (command) => {
     //console.log(command);
     const {cmd: nac, uuid, dir, args: [cmd, target, ...args]} = command;
@@ -19,8 +27,10 @@ export const $handler = (command) => {
     }
 
     // before you needs decode its
-    const result = $dataHandler?.$getHandler?.("local")?.$handle?.(cmd, target, ...args);
-    return [$coders.encode(result, transfer), transfer] // also, needs to recode back
+    return doOnlyAfterResolve($coders.decode([cmd, target, ...args], transfer), ([cmd, target, ...args])=>{
+        const result = $dataHandler?.$getHandler?.("promise")?.$handle?.(cmd, target, ...args);
+        return [$coders.encode(result, transfer), transfer] // also, needs to recode back
+    });
 }
 
 //

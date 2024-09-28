@@ -9,3 +9,5 @@ const Tungst = Host.access("Tungst");
 console.log(Tungst);
 
 console.log(await Tungst.lab);
+
+console.log(await new Tungst());

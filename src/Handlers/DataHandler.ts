@@ -1,5 +1,6 @@
 import ObjectProxy from "../Instruction/ObjectProxy";
 import {$data} from "../Instruction/InstructionType.ts"
+import { extract } from "./UniversalHandler";
 
 //
 const isPromise = (target)=>{
@@ -44,6 +45,11 @@ export default class DataHandler {
 
         //
         return this.$unwrap(meta, (ref)=>{
+            /*if (extract(ref)?.["@uuid"]) {
+                console.warn("Wrong type passed, probably organic...");
+                return null;
+            }*/
+
             // any illegal is illegal (after 'then' or defer operation)...
             if (ref == null || (typeof ref != "object" && typeof ref != "function")) { return ref; }
 

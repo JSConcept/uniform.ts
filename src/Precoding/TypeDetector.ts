@@ -70,7 +70,9 @@ export default class TypeDetector {
 
         // other data are primitives
         for (const [type, def] of this.detection) {
-            if (def(data)) return [false, type];
+            if (def(data)) {
+                return [false, type];
+            }
         }
 
         //

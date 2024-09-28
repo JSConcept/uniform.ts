@@ -16,13 +16,19 @@ export default class RemoteReferenceHandler extends DataHandler {
     //
     $data(t) { return extract(t); }
     $handle(cmd, meta, ...args) {
-        if (cmd == "get" && args[0] == $data) { return extract(meta); }
+        if (cmd == "get" && args[0] == $data) {
+            return this.$data(meta);
+        };
 
         //
-        if (cmd == "get" && [
-            "then", "catch", "finally", // promise forbidden
-            "@uuid", "@type", "@payload", $data // organic forbidden
-        ].indexOf(args[0]) >= 0) {
+        if (cmd == "get" &&
+            (typeof args[0] === 'symbol' || typeof args[0] === 'object' && Object.prototype.toString.call(args[0]) === '[object Symbol]') ||
+            [
+                "bind", "toString", // system accessors are forbidden!
+                "then", "catch", "finally", // promise forbidden
+                "@uuid", "@type", "@payload", $data // organic forbidden
+            ].indexOf(args[0]) >= 0
+        ) {
             return null;
         }
 
@@ -36,5 +42,5 @@ export default class RemoteReferenceHandler extends DataHandler {
     }
 
     //
-    $get(uuid): any { return null; };
+    $get(_): any { return null; };
 }
