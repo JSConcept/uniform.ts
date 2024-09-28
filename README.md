@@ -1,4 +1,4 @@
-# 🥋 uniform.ts 🥋
+# 🏬 Uniform.TS 🏬
 
 Replacement of all my web workers libraries.
 
