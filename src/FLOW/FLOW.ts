@@ -35,10 +35,7 @@ export default class FLOW {
         //
         const self: WorkerContext | null = this.#worker;
         self?.addEventListener("message", (ev)=>{
-            if (!ev.data) {
-                console.log(ev.data);
-                return;
-            }
+            if (!ev?.data) { console.log(ev); return; }
             const {cmd, uuid, dir} = ev.data;
             if (dir == "req") {
                 if (cmd == "import") {

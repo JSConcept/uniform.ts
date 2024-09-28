@@ -22,7 +22,6 @@ export const doOnlyAfterResolve = (meta, cb)=>{
 
 //
 export const $handler = (command) => {
-    //console.log(command);
     const {cmd: nac, uuid, dir, args: [cmd, target, ...args]} = command;
 
     //

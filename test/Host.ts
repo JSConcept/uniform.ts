@@ -5,7 +5,7 @@ export const Host = new ExChanger(new Worker(new URL("./Worker.ts", import.meta.
 await Host.initialize();
 
 //
-const Tungst = Host.access("Tungst");
+const Tungst = await Host.access("Tungst");
 console.log(Tungst);
 
 console.log(await Tungst.lab);
