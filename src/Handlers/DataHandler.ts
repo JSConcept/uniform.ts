@@ -27,7 +27,7 @@ export default class DataHandler {
 
     //
     $wrapPromise(result) {
-        if (isPromise(result)) {
+        if (isPromise(result) && !result?.[$data]) {
             return new Proxy(MakeReference(result), new ObjectProxy(this));
         }
         return result;

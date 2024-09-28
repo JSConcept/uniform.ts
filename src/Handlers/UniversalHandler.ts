@@ -50,15 +50,16 @@ export const doOnlyAfterResolve = (meta, cb)=>{
 //
 export const wrapMeta = (meta, handler: UniversalHandler | DataHandler | RemoteReferenceHandler = new UniversalHandler())=>{
     //
-    const wrap = new Proxy(MakeReference(meta), new ObjectProxy(handler));
+    const wrap = (!meta?.[$data]) ? (new Proxy(MakeReference(meta), new ObjectProxy(handler))) : meta;
 
     //
-    doOnlyAfterResolve(meta, (m)=>{
-        doOnlyAfterResolve(wrap, (w)=>{
+    doOnlyAfterResolve(meta, ($m)=>{
+        const m = extract($m);
+        if (m) { doOnlyAfterResolve(wrap, (w)=>{
             if (w != null && (typeof w == "object" || typeof w == "function")) {
                 wrapWeakMap.set(w, m);
             }
-        });
+        }); };
     });
 
     //
