@@ -13,14 +13,16 @@ export default class ObjectPoolMemberHandler extends DataHandler {
     }
 
     // there is may not be meta object
-    $data(t) {
-        const wrap = extract(t) ?? t;
-        const uuid = wrap?.["@uuid"] ?? wrap;
-        if (typeof uuid == "string") {
-            const weak: any = this.#memoryPool?.get(uuid);
-            return (weak?.deref?.() ?? weak) ?? t;
-        }
-        return t;
+    $data(t): any {
+        return super.$data((()=>{
+            const wrap = extract(t) ?? t;
+            const uuid = wrap?.["@uuid"] ?? wrap;
+            if (typeof uuid == "string") {
+                const weak: any = this.#memoryPool?.get(uuid);
+                return (weak?.deref?.() ?? weak) ?? t;
+            }
+            return t;
+        })());
     }
 
     //
