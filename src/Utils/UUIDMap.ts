@@ -22,12 +22,20 @@ export default class UUIDMap<T=dT> {
         });
     }
 
+    // when transfer out required
+    delete<R extends dT | string>(key: R): R {
+        if (typeof key == "object" || typeof key == "function") {
+            return this.#weakMap.delete(<dT>(<unknown>key)) as any;
+        }
+        return this.#refMap.delete(<string>(<unknown>key)) as any;
+    }
+
     //
-    add(obj: dT, id: string = "") {
+    add(obj: dT, id: string = "", force = false) {
         if (!(typeof obj == "object" || typeof obj == "function")) return obj;
 
-        // never override already added
-        if (id && this.#refMap.has(id)) {return id; id = UUIDv4();}
+        // never override already added, except transfer cases
+        if (id && this.#refMap.has(id) && !force) { return id; };
 
         //
         if (this.#weakMap.has(obj)) {

@@ -35,7 +35,7 @@ export default class PreCoding {
             ["reference", (organic, target, transfer = [])=>{
                 const meta = {
                     "@type": "reference",
-                    "@uuid": this.memoryPool.add(target, extract(target)?.["@uuid"])
+                    "@uuid": this.memoryPool.add(target, extract(target)?.["@uuid"], !organic)
                 };
                 return meta;
             }]
@@ -60,8 +60,7 @@ export default class PreCoding {
                     if (exists) { return exists; }
 
                     //
-                    const handler = this.handler?.$getHandler?.("remote");
-                    if (handler) { return wrapMeta(org, handler); }
+                    return wrapMeta(org, this.handler);
                 }
                 // unusual
                 return target;

@@ -15,27 +15,19 @@ export default class UniversalHandler extends DataHandler {
     }
 
     //
-    $addHandler(name: string, handler: DataHandler) {
-        this.#dataHandler.set(name, handler);
-    }
-
-    //
-    $getHandler(name: string) {
-        return this.#dataHandler.get(name);
-    }
+    $addHandler(name: string, handler: DataHandler) { this.#dataHandler.set(name, handler); }
+    $getHandler(name: string) { return this.#dataHandler.get(name); }
 
     //
     $handle(cmd = "access", t, ...args) {
         const meta  = extract(t);
         const local = this.$get(meta);
-        const tp    = (local && (typeof local != "string")) ? "local" : (typeof meta?.["@uuid"] == "string" ? "remote" : "promise");
+        const tp    = (local && (typeof local != "string") && (extract(local)?.["@uuid"] != meta?.["@uuid"])) ? "local" : (typeof meta?.["@uuid"] == "string" ? "remote" : "promise");
         return this.#dataHandler?.get(tp)?.$handle?.(cmd, t, ...args);
     }
 
     //
-    $get(uuid) {
-        return this.#dataHandler.get("local")?.$get?.(uuid);
-    };
+    $get(uuid) { return this.#dataHandler.get("local")?.$get?.(uuid); };
 }
 
 //
