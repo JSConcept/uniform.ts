@@ -39,7 +39,7 @@ export default class UUIDMap<T=dT> {
 
         //
         if (this.#weakMap.has(obj)) {
-            this.#weakMap.get(obj);
+            return this.#weakMap.get(obj);
         }
 
         //
