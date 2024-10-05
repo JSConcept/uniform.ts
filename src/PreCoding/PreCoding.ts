@@ -40,18 +40,22 @@ export default class PreCoding {
 
                     // if exists
                     if (node != null) {
+                        // sometimes, `@uuid` may already known in database
+                        const meta = { // request to transfer node
+                            "@type": "transfer",
+                            "@uuid": org?.["@uuid"]||this?.memoryPool?.get?.(node)||"",
+                            "@node": node
+                        }
+
+                        // add to transfer list
                         if (transfer?.indexOf?.(node) < 0) {
                             this.memoryPool.delete(node);
                             transfer?.push?.(node);
                         }
 
-                        // request to transfer node
-                        return {
-                            "@type": "transfer",
-                            "@uuid": org?.["@uuid"]||"", //|| this.memoryPool.add(node, org?.["@uuid"], true),
-                            "@node": node
-                        }
-                    } 
+                        //
+                        return meta;
+                    }
                     return org;
                 }
 

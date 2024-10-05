@@ -1,6 +1,6 @@
 import ObjectProxy from "../Instruction/ObjectProxy.ts";
 import { $data, MakeReference} from "../Instruction/InstructionType.ts"
-import { isPromise } from "../Instruction/Defer.ts";
+import { extract, isPromise } from "../Instruction/Defer.ts";
 
 //
 export default class DataHandler {
@@ -30,10 +30,9 @@ export default class DataHandler {
 
     //
     $handle(cmd, meta, ...args) {
-        const data = this.$data(meta);
-
         //
         if (cmd == "get" && ["then", "catch", "finally", $data].indexOf(args[0]) >= 0) {
+            const data = this.$data(meta);
             const gt = Reflect?.[cmd]?.(data, ...args);
             if (cmd == "get" && typeof gt == "function" && typeof gt?.bind == "function") {
                 // may be organic or context detached
@@ -42,23 +41,30 @@ export default class DataHandler {
             if (gt != null) { return gt; }
         }
 
-        //
-        return this.$wrapPromise(this.$deferOp(data, (ref)=> {
-            // any illegal is illegal (after 'then' or defer operation)...
-            if (ref == null || (typeof ref != "object" && typeof ref != "function")) { return ref; }
+        // unwrap first-level promise
+        return this.$wrapPromise(this.$deferOp(meta, (raw)=> {
+            const data = this.$data(raw); // will get data from memory pool include
+            return this.$deferOp(data, (ref)=> {
+                // any illegal is illegal (after 'then' or defer operation)...
+                if (ref == null || (typeof ref != "object" && typeof ref != "function")) { return ref; }
 
-            // needs to return itself
-            if (cmd == "access") { return ref; }
-            if (cmd == "transfer") { return {"@type": "transfer", "@node": ref, "@uuid": ""} };
-            try {
-                const gt = Reflect?.[cmd]?.(ref, ...args);
-                if (gt != null) { return gt; }
-            } catch(e) {
-                const err = e as Error;
-                console.error("Wrong op: " + err.message);
-                console.trace(err);
-            }
-            return null;
+                // needs to return itself
+                if (cmd == "access") { return ref; }
+                if (cmd == "transfer") {
+                    // sometimes, `@uuid` may already is known from memory pool
+                    const wrap = extract(raw) ?? raw;
+                    return {"@type": "transfer", "@node": ref, "@uuid": wrap?.["@uuid"] ?? ""}
+                };
+                try {
+                    const gt = Reflect?.[cmd]?.(ref, ...args);
+                    if (gt != null) { return gt; }
+                } catch(e) {
+                    const err = e as Error;
+                    console.error("Wrong op: " + err.message);
+                    console.trace(err);
+                }
+                return null;
+            });
         }));
     }
 
