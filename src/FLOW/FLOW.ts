@@ -1,5 +1,5 @@
 import PromiseStack from '../Utils/PromiseStack.ts';
-import UUIDMap from "../Utils/UUIDMap";
+import UUIDMap from "../Utils/UUIDMap.ts";
 
 // @ts-ignore
 export type WorkerContext = Worker | WorkerGlobalScope;

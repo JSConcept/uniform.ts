@@ -1,0 +1,25 @@
+{
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview"
+    },
+    "browserslist": [
+        "last 1 chrome version",
+        "last 1 firefox version"
+    ],
+    "dependencies": {
+        "@effective/eslint-config": "^5.4.7",
+        "@types/node": "*",
+        "autoprefixer": "^10.4.16",
+        "cbor-x": "^1.5.9",
+        "eslint-config-prettier": "^9.1.0",
+        "glob": "^10.4.2",
+        "jsox": "^1.2.119",
+        "rimraf": "^5.0.7",
+        "sass": "^1.77.6",
+        "typescript": "^5.5.3"
+    }
+}

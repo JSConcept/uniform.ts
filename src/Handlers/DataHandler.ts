@@ -54,6 +54,7 @@ export default class DataHandler {
 
             // needs to return itself
             if (cmd == "access") { return ref; }
+            if (cmd == "transfer") { return {"@type": "transfer", "@node": ref, "@uuid": ""} };
             try {
                 const gt = Reflect?.[cmd]?.(ref, ...args);
                 if (gt != null) { return gt; }

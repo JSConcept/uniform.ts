@@ -25,8 +25,9 @@ export default class RemoteReferenceHandler extends DataHandler {
             (typeof args[0] === 'symbol' || typeof args[0] === 'object' && Object.prototype.toString.call(args[0]) === '[object Symbol]') ||
             [
                 "bind", "toString", // system accessors are forbidden!
+
                 "then", "catch", "finally", // promise forbidden
-                "@uuid", "@type", "@payload", $data // organic forbidden
+                "@uuid", "@type", "@payload", "@node", $data // organic forbidden
             ].indexOf(args[0]) >= 0
         ) {
             return null;

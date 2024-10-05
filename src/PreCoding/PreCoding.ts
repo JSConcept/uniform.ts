@@ -1,8 +1,8 @@
 // Will be used when result are predictable in the pools or return results
 import UniversalHandler, { extract, redirect, wrapMeta, wrapWeakMap } from "../Handlers/UniversalHandler";
 import UUIDMap from "../Utils/UUIDMap";
-import TypeDetector from "./TypeDetector.ts";
-//import {$data} from "../Instruction/InstructionType.ts"
+import TypeDetector from "./TypeDetector";
+import {$data} from "../Instruction/InstructionType.ts"
 //import RemoteReferenceHandler from "../Handlers/RemotePool";
 
 //
@@ -27,17 +27,48 @@ export default class PreCoding {
 
             //
             ["transfer", (organic, target: any, transfer: any[] = [])=>{
-                if (!organic) { if (transfer.indexOf(target) < 0) { transfer.push(target); }; }
+                if (!organic) {
+                    // non-organic just to transfer
+                    if (transfer?.indexOf?.(target) < 0 && target != null) {
+                        this.memoryPool.delete(target);
+                        transfer?.push?.(target);
+                    };
+                } else {
+                    // transfers only when is exists
+                    const org  = extract(target);
+                    const node = org?.["@node"] ?? this?.memoryPool?.get(org?.["@uuid"])?.deref?.();
+
+                    // if exists
+                    if (node != null) {
+                        if (transfer?.indexOf?.(node) < 0) {
+                            this.memoryPool.delete(node);
+                            transfer?.push?.(node);
+                        }
+
+                        // request to transfer node
+                        return {
+                            "@type": "transfer",
+                            "@uuid": org?.["@uuid"]||"", //|| this.memoryPool.add(node, org?.["@uuid"], true),
+                            "@node": node
+                        }
+                    } 
+                    return org;
+                }
+
+                // return as regular
                 return target;
             }],
 
             //
             ["reference", (organic, target, transfer = [])=>{
-                const meta = {
-                    "@type": "reference",
-                    "@uuid": this.memoryPool.add(target, extract(target)?.["@uuid"], !organic)
-                };
-                return meta;
+                if (target?.[$data] || !organic) {
+                    const meta = {
+                        "@type": "reference",
+                        "@uuid": this.memoryPool.add(target, extract(target)?.["@uuid"], !organic)
+                    };
+                    return meta;
+                }
+                return target;
             }]
         ]);
 
@@ -49,6 +80,25 @@ export default class PreCoding {
                     return (decoded.some((e)=>e instanceof Promise || typeof e?.then == "function")) ? Promise.all(decoded) : decoded;
                 }
                 // unusual
+                return target;
+            }],
+
+            //
+            ["transfer", (organic, target: any, transfer: any[] = [])=>{
+                if (organic) {
+                    const org  = extract(target);
+                    const node = this?.memoryPool?.get(org?.["@uuid"])?.deref?.() ?? (org?.["@node"]);
+
+                    // unable to override exists
+                    if (node != null) {
+                        org["@uuid"] = this.memoryPool.add(node, org?.["@uuid"]||"")
+                        return node;
+                    };
+
+                    // reformat transfer type, add to registry
+                    org["@type"] = "reference";
+                    return wrapMeta(org, this.handler);
+                }
                 return target;
             }],
 

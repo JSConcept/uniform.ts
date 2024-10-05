@@ -16,7 +16,7 @@ export default class ObjectPoolMemberHandler extends DataHandler {
     $data(t): any {
         return super.$data((()=>{
             const wrap = extract(t) ?? t;
-            const uuid = wrap?.["@uuid"] ?? wrap;
+            const uuid = wrap?.["@type"] ?? wrap;
             if (typeof uuid == "string") {
                 const weak: any = this.#memoryPool?.get(uuid);
                 return (weak?.deref?.() ?? weak) ?? t;
@@ -28,7 +28,7 @@ export default class ObjectPoolMemberHandler extends DataHandler {
     //
     $get(t): any {
         const wrap = extract(t) ?? t;
-        const uuid = wrap?.["@uuid"] ?? wrap;
+        const uuid = wrap?.["@type"] ?? wrap;
         if (typeof uuid == "string") {
             const weak: any = this.#memoryPool?.get(uuid);
             return weak?.deref?.() ?? weak ?? null;

@@ -1,6 +1,6 @@
 //
 import UniversalHandler from "../Handlers/UniversalHandler.ts";
-import PreCoding from "../PreCoding/PreCoding";
+import PreCoding from "../PreCoding/PreCoding.ts";
 
 //
 export const $coders      = new PreCoding();

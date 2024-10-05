@@ -4,7 +4,7 @@ import RemoteReferenceHandler from "../Handlers/RemotePool";
 import ObjectPoolMemberHandler from "../Handlers/ObjectPool";
 import DataHandler from "../Handlers/DataHandler";
 import UUIDMap from "../Utils/UUIDMap";
-import PreCoding from "../PreCoding/PreCoding";
+import PreCoding from "../PreCoding/PreCoding.ts";
 import { MakeReference } from "../Instruction/InstructionType";
 import ObjectProxy from "../Instruction/ObjectProxy";
 
@@ -71,5 +71,14 @@ export default class ExChanger {
     //
     access(name = "") {
         return this.$request("access", {"@uuid": name, "@type": "reference"}, []);
+    }
+
+    //
+    transfer(name = "", node = null) {
+        if (node != null) {
+            return this.$request("access", {"@uuid": name, "@type": "transfer", "@node": node}, []);
+        } else {
+            return this.$request("transfer", {"@uuid": name, "@type": "reference"}, []);
+        }
     }
 }

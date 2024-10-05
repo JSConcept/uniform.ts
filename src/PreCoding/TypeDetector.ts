@@ -1,5 +1,5 @@
 import { extract } from "../Handlers/UniversalHandler";
-import { $data } from "../Instruction/InstructionType.ts"
+import { $data } from "../Instruction/InstructionType"
 
 //
 export default class TypeDetector {
@@ -60,7 +60,7 @@ export default class TypeDetector {
     detectType(data, transfer: any[] = []) {
         // are data meta type, skip definition
         const organic = extract(data);
-        if (organic?.["@uuid"]) {
+        if (organic?.["@type"]) {
             return [true, organic?.["@type"]];
         } else
 
