@@ -1,5 +1,4 @@
-import { extract } from "../Handlers/UniversalHandler";
-import { $data } from "../Instruction/InstructionType"
+import { extract } from "../Instruction/Defer.ts";
 
 //
 export default class TypeDetector {

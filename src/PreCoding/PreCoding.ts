@@ -1,9 +1,9 @@
 // Will be used when result are predictable in the pools or return results
-import UniversalHandler, { extract, redirect, wrapMeta, wrapWeakMap } from "../Handlers/UniversalHandler";
-import UUIDMap from "../Utils/UUIDMap";
-import TypeDetector from "./TypeDetector";
+import { extract, redirect, wrapMeta, wrapWeakMap } from "../Instruction/Defer.ts";
+import UUIDMap from "../Utils/UUIDMap.ts";
+import TypeDetector from "./TypeDetector.ts";
 import {$data} from "../Instruction/InstructionType.ts"
-//import RemoteReferenceHandler from "../Handlers/RemotePool";
+import UniversalHandler from "../Handlers/UniversalHandler.ts";
 
 //
 export default class PreCoding {

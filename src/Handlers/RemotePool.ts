@@ -1,7 +1,7 @@
 import ExChanger from "../FLOW/ExChanger.ts";
 import DataHandler from "./DataHandler.ts";
 import {$data} from "../Instruction/InstructionType.ts"
-import { extract } from "./UniversalHandler";
+import { extract } from "../Instruction/Defer.ts";
 
 //
 export default class RemoteReferenceHandler extends DataHandler {

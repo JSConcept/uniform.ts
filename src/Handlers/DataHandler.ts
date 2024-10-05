@@ -1,11 +1,6 @@
-import ObjectProxy from "../Instruction/ObjectProxy";
-import {$data, MakeReference} from "../Instruction/InstructionType.ts"
-import { extract } from "./UniversalHandler";
-
-//
-const isPromise = (target)=>{
-    return target?.then != null && typeof target?.then == "function" || target instanceof Promise;
-}
+import ObjectProxy from "../Instruction/ObjectProxy.ts";
+import { $data, MakeReference} from "../Instruction/InstructionType.ts"
+import { isPromise } from "../Instruction/Defer.ts";
 
 //
 export default class DataHandler {

@@ -1,6 +1,6 @@
 import UUIDMap from "../Utils/UUIDMap.ts";
 import DataHandler from "./DataHandler.ts";
-import { extract } from "./UniversalHandler";
+import { extract } from "../Instruction/Defer.ts";
 
 //
 export default class ObjectPoolMemberHandler extends DataHandler {

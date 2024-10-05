@@ -1,24 +1,10 @@
-//
-import UniversalHandler from "../Handlers/UniversalHandler.ts";
 import PreCoding from "../PreCoding/PreCoding.ts";
+import { doOnlyAfterResolve } from "../Instruction/Defer.ts";
 
 //
 export const $coders      = new PreCoding();
 export const $memoryPool  = $coders.memoryPool;
 export const $dataHandler = $coders.handler;
-
-//
-export const isPromise = (target)=>{
-    return target?.then != null && typeof target?.then == "function" || target instanceof Promise;
-}
-
-//
-export const doOnlyAfterResolve = (meta, cb)=>{
-    if (isPromise(meta)) {
-        return meta?.then(cb) ?? cb(meta);
-    }
-    return cb(meta);
-}
 
 //
 export const $handler = (command) => {

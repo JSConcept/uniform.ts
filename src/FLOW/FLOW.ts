@@ -1,22 +1,8 @@
+import { doOnlyAfterResolve } from "../Instruction/Defer.ts";
 import PromiseStack from '../Utils/PromiseStack.ts';
-import UUIDMap from "../Utils/UUIDMap.ts";
 
 // @ts-ignore
 export type WorkerContext = Worker | WorkerGlobalScope;
-
-//
-export const isPromise = (target)=>{
-    return target?.then != null && typeof target?.then == "function" || target instanceof Promise;
-}
-
-//
-export const doOnlyAfterResolve = (meta, cb)=>{
-    if (isPromise(meta)) {
-        return meta?.then(cb) ?? cb(meta);
-    }
-    return cb(meta);
-}
-
 // FLOW - is web worker library core (low-level)...
 export default class FLOW {
     #worker: WorkerContext | null = null;//new Worker("./FLOW-Unit.ts");

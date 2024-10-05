@@ -1,25 +1,10 @@
-import UniversalHandler, { wrapMeta } from "../Handlers/UniversalHandler";
-import FLOW, { type WorkerContext } from "./FLOW";
-import RemoteReferenceHandler from "../Handlers/RemotePool";
-import ObjectPoolMemberHandler from "../Handlers/ObjectPool";
-import DataHandler from "../Handlers/DataHandler";
-import UUIDMap from "../Utils/UUIDMap";
+import UniversalHandler from "../Handlers/UniversalHandler.ts";
+import FLOW, { type WorkerContext } from "./FLOW.ts";
+import RemoteReferenceHandler from "../Handlers/RemotePool.ts";
+import ObjectPoolMemberHandler from "../Handlers/ObjectPool.ts";
+import DataHandler from "../Handlers/DataHandler.ts";
+import UUIDMap from "../Utils/UUIDMap.ts";
 import PreCoding from "../PreCoding/PreCoding.ts";
-import { MakeReference } from "../Instruction/InstructionType";
-import ObjectProxy from "../Instruction/ObjectProxy";
-
-//
-export const isPromise = (target)=>{
-    return target?.then != null && typeof target?.then == "function" || target instanceof Promise;
-}
-
-//
-export const doOnlyAfterResolve = (meta, cb)=>{
-    if (isPromise(meta)) {
-        return meta?.then(cb) ?? cb(meta);
-    }
-    return cb(meta);
-}
 
 //
 export default class ExChanger {

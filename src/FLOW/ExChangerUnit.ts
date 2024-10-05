@@ -1,3 +1,3 @@
 // Web Worker Unit...
-import ExChanger from "./ExChanger";
+import ExChanger from "./ExChanger.ts";
 export default new ExChanger(self);
