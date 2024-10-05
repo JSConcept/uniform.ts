@@ -18,7 +18,7 @@
             "url": "http://localhost:5173/",
             "webRoot": "${workspaceFolder}",
             "port": 9222,
-            "runtimeExecutable": "C:/Users/AdminX/AppData/Local/Yandex/YandexBrowser/Application/browser.exe",
+            "runtimeExecutable": "/usr/bin/yandex-browser-stable",
             "runtimeArgs": ["--headless", "--disable-gpu", "--remote-debugging-port=9222"]
         }
     ]
