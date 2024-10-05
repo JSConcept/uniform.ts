@@ -91,11 +91,11 @@ export default class PreCoding {
             ["transfer", (organic, target: any, transfer: any[] = [])=>{
                 if (organic) {
                     const org  = extract(target);
-                    const node = this?.memoryPool?.get(org?.["@uuid"])?.deref?.() ?? (org?.["@node"]);
+                    const node = (org?.["@node"]) ?? this?.memoryPool?.get(org?.["@uuid"])?.deref?.();
 
                     // unable to override exists
                     if (node != null) {
-                        org["@uuid"] = this.memoryPool.add(node, org?.["@uuid"]||"")
+                        org["@uuid"] = this.memoryPool.add(node, org?.["@uuid"]||"", organic)
                         return node;
                     };
 
