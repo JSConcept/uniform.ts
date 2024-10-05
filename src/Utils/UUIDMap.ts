@@ -1,13 +1,36 @@
+import DataHandler from "../Handlers/DataHandler";
+
 //
 export const UUIDv4 = () => {
     return crypto?.randomUUID ? crypto?.randomUUID() : "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c => (+c ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (+c / 4)))).toString(16));
 };
 
 //
+const timers = new WeakMap();
+const tmpSet = new Set();
+export const hold = (obj, timeout = 1000)=>{
+
+    // holding from GC
+    if (typeof obj == "object" || typeof obj == "function") {
+        if (!tmpSet.has(obj)) {
+            tmpSet.add(obj);
+            timers.set(obj, setTimeout(
+                (obj) => { return tmpSet.delete(obj); },
+                timeout,
+                obj
+            ));
+        }
+    }
+
+    //
+    return obj;
+}
+
+//
 export type dT = object | Function;
 export type rT = WeakRef<dT>;
 
-//
+// TODO! planned promised...
 export default class UUIDMap<T=dT> {
     #weakMap = new WeakMap<dT, string>();
     #registry = new FinalizationRegistry<string>((_: string) => {});
@@ -44,17 +67,8 @@ export default class UUIDMap<T=dT> {
 
         //
         this.#weakMap.set(obj, (id ||= UUIDv4()));
-        this.#refMap.set(id, new WeakRef<dT>(obj));
+        this.#refMap.set(id, new WeakRef<dT>(  hold(obj, 1000)  ));
         this.#registry.register(obj, id);
-
-        // holding from GC
-        setTimeout(
-            (obj) => {
-                return obj;
-            },
-            1000,
-            obj
-        );
 
         //
         return id;

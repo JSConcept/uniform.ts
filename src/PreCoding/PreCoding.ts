@@ -1,9 +1,10 @@
 // Will be used when result are predictable in the pools or return results
 import { extract, redirect, wrapMeta, wrapWeakMap } from "../Instruction/Defer.ts";
-import UUIDMap from "../Utils/UUIDMap.ts";
+import UUIDMap, {hold} from "../Utils/UUIDMap.ts";
 import TypeDetector from "./TypeDetector.ts";
 import {$data} from "../Instruction/InstructionType.ts"
 import UniversalHandler from "../Handlers/UniversalHandler.ts";
+
 
 //
 export default class PreCoding {
@@ -36,7 +37,7 @@ export default class PreCoding {
                 } else {
                     // transfers only when is exists
                     const org  = extract(target);
-                    const node = org?.["@node"] ?? this?.memoryPool?.get(org?.["@uuid"])?.deref?.();
+                    const node = org?.["@node"] ?? hold(this?.memoryPool?.get(org?.["@uuid"])?.deref?.());
 
                     // if exists
                     if (node != null) {
@@ -91,7 +92,7 @@ export default class PreCoding {
             ["transfer", (organic, target: any, transfer: any[] = [])=>{
                 if (organic) {
                     const org  = extract(target);
-                    const node = (org?.["@node"]) ?? this?.memoryPool?.get(org?.["@uuid"])?.deref?.();
+                    const node = (org?.["@node"]) ?? hold(this?.memoryPool?.get(org?.["@uuid"])?.deref?.());
 
                     // unable to override exists
                     if (node != null) {
@@ -110,7 +111,7 @@ export default class PreCoding {
             ["reference", (organic, target, transfer = [])=>{
                 if (organic) {
                     const org    = extract(target);
-                    const exists = this?.memoryPool?.get(org?.["@uuid"])?.deref?.();
+                    const exists = hold(this?.memoryPool?.get(org?.["@uuid"])?.deref?.());
                     if (exists) { return exists; }
 
                     //

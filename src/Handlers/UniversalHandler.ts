@@ -1,5 +1,6 @@
 import DataHandler from "./DataHandler.ts";
-import { extract } from "../Instruction/Defer.ts";
+import { extract, isPromise } from "../Instruction/Defer.ts";
+import { $data, MakeReference} from "../Instruction/InstructionType.ts"
 
 //
 export default class UniversalHandler extends DataHandler {
@@ -19,8 +20,21 @@ export default class UniversalHandler extends DataHandler {
     $handle(cmd = "access", t, ...args) {
         const meta  = extract(t);
         const local = this.$get(meta);
-        const tp    = (local && (typeof local != "string") && (extract(local)?.["@uuid"] != meta?.["@uuid"])) ? "local" : (typeof meta?.["@type"] == "string" ? "remote" : "promise");
-        return this.#dataHandler?.get(tp)?.$handle?.(cmd, t, ...args);
+
+        //
+        let htp = "direct";
+        if (isPromise(t?.[$data] ?? t)) 
+            { htp = "promise"; } else
+
+            if (typeof meta?.["@uuid"] == "string") {
+                if (local && extract(local)?.["@uuid"] != meta?.["@uuid"]) 
+                    { htp = "local"; } else 
+                if (meta?.["@uuid"]) 
+                    { htp = "remote"; }
+            }
+
+        //
+        return this.#dataHandler?.get(htp)?.$handle?.(cmd, t, ...args);
     }
 
     //

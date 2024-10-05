@@ -5,13 +5,33 @@ export const Host = new ExChanger(new Worker(new URL("./Worker.ts", import.meta.
 await Host.initialize();
 
 //
-const Tungst = await Host.access("Tungst");
-console.log(Tungst);
+const transferCheck = (ab)=>{ console.log(ab); };
+const hostAction = async ()=>{
+    //
+    const Tungst = Host.access("Tungst");
+    console.log(await Tungst.lab);
 
-console.log(await Tungst.lab);
+    //
+    const tgn = (new Tungst());
+    await tgn?.callback?.(6);
 
-const tgn = (new Tungst());
-console.log(tgn);
+    //
+    console.log(await Host.transfer("regrets"));
+}
 
+//
+await Host.sync();
 
-console.log( tgn.callback(6));
+//
+Host.register(transferCheck, "transferCheck");
+Host.register(hostAction, "hostAction");
+
+//
+await Host.sync();
+
+//
+const workerAction = await Host.access("workerAction");
+
+//
+await hostAction();
+await workerAction();

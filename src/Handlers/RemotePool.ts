@@ -34,7 +34,7 @@ export default class RemoteReferenceHandler extends DataHandler {
         }
 
         //
-        return this.#exChanger.$request(cmd, meta, ...args);
+        return this.#exChanger.$request(cmd, meta, args);
     }
 
     //

@@ -24,6 +24,9 @@ export default class FLOW {
             if (!ev?.data) { console.log(ev); return; }
             const {cmd, uuid, dir} = ev.data;
             if (dir == "req") {
+                if (cmd == "ping") {
+                    self?.postMessage({ cmd, uuid, dir: "res", result: "ok" });
+                } else
                 if (cmd == "import") {
                     import(ev.data.source).then((m)=>{
                         Object.assign(this.#imports, (m.default ?? m));
@@ -70,28 +73,48 @@ export default class FLOW {
 
     //
     importToUnit(source) {
+        const remain = this.#promiseStack?.sync;
         const pair = this.#promiseStack?.create();
-        this.#worker?.postMessage?.({
-            handler: "$import",
-            cmd: "import",
-            dir: "req",
-            uuid: pair?.[0] || "",
-            source
+        doOnlyAfterResolve(remain, ()=>{
+            this.#worker?.postMessage?.({
+                handler: "$import",
+                cmd: "import",
+                dir: "req",
+                uuid: pair?.[0] || "",
+                source
+            });
         });
         return pair?.[1];
     }
 
     //
-    callTask($args: any[] = [], transfer = []) {
-        const pair = this.#promiseStack?.create();
-        doOnlyAfterResolve($args, (args)=>{
+    sync() {
+        const remain = this.#promiseStack?.sync;
+        const pair = this.#promiseStack?.create?.();
+        doOnlyAfterResolve(remain, ()=>{
             this.#worker?.postMessage?.({
-                handler: "$handler",
-                cmd: "call",
+                cmd: "ping",
                 dir: "req",
-                uuid: pair?.[0] || "",
-                args
-            }, [...new Set(transfer||[])] as StructuredSerializeOptions);
+                uuid: pair?.[0] || ""
+            });
+        });
+        return Promise.all([pair?.[1], remain]);
+    }
+
+    //
+    callTask($args: any[] = [], transfer = []) {
+        const remain = this.#promiseStack?.sync;
+        const pair = this.#promiseStack?.create();
+        doOnlyAfterResolve(remain, ()=>{
+            doOnlyAfterResolve($args, (args)=>{
+                this.#worker?.postMessage?.({
+                    handler: "$handler",
+                    cmd: "call",
+                    dir: "req",
+                    uuid: pair?.[0] || "",
+                    args
+                }, [...new Set(transfer||[])] as StructuredSerializeOptions);
+            });
         });
         return pair?.[1];
     }

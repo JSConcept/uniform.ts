@@ -6,34 +6,30 @@ import ObjectProxy from "./ObjectProxy.ts";
 
 //
 export const isPromise = (target)=>{
-    return target?.then != null && typeof target?.then == "function" || target instanceof Promise;
+    return target instanceof Promise && typeof target?.then == "function" && target?.then != null;
 }
 
 //
 export const doOnlyAfterResolve = (meta, cb)=>{
     if (isPromise(meta)) {
-        return meta?.then(cb) ?? cb(meta);
+        return meta?.then?.(cb) ?? cb(meta);
     }
     return cb(meta);
 }
 
 //
 export const wrapWeakMap = new WeakMap([]);
-export const wrapMeta = (meta, handler: UniversalHandler | DataHandler | RemoteReferenceHandler = new UniversalHandler())=>{
-    //
-    const wrap = (!meta?.[$data]) ? (new Proxy(MakeReference(meta), new ObjectProxy(handler))) : meta;
-
-    //
+export const wrapMeta = (meta, handler: UniversalHandler | DataHandler | RemoteReferenceHandler | null = null)=>{
+    const wrap = (!meta?.[$data]) ? (new Proxy(MakeReference(meta), new ObjectProxy(handler || new UniversalHandler()))) : meta;
     doOnlyAfterResolve(meta, ($m)=>{
-        const m = extract($m);
-        if (m) { doOnlyAfterResolve(wrap, (w)=>{
+        if ($m) { doOnlyAfterResolve(wrap, (w)=>{
             if (w != null && (typeof w == "object" || typeof w == "function")) {
-                wrapWeakMap.set(w, m);
+                const organic = wrapWeakMap.get(w) ?? w;
+                const pt = organic?.[$data] ?? organic;
+                if (pt?.["@uuid"]||pt?.["@type"]) { wrapWeakMap.set(w, pt); };
             }
         }); };
     });
-
-    //
     return wrap;
 }
 

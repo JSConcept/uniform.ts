@@ -12,23 +12,37 @@ export default class PromiseStack {
         this.#map = new Map<string, PromiseWithResolvers<any>>();
     }
 
+    //
+    #syncExcept(ne = "") {
+        return Promise.allSettled(Array.from(this.#map?.entries?.()?.filter?.(([n,v])=>(ne!=n))?.map?.((([n,v])=>v))));
+    }
+
+    //
+    get sync() {
+        return this.#syncExcept();
+    }
+
     // reject by UUID
     rejectBy(name, why) {
-        if (this.#map.has(name)) {
-            const pm = this.#map.get(name);
-            this.#map.delete(name);
-            pm?.reject(why);
-        }
+        this.#syncExcept(name).then(()=>{
+            if (this.#map.has(name)) {
+                const pm = this.#map.get(name);
+                this.#map.delete(name);
+                pm?.reject(why);
+            }
+        });
         return this;
     }
 
     // resolve by UUID
     resolveBy(name, why) {
-        if (this.#map.has(name)) {
-            const pm = this.#map.get(name);
-            this.#map.delete(name);
-            pm?.resolve(why);
-        }
+        this.#syncExcept(name).then(()=>{
+            if (this.#map.has(name)) {
+                const pm = this.#map.get(name);
+                this.#map.delete(name);
+                pm?.resolve(why);
+            }
+        });
         return this;
     }
 

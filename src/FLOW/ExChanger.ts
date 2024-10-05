@@ -5,6 +5,10 @@ import ObjectPoolMemberHandler from "../Handlers/ObjectPool.ts";
 import DataHandler from "../Handlers/DataHandler.ts";
 import UUIDMap from "../Utils/UUIDMap.ts";
 import PreCoding from "../PreCoding/PreCoding.ts";
+import { isPromise, wrapMeta } from "../Instruction/Defer.ts";
+import { $data, MakeReference} from "../Instruction/InstructionType.ts"
+import PromiseHandler from "../Handlers/PromiseHandler";
+import ObjectProxy from "../Instruction/ObjectProxy";
 
 //
 export default class ExChanger {
@@ -24,12 +28,22 @@ export default class ExChanger {
         await this.#flow?.importToSelf(import("./MessageChannel.ts"));
 
         //
-        this.#coder      = this.#flow?.$imports?.$coders;
-        this.#handler    = this.#flow?.$imports?.$dataHandler;
-        this.#memoryPool = this.#flow?.$imports?.$memoryPool;
-        this.#handler?.$addHandler("local", new ObjectPoolMemberHandler(this.#memoryPool));
-        this.#handler?.$addHandler("remote", new RemoteReferenceHandler(this));
-        this.#handler?.$addHandler("promise", new DataHandler());
+        this.#coder      = this.#flow?.$imports?.$coders      ?? this.#coder;
+        this.#memoryPool = this.#flow?.$imports?.$memoryPool  ?? this.#memoryPool;
+        this.#handler    = this.#flow?.$imports?.$dataHandler ?? this.#handler;
+
+        //
+        if (this.#handler) {
+            this.#handler?.$addHandler("local", new ObjectPoolMemberHandler(this.#memoryPool));
+            this.#handler?.$addHandler("remote", new RemoteReferenceHandler(this));
+            this.#handler?.$addHandler("promise", new PromiseHandler());
+            this.#handler?.$addHandler("direct", new DataHandler());
+        } else {
+            throw Error("Invalid Native Module!");
+        }
+
+        //
+        return this.sync();
     }
 
     //
@@ -38,32 +52,53 @@ export default class ExChanger {
     }
 
     //
-    $request(cmd: string, meta: any, ...args : any[]) {
-        const encoded = this.#coder?.encode([cmd, meta, ...args]);
-        const result = this.#flow?.callTask?.(encoded, []);
-        return this.#handler?.$wrapPromise(result);
+    $sync() { return this.#flow?.sync?.(); }
+    $request(cmd: string, meta: any, args : any[]) {
+        const transfer = [];
+        const encoded = this.#coder?.encode([cmd, meta, ...args], transfer);
+        const result = this.#flow?.callTask?.(encoded, transfer);
+
+        //
+        if (isPromise(result)) {
+            return new Proxy(MakeReference(result), new ObjectProxy(this.#handler?.$getHandler?.("promise")));
+        }
+        return result;
     }
+
+    //
+    //unwrap(obj) { return obj?.[$data] ?? obj; }
+    //local(name) { return wrapMeta({"@uuid": name, "@type": "reference"}, this.#handler); }
 
     //
     $importToUnit(source) { return this.#flow?.importToUnit(source); }
     $importToSelf(module) { return this.#flow?.importToSelf(module); }
 
     //
+    async sync() { await this.$sync(); return this; }
+
+    //
     register(object: any, name = "") {
-        return this.#memoryPool?.add?.(object, name);
+        const uuid = this.#memoryPool?.add?.(object, name);
+        //this.#flow?.sync?.();
+        return uuid;
     }
 
     //
     access(name = "") {
-        return this.$request("access", {"@uuid": name, "@type": "reference"}, []);
+        const com = this.$request("access", {"@uuid": name, "@type": "reference"}, []);
+        //this.#flow?.sync?.();
+        return com;
     }
 
     //
-    transfer(name = "", node = null) {
+    transfer(name = "", node: any | null = null) {
+        let result = null;
         if (node != null) {
-            return this.$request("access", {"@uuid": name, "@type": "transfer", "@node": node}, []);
+            result = this.$request("access", {"@uuid": name, "@type": "transfer", "@node": node}, []);
         } else {
-            return this.$request("transfer", {"@uuid": name, "@type": "reference"}, []);
+            result = this.$request("transfer", {"@uuid": name, "@type": "reference"}, []);
         }
+        //this.#flow?.sync?.();
+        return result;
     }
 }

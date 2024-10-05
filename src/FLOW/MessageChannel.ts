@@ -19,7 +19,8 @@ export const $handler = (command) => {
     // before you needs decode its
     return doOnlyAfterResolve($coders.decode([cmd, target, ...args], transfer), ([cmd, target, ...args])=>{
         const result = $dataHandler?.$getHandler?.("promise")?.$handle?.(cmd, target, ...args);
-        return [$coders.encode(result, transfer), transfer] // also, needs to recode back
+        const ready  = $coders.encode(result, transfer);
+        return [ready, transfer] // also, needs to recode back
     });
 }
 
