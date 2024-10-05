@@ -33,9 +33,8 @@ export default class DataHandler {
         //
         if (cmd == "get" && ["then", "catch", "finally", $data].indexOf(args[0]) >= 0) {
             const data = this.$data(meta);
-            if (args[0] == $data) {
-                return (data?.[$data] ?? data);
-            }
+            if (args[0] == $data) { return (data?.[$data] ?? data); }
+            if (data == null || (typeof data != "object" && typeof data != "function")) { return data; }
 
             //
             const gt = Reflect?.[cmd]?.(data, ...args);
