@@ -1,6 +1,7 @@
 import DataHandler from "../Handlers/DataHandler.ts";
 import RemoteReferenceHandler from "../Handlers/RemotePool.ts";
 import UniversalHandler from "../Handlers/UniversalHandler.ts";
+import SharedChannel from "../Utils/SharedChannel";
 import { $data, MakeReference } from "./InstructionType.ts";
 import ObjectProxy from "./ObjectProxy.ts";
 
@@ -13,6 +14,9 @@ export const isPromise = (target)=>{
 export const doOnlyAfterResolve = (meta, cb)=>{
     if (isPromise(meta)) {
         return meta?.then?.(cb) ?? cb(meta);
+    }
+    if (meta instanceof SharedChannel) {
+        return doOnlyAfterResolve(meta?.waitAuto?.(), cb);
     }
     return cb(meta);
 }

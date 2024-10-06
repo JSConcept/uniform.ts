@@ -22,7 +22,7 @@ export default class FLOW {
         const self: WorkerContext | null = this.#worker;
         self?.addEventListener("message", (ev)=>{
             if (!ev?.data) { console.log(ev); return; }
-            const {cmd, uuid, dir} = ev.data;
+            const {cmd, uuid, dir, shared} = ev.data;
             if (dir == "req") {
                 if (cmd == "ping") {
                     self?.postMessage({ cmd, uuid, dir: "res", result: "ok" });
@@ -48,6 +48,10 @@ export default class FLOW {
                                     dir: "res",
                                     result
                                 }, [...new Set(Array.from(transfer||[]))] as StructuredSerializeOptions);
+
+                                // resolve when sync supported
+                                (shared ? this.#promiseStack?.hook?.(uuid, shared) : null);
+                                this.#promiseStack?.resolveBy?.(uuid, result);
                             });
                         });
                     });
@@ -72,14 +76,15 @@ export default class FLOW {
     }
 
     //
-    importToUnit(source) {
+    importToUnit(source, sync = false) {
         const remain = this.#promiseStack?.sync;
-        const pair = this.#promiseStack?.create();
+        const pair = this.#promiseStack?.[sync ? "createSync" : "create"]?.();
         doOnlyAfterResolve(remain, ()=>{
             this.#worker?.postMessage?.({
                 handler: "$import",
                 cmd: "import",
                 dir: "req",
+                shared: pair?.[2],
                 uuid: pair?.[0] || "",
                 source
             });
@@ -88,11 +93,12 @@ export default class FLOW {
     }
 
     //
-    sync() {
+    sync(sync = false) {
         const remain = this.#promiseStack?.sync;
-        const pair = this.#promiseStack?.create?.();
+        const pair = this.#promiseStack?.[sync ? "createSync" : "create"]?.();
         doOnlyAfterResolve(remain, ()=>{
             this.#worker?.postMessage?.({
+                shared: pair?.[2],
                 cmd: "ping",
                 dir: "req",
                 uuid: pair?.[0] || ""
@@ -102,9 +108,9 @@ export default class FLOW {
     }
 
     //
-    callTask($args: any[] = [], transfer = []) {
+    callTask($args: any[] = [], transfer = [], sync = false) {
         const remain = this.#promiseStack?.sync;
-        const pair = this.#promiseStack?.create();
+        const pair = this.#promiseStack?.[sync ? "createSync" : "create"]?.();
         doOnlyAfterResolve(remain, ()=>{
             doOnlyAfterResolve($args, (args)=>{
                 this.#worker?.postMessage?.({
@@ -112,6 +118,7 @@ export default class FLOW {
                     cmd: "call",
                     dir: "req",
                     uuid: pair?.[0] || "",
+                    shared: pair?.[2],
                     args
                 }, [...new Set(transfer||[])] as StructuredSerializeOptions);
             });

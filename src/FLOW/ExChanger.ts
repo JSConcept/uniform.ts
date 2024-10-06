@@ -5,7 +5,7 @@ import ObjectPoolMemberHandler from "../Handlers/ObjectPool.ts";
 import DataHandler from "../Handlers/DataHandler.ts";
 import UUIDMap from "../Utils/UUIDMap.ts";
 import PreCoding from "../PreCoding/PreCoding.ts";
-import { isPromise, wrapMeta } from "../Instruction/Defer.ts";
+import { doOnlyAfterResolve, isPromise, wrapMeta } from "../Instruction/Defer.ts";
 import { $data, MakeReference} from "../Instruction/InstructionType.ts"
 import PromiseHandler from "../Handlers/PromiseHandler";
 import ObjectProxy from "../Instruction/ObjectProxy";
@@ -57,12 +57,11 @@ export default class ExChanger {
         const transfer = [];
         const encoded = this.#coder?.encode([cmd, meta, ...args], transfer);
         const result = this.#flow?.callTask?.(encoded, transfer);
+        const coded = doOnlyAfterResolve(result, (res)=>this.#coder?.decode?.(res, transfer));
 
         //
-        if (isPromise(result)) {
-            return new Proxy(MakeReference(result), new ObjectProxy(this.#handler?.$getHandler?.("promise")));
-        }
-        return result;
+        if (isPromise(coded)) { return new Proxy(MakeReference(coded), new ObjectProxy(this.#handler?.$getHandler?.("promise"))); }
+        return coded;
     }
 
     //

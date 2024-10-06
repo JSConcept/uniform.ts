@@ -25,8 +25,4 @@ export const $handler = (command) => {
 }
 
 //
-export const $resolver = (command) => {
-    const transfer = [];
-    const {cmd, uuid, dir, result} = command;
-    return $coders.decode(result, transfer); // also, needs to decode
-}
+export const $resolver = (command) => (command.result);
