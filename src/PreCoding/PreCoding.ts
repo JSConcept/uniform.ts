@@ -5,7 +5,6 @@ import TypeDetector from "./TypeDetector.ts";
 import {$data} from "../Instruction/InstructionType.ts"
 import UniversalHandler from "../Handlers/UniversalHandler.ts";
 
-
 //
 export default class PreCoding {
     encoder = new Map<string, any>();
