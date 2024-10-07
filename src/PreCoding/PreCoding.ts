@@ -7,8 +7,8 @@ import UniversalHandler from "../Handlers/UniversalHandler.ts";
 
 //
 export default class PreCoding {
-    encoder = new Map<string, any>();
-    decoder = new Map<string, any>();
+    encoder = new Map<string, (organic: boolean, target: unknown, transfer: unknown[])=>boolean>();
+    decoder = new Map<string, (organic: boolean, target: unknown, transfer: unknown[])=>boolean>();
     memoryPool = new UUIDMap();
     handler: UniversalHandler = new UniversalHandler();
     typeDetector = new TypeDetector();
@@ -16,8 +16,8 @@ export default class PreCoding {
     //
     constructor(memoryPool = new UUIDMap()) {
         this.memoryPool = memoryPool;
-        this.encoder = new Map<string, any>([
-            ["array", (organic, target, transfer = [])=>{
+        this.encoder = new Map<string, (organic: boolean, target: unknown, transfer: unknown[])=>boolean>([
+            ["array", (organic: boolean, target: unknown, transfer: unknown[] = [])=>{
                 if (!organic) {
                     const encoded = Array.from(target).map((e)=>this.encode(e, transfer));
                     return (encoded.some((e)=>(e instanceof Promise || typeof e?.then == "function"))) ? Promise.all(encoded) : encoded;
@@ -26,7 +26,7 @@ export default class PreCoding {
             }],
 
             //
-            ["transfer", (organic, target: any, transfer: any[] = [])=>{
+            ["transfer", (organic: boolean, target: unknown, transfer: unknown[] = [])=>{
                 if (!organic) {
                     // non-organic just to transfer
                     if (transfer?.indexOf?.(target) < 0 && target != null) {
@@ -64,8 +64,8 @@ export default class PreCoding {
             }],
 
             //
-            ["reference", (organic, target, transfer = [])=>{
-                if (target?.[$data] || !organic) {
+            ["reference", (organic: boolean, target: unknown, transfer: unknown[] = [])=>{
+                if (!organic || target?.[$data]) {
                     const meta = {
                         "@type": "reference",
                         "@uuid": this.memoryPool.add(target, extract(target)?.["@uuid"], !organic)
@@ -77,8 +77,8 @@ export default class PreCoding {
         ]);
 
         //
-        this.decoder = new Map<string, any>([
-            ["array", (organic, target, transfer = [])=>{
+        this.decoder = new Map<string, (organic: boolean, target: unknown, transfer: unknown[])=>boolean>([
+            ["array", (organic: boolean, target: unknown, transfer: unknown[] = [])=>{
                 if (!organic) {
                     const decoded = Array.from(target).map((e)=>this.decode(e, transfer));
                     return (decoded.some((e)=>e instanceof Promise || typeof e?.then == "function")) ? Promise.all(decoded) : decoded;
@@ -88,7 +88,7 @@ export default class PreCoding {
             }],
 
             //
-            ["transfer", (organic, target: any, transfer: any[] = [])=>{
+            ["transfer", (organic: boolean, target: unknown, transfer: unknown[] = [])=>{
                 if (organic) {
                     const org  = extract(target);
                     const node = (org?.["@node"]) ?? hold(this?.memoryPool?.get(org?.["@uuid"])?.deref?.());
@@ -107,7 +107,7 @@ export default class PreCoding {
             }],
 
             //
-            ["reference", (organic, target, transfer = [])=>{
+            ["reference", (organic: boolean, target: unknown, transfer: unknown[] = [])=>{
                 if (organic) {
                     const org    = extract(target);
                     const exists = hold(this?.memoryPool?.get(org?.["@uuid"])?.deref?.());
@@ -125,7 +125,7 @@ export default class PreCoding {
 
 
     //
-    $decode(target, transfer: any[] = []) {
+    $decode(target: unknown, transfer: unknown[] = []) {
         const [o, t] = this.typeDetector.detectType(target, transfer);
         if (this.decoder.has(t)) {
             return this.decoder.get(t)?.(o, target, transfer);
@@ -134,7 +134,7 @@ export default class PreCoding {
     }
 
     //
-    $encode(target, transfer: any[] = []) {
+    $encode(target: unknown, transfer: unknown[] = []) {
         const [o, t] = this.typeDetector.detectType(target, transfer);
         if (this.encoder.has(t)) {
             return this.encoder.get(t)?.(o, target, transfer);
@@ -145,17 +145,17 @@ export default class PreCoding {
 
 
     //
-    decode(target, transfer: any[] = []) {
+    decode(target: unknown|Promise<unknown>, transfer: unknown[] = []) {
         if (target instanceof Promise || typeof target?.then == "function") {
-            return target?.then((e)=>this.$decode(e, transfer));
+            return target?.then?.((e: unknown)=>this.$decode(e, transfer));
         }
         return this.$decode(target, transfer);
     }
 
     //
-    encode(target, transfer: any[] = []) {
+    encode(target: unknown|Promise<unknown>, transfer: unknown[] = []) {
         if (target instanceof Promise || typeof target?.then == "function") {
-            return target?.then((e)=>this.$encode(e, transfer));
+            return target?.then?.((e: unknown)=>this.$encode(e, transfer));
         }
         return this.$encode(target, transfer);
     }

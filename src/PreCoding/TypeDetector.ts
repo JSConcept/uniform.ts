@@ -2,13 +2,13 @@ import { extract } from "../Instruction/Defer.ts";
 
 //
 export default class TypeDetector {
-    detection: Map<string, (d:any)=>boolean> = new Map<string, (d:any)=>boolean>();
+    detection: Map<string, (d: unknown)=>boolean> = new Map<string, (d: unknown)=>boolean>();
 
     // we working only with unwrapped data, we doesn't accept any promise directly
     constructor() {
         //
-        this.detection = new Map<string, (d:any)=>boolean>([
-            ["primitive", (a:any):boolean=>{
+        this.detection = new Map<string, (d: unknown)=>boolean>([
+            ["primitive", (a: unknown): boolean=>{
                 return (typeof a != "object" && typeof a != "function" || typeof a == "undefined" || a == null);
             }],
 
@@ -18,23 +18,23 @@ export default class TypeDetector {
             //}],
 
             //
-            ["array", (a:any):boolean=>{
+            ["array", (a: unknown): boolean=>{
                 return Array.isArray(a);
             }],
 
             //
-            ["arraybuffer", (a:any):boolean=>{
+            ["arraybuffer", (a: unknown): boolean=>{
                 return (a instanceof ArrayBuffer /*|| a instanceof SharedArrayBuffer*/);
             }],
 
             //
-            ["typedarray", (a:any):boolean=>{
+            ["typedarray", (a: any): boolean=>{
                 return (a?.buffer instanceof ArrayBuffer /*|| a?.buffer instanceof SharedArrayBuffer*/);
             }],
 
             //
-            ["promise", (a:any):boolean=>{
-                const valid = typeof a?.then == "function" || a instanceof Promise;
+            ["promise", (a: unknown|Promise<unknown>): boolean=>{
+                const valid = (typeof a?.then == "function" || a instanceof Promise);
                 if (valid) {
                     console.warn("Potentially invalid type");
                     console.trace(a);
@@ -43,12 +43,12 @@ export default class TypeDetector {
             }],
 
             //
-            ["symbol", (a:any):boolean=>{
+            ["symbol", (a: unknown): boolean=>{
                 return typeof a === 'symbol' || typeof a === 'object' && Object.prototype.toString.call (a) === '[object Symbol]';
             }],
 
             // may needs to save into temp object pool for remote access
-            ["reference", (a:any):boolean=>{
+            ["reference", (a: unknown): boolean=>{
                 const fx = (typeof a == "object" || typeof a == "function");
                 return fx;
             }]
@@ -56,7 +56,7 @@ export default class TypeDetector {
     }
 
     // [is organic, defined type]
-    detectType(data, transfer: any[] = []) {
+    detectType(data: unknown, transfer: unknown[] = []) {
         // are data meta type, skip definition
         const organic = extract(data);
         if (organic?.["@type"]) {

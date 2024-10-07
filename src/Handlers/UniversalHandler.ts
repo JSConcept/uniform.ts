@@ -17,7 +17,7 @@ export default class UniversalHandler extends DataHandler {
     $getHandler(name: string) { return this.#dataHandler.get(name); }
 
     //
-    $handle(cmd = "access", t, ...args) {
+    $handle(cmd = "access", t: any, ...args: unknown[]) {
         //
         let htp = "direct";
         if (isPromise(t?.[$data] ?? t)) 
@@ -33,5 +33,5 @@ export default class UniversalHandler extends DataHandler {
     }
 
     //
-    $get(uuid) { return this.#dataHandler.get("local")?.$get?.(uuid); };
+    $get(uuid: unknown|string|null) { return this.#dataHandler.get("local")?.$get?.(uuid); };
 }

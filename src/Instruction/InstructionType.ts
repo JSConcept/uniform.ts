@@ -1,3 +1,4 @@
+// deno-lint-ignore-file ban-types
 export const $data = Symbol("@data");
 export const MakeReference = (data: any = null): Function => {
     // not ordinal not acceptable
@@ -9,7 +10,7 @@ export const MakeReference = (data: any = null): Function => {
     if (typeof data == "function" && data?.[$data]) { return data; }
 
     // make function or class compatible for proxy
-    const fx = function() { if (this != null) { this[$data] = data; }; }
+    const fx = function(this: any) { if (this != null) { this[$data] = data; }; }
     if (fx != null) {
         fx.prototype.stringify = function (){ return JSON.stringify(this[$data] || "{}"); }
         fx.stringify = ()=>{ return JSON.stringify(data || "{}"); }

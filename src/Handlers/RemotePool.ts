@@ -5,17 +5,17 @@ import { extract } from "../Instruction/Defer.ts";
 
 //
 export default class RemoteReferenceHandler extends DataHandler {
-    #exChanger: ExChanger;
+    #exChanger: ExChanger|null;
 
     //
-    constructor(exChanger){
+    constructor(exChanger: ExChanger|null){
         super();
         this.#exChanger = exChanger;
     }
 
     //
-    $data(t) { return extract(t); }
-    $handle(cmd, meta, ...args) {
+    $data(t: unknown) { return extract(t); }
+    $handle(cmd: string, meta: unknown, ...args: unknown[]) {
         if (cmd == "get" && args[0] == $data) {
             return this.$data(meta);
         };
@@ -28,15 +28,15 @@ export default class RemoteReferenceHandler extends DataHandler {
 
                 "then", "catch", "finally", // promise forbidden
                 "@uuid", "@type", "@payload", "@node", $data // organic forbidden
-            ].indexOf(args[0]) >= 0
+            ].indexOf(args?.[0] as any) >= 0
         ) {
             return null;
         }
 
         //
-        return this.#exChanger.$request(cmd, meta, args);
+        return this.#exChanger?.$request(cmd, meta, args);
     }
 
     //
-    $get(_): any { return null; };
+    $get(_: unknown|string|null): any { return null; };
 }

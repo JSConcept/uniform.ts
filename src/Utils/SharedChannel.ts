@@ -1,3 +1,4 @@
+// deno-lint-ignore-file ban-ts-comment
 // @ts-ignore
 import * as cbor from "cbor-x";
 import { doOnlyAfterResolve } from "../Instruction/Defer.ts";
@@ -9,32 +10,30 @@ import { doOnlyAfterResolve } from "../Instruction/Defer.ts";
  * 8...N byte: data payload
  */
 
-export default class SharedChannel<T extends any> {
-    #sharedBuffer: SharedArrayBuffer | null = null;
+export default class SharedChannel<T extends unknown> {
+    #sharedBuffer: SharedArrayBuffer | unknown | null = null;
     #byteOffset: number = 0;
 
     //
-    constructor(sharedBuffer, byteOffset = 0) {
+    constructor(sharedBuffer: SharedArrayBuffer | unknown | null, byteOffset = 0) {
         this.#sharedBuffer = sharedBuffer;
         this.#byteOffset = byteOffset;
     }
 
     //
-    resolve(object: T|unknown = {}) {
-        return this.$resolveWith(cbor.encode(object ?? {}));
+    resolve(object: T|Uint8Array|unknown = {}) {
+        return this.$resolveWith(cbor?.encode?.(object ?? new Uint8Array([])));
     }
 
     //
-    reject(e: Error | any) {
-        throw e;
-    }
+    reject(e: Error | unknown): unknown { throw e; }
 
     //
-    waitAuto(timeout = 1000) { return (self?.document ? this.waitAsync(timeout) : this.waitSync(timeout)); }
-    waitSync(timeout = 1000) { const result = this.$waitSync(timeout); return result ? cbor.decode(result) : null; }
-    waitAsync(timeout = 1000) {
+    waitAuto(timeout = 1000): unknown { return (self?.document ? this.waitAsync(timeout) : this.waitSync(timeout)); }
+    waitSync(timeout = 1000): unknown { const result = this.$waitSync(timeout); return result ? cbor.decode(result) : null; }
+    waitAsync(timeout = 1000): unknown {
         const result = this.$promised(timeout);
-        return doOnlyAfterResolve(result, (bin)=>{
+        return doOnlyAfterResolve(result, (bin: unknown|Uint8Array)=>{
             return bin ? cbor.decode(bin) : null;
         });
     }

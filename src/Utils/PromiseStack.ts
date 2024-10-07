@@ -6,18 +6,18 @@ export const UUIDv4 = () => {
 };
 
 // for your web worker project...
-export default class PromiseStack {
-    #map = new Map<string, PromiseWithResolvers<any>>();
-    #smp = new Map<string, SharedChannel<any>>();
+export default class PromiseStack<T extends unknown> {
+    #map = new Map<string, PromiseWithResolvers<T>>();
+    #smp = new Map<string, SharedChannel<T>>();
 
     //
     constructor() {
-        this.#map = new Map<string, PromiseWithResolvers<any>>();
+        this.#map = new Map<string, PromiseWithResolvers<T>>();
     }
 
     //
     get sync() { return this.#syncExcept(); }
-    #syncExcept(ne = "") { return Promise.allSettled(Array.from(this.#map?.entries?.()?.filter?.(([n,v])=>(ne!=n))?.map?.((([n,v])=>v)))); }
+    #syncExcept(ne = "") { return Promise.allSettled(Array.from(this.#map?.entries?.())?.filter?.(([n,v])=>(ne!=n))?.map?.((([n,v])=>v))); }
 
     //
     get(name = "") {
@@ -25,7 +25,7 @@ export default class PromiseStack {
     }
 
     // reject by UUID
-    rejectBy(name, why) {
+    rejectBy(name: string, why: unknown) {
         if (this.#smp.has(name)) {
             const pm = this.#smp.get(name);
             this.#smp.delete(name);
@@ -43,7 +43,7 @@ export default class PromiseStack {
     }
 
     // resolve by UUID
-    resolveBy(name, why) {
+    resolveBy(name: string, why: unknown) {
         if (this.#smp.has(name)) {
             const pm = this.#smp.get(name);
             this.#smp.delete(name);
@@ -53,14 +53,14 @@ export default class PromiseStack {
             if (this.#map.has(name)) {
                 const pm = this.#map.get(name);
                 this.#map.delete(name);
-                pm?.resolve?.(why);
+                pm?.resolve?.(why as T);
             }
         });
         return this;
     }
 
     //
-    hook<T extends any>(key: string | null = null, buffer: SharedArrayBuffer | ArrayBuffer | null = null): [string, SharedChannel<T>, SharedArrayBuffer|ArrayBuffer|unknown] {
+    hook<T extends unknown>(key: string | null = null, buffer: SharedArrayBuffer | ArrayBuffer | null = null): [string, SharedChannel<T>, SharedArrayBuffer|ArrayBuffer|unknown] {
         const pm = new SharedChannel(buffer);
         this.#smp.set(key ||= UUIDv4(), pm);
         return [key, pm, buffer];
@@ -70,7 +70,7 @@ export default class PromiseStack {
     //  :0 - for sending UUID or identify
     //  :1 - for waiting or async ops
     // ]
-    createSync<T extends any>(key: string | null = null): [string, SharedChannel<T>, SharedArrayBuffer|ArrayBuffer|unknown] {
+    createSync<T extends unknown>(key: string | null = null): [string, SharedChannel<T>, SharedArrayBuffer|ArrayBuffer|unknown] {
         const bf = new SharedArrayBuffer(16);
         const pm = new SharedChannel(bf);
         this.#smp.set(key ||= UUIDv4(), pm);
@@ -82,7 +82,7 @@ export default class PromiseStack {
     //  :1 - for waiting or async ops
     // ]
     create(key: string | null = null) {
-        const pm = Promise.withResolvers();
+        const pm = Promise.withResolvers<T>();
         this.#map.set(key ||= UUIDv4(), pm);
         return [key, pm.promise];
     }

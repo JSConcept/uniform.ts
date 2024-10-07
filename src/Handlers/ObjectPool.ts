@@ -13,7 +13,7 @@ export default class ObjectPoolMemberHandler extends DataHandler {
     }
 
     // there is may not be meta object
-    $data(t): any {
+    $data(t: unknown|string|null): any {
         return super.$data((()=>{
             const wrap = extract(t) ?? t;
             const uuid = wrap?.["@uuid"] ?? wrap;
@@ -26,7 +26,7 @@ export default class ObjectPoolMemberHandler extends DataHandler {
     }
 
     //
-    $get(t): any {
+    $get(t: unknown|string|null): any {
         const wrap = extract(t) ?? t;
         const uuid = wrap?.["@uuid"] ?? wrap;
         if (typeof uuid == "string") {

@@ -1,9 +1,7 @@
-import ObjectProxy from "../Instruction/ObjectProxy.ts";
-import { $data, MakeReference} from "../Instruction/InstructionType.ts"
-import { extract, isPromise } from "../Instruction/Defer.ts";
+import { extract } from "../Instruction/Defer.ts";
 
 //
-export const bindCtx = (gt, ref = null)=>{
+export const bindCtx = (gt: any, ref: any|null = null)=>{
     if (typeof gt == "function" && typeof gt?.bind == "function" && (typeof ref == "object" || typeof ref == "function")) {
         // may be organic or context detached
         return gt?.bind?.(ref) ?? gt;
@@ -17,8 +15,8 @@ export default class DataHandler {
     }
 
     //
-    $data(target) { return target; };
-    $handle(cmd, meta, ...args) {
+    $data(target: unknown|string|null) { return target; };
+    $handle(cmd: string, meta: unknown, ...args: unknown[]) {
         const ref = this.$data(meta);
 
         // any illegal is illegal (after 'then' or defer operation)...
@@ -47,5 +45,5 @@ export default class DataHandler {
     }
 
     //
-    $get(uuid): any { return null; };
+    $get(uuid: unknown|string|null): any { return null; };
 }

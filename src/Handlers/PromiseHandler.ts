@@ -4,7 +4,7 @@ import { extract, isPromise } from "../Instruction/Defer.ts";
 import DataHandler from "./DataHandler.ts";
 
 //
-export const bindCtx = (gt, ref = null)=>{
+export const bindCtx = (gt: any, ref: any|null = null)=>{
     if (typeof gt == "function" && typeof gt?.bind == "function" && (typeof ref == "object" || typeof ref == "function")) {
         // may be organic or context detached
         return gt?.bind?.(ref) ?? gt;
@@ -17,12 +17,12 @@ export default class PromiseHandler extends DataHandler {
     constructor() { super(); }
 
     //
-    $data(target) {
+    $data(target: unknown|Promise<unknown>) {
         return (isPromise(target?.[$data]) ? target?.[$data] : target) ?? target;
     }
 
     //
-    $deferOp(target, cb = (e)=>e) {
+    $deferOp(target: unknown|Promise<unknown>, cb = (e: any)=>e) {
         if (isPromise(target)) {
             return (target?.then?.(cb) ?? cb(target) ?? target);
         }
@@ -30,18 +30,18 @@ export default class PromiseHandler extends DataHandler {
     }
 
     //
-    $wrapPromise(result, handler: any = null) {
+    $wrapPromise(result: unknown|Promise<unknown>, handler: DataHandler|null = null) {
         if (isPromise(result)) {
-            return new Proxy(MakeReference(result), handler ?? new ObjectProxy(this));
+            return new Proxy(MakeReference(result), new ObjectProxy(handler ?? this));
         }
         return result;
     }
 
     //
-    $handle(cmd, meta, ...args) {
+    $handle(cmd: string, meta: unknown, ...args: unknown[]) {
         //
         const data = this.$data(meta);
-        if (cmd == "get" && ["then", "catch", "finally", $data].indexOf(args[0]) >= 0) {
+        if (cmd == "get" && ["then", "catch", "finally", $data].indexOf(args?.[0]) >= 0) {
             if (args[0] == $data) { return this.$wrapPromise(data); }
             if (data == null || (typeof data != "object" && typeof data != "function")) { return data; };
             return bindCtx(Reflect?.[cmd]?.(data, ...args), data);
@@ -54,5 +54,5 @@ export default class PromiseHandler extends DataHandler {
     }
 
     //
-    $get(uuid): any { return null; };
+    $get(uuid: unknown|string|null): any { return null; };
 }

@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 //
 export const UUIDv4 = () => {
     return crypto?.randomUUID ? crypto?.randomUUID() : "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c => (+c ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (+c / 4)))).toString(16));
@@ -6,7 +7,7 @@ export const UUIDv4 = () => {
 //
 const timers = new WeakMap();
 const tmpSet = new Set();
-export const hold = (obj, timeout = 1000)=>{
+export const hold = (obj: any | unknown, timeout = 1000)=>{
 
     // holding from GC
     if (typeof obj == "object" || typeof obj == "function") {
@@ -25,6 +26,7 @@ export const hold = (obj, timeout = 1000)=>{
 }
 
 //
+// deno-lint-ignore ban-types
 export type dT = object | Function;
 export type rT = WeakRef<dT>;
 
@@ -44,11 +46,11 @@ export default class UUIDMap<T=dT> {
     }
 
     // when transfer out required
-    delete<R extends dT | string>(key: R): R {
+    delete<R extends dT | string>(key: R): unknown {
         if (typeof key == "object" || typeof key == "function") {
-            return this.#weakMap.delete(<dT>(<unknown>key)) as any;
+            return this.#weakMap.delete(<dT>(<unknown>key));
         }
-        return this.#refMap.delete(<string>(<unknown>key)) as any;
+        return this.#refMap.delete(<string>(<unknown>key));
     }
 
     //
@@ -73,10 +75,10 @@ export default class UUIDMap<T=dT> {
     }
 
     //
-    get<R extends dT | string>(key: R): R {
+    get<R extends dT | string>(key: R): unknown {
         if (typeof key == "object" || typeof key == "function") {
-            return this.#weakMap.get(<dT>(<unknown>key)) as any;
+            return this.#weakMap.get(<dT>(<unknown>key));
         }
-        return this.#refMap.get(<string>(<unknown>key)) as any;
+        return this.#refMap.get(<string>(<unknown>key));
     }
 }

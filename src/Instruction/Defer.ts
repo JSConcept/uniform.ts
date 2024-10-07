@@ -6,12 +6,12 @@ import { $data, MakeReference } from "./InstructionType.ts";
 import ObjectProxy from "./ObjectProxy.ts";
 
 //
-export const isPromise = (target)=>{
+export const isPromise = (target: unknown|Promise<unknown>)=>{
     return target instanceof Promise && typeof target?.then == "function" && target?.then != null;
 }
 
 //
-export const doOnlyAfterResolve = (meta, cb)=>{
+export const doOnlyAfterResolve = (meta: unknown|Promise<unknown>, cb: (u: unknown|any)=>unknown): unknown => {
     if (isPromise(meta)) {
         return meta?.then?.(cb) ?? cb(meta);
     }
@@ -23,7 +23,7 @@ export const doOnlyAfterResolve = (meta, cb)=>{
 
 //
 export const wrapWeakMap = new WeakMap([]);
-export const wrapMeta = (meta, handler: UniversalHandler | DataHandler | RemoteReferenceHandler | null = null)=>{
+export const wrapMeta = (meta: unknown, handler: UniversalHandler | DataHandler | RemoteReferenceHandler | null = null)=>{
     const wrap = (!meta?.[$data]) ? (new Proxy(MakeReference(meta), new ObjectProxy(handler || new UniversalHandler()))) : meta;
     doOnlyAfterResolve(meta, ($m)=>{
         if ($m) { doOnlyAfterResolve(wrap, (w)=>{
@@ -38,8 +38,8 @@ export const wrapMeta = (meta, handler: UniversalHandler | DataHandler | RemoteR
 }
 
 //
-export const prepare = (w)=>{
-    return doOnlyAfterResolve(w, (wrap)=>{
+export const prepare = (w: unknown): any => {
+    return doOnlyAfterResolve(w, (wrap: any)=>{
         if (wrap?.[$data]) return wrap?.[$data];
         const organic = wrapWeakMap.get(wrap) ?? wrap;
         return organic?.[$data] ?? organic;
@@ -47,17 +47,17 @@ export const prepare = (w)=>{
 }
 
 //
-export const redirect = (w)=>{
-    return doOnlyAfterResolve(w, (wrap)=>{
+export const redirect = (w: unknown): any =>{
+    return doOnlyAfterResolve(w, (wrap: any)=>{
         const pt = prepare(wrap);
-        return (pt?.["@uuid"]||pt?.["@type"])?pt:null;
+        return ((pt?.["@uuid"]||pt?.["@type"]) as string|null)?pt:null;
     });
 }
 
 //
-export const extract = (w)=>{
-    return doOnlyAfterResolve(w, (wrap)=>{
+export const extract = (w: unknown): any =>{
+    return doOnlyAfterResolve(w, (wrap: any)=>{
         const pt = prepare(wrap);
-        return (pt?.["@uuid"]||pt?.["@type"])?pt:null;
+        return ((pt?.["@uuid"]||pt?.["@type"] as string|null))?pt:null;
     });
 }
