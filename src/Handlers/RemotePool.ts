@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 import ExChanger from "../FLOW/ExChanger.ts";
 import DataHandler from "./DataHandler.ts";
 import {$data} from "../Instruction/InstructionType.ts"

@@ -1,6 +1,7 @@
+// deno-lint-ignore-file no-explicit-any
 import DataHandler from "./DataHandler.ts";
 import { extract, isPromise } from "../Instruction/Defer.ts";
-import { $data, MakeReference} from "../Instruction/InstructionType.ts"
+import { $data } from "../Instruction/InstructionType.ts"
 
 //
 export default class UniversalHandler extends DataHandler {

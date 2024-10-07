@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 import UUIDMap, {hold} from "../Utils/UUIDMap.ts";
 import DataHandler from "./DataHandler.ts";
 import { extract } from "../Instruction/Defer.ts";
@@ -19,7 +20,7 @@ export default class ObjectPoolMemberHandler extends DataHandler {
             const uuid = wrap?.["@uuid"] ?? wrap;
             if (typeof uuid == "string") {
                 const weak: any = this.#memoryPool?.get(uuid);
-                return (hold(weak?.deref?.()) ?? weak) ?? t;
+                return hold(weak) ?? t;
             }
             return t;
         })());
@@ -31,7 +32,7 @@ export default class ObjectPoolMemberHandler extends DataHandler {
         const uuid = wrap?.["@uuid"] ?? wrap;
         if (typeof uuid == "string") {
             const weak: any = this.#memoryPool?.get(uuid);
-            return hold(weak?.deref?.()) ?? weak ?? null;
+            return hold(weak) ?? null;
         }
         return null;
     };

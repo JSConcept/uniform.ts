@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 import PreCoding from "../PreCoding/PreCoding.ts";
 import { doOnlyAfterResolve } from "../Instruction/Defer.ts";
 
@@ -7,11 +8,11 @@ export const $memoryPool  = $coders.memoryPool;
 export const $dataHandler = $coders.handler;
 
 //
-export const $handler = (command) => {
-    const {cmd: nac, uuid, dir, args: [cmd, target, ...args]} = command;
+export const $handler = (command: any) => {
+    const {args: [cmd, target, ...args]} = command;
 
     //
-    let transfer: any[] = [];
+    const transfer: unknown[] = [];
     if (cmd == "apply" && args.length >= 3) {
         transfer.push(...args.splice(2));
     }
@@ -25,4 +26,4 @@ export const $handler = (command) => {
 }
 
 //
-export const $resolver = (command) => (command.result);
+export const $resolver = (command: any) => (command.result);

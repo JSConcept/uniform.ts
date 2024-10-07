@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 import DataHandler from "../Handlers/DataHandler.ts";
 import RemoteReferenceHandler from "../Handlers/RemotePool.ts";
 import UniversalHandler from "../Handlers/UniversalHandler.ts";

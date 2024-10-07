@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 import { extract } from "../Instruction/Defer.ts";
 
 //
@@ -45,5 +46,5 @@ export default class DataHandler {
     }
 
     //
-    $get(uuid: unknown|string|null): any { return null; };
+    $get(_uuid: unknown|string|null): any { return null; };
 }

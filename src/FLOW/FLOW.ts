@@ -1,18 +1,20 @@
+// deno-lint-ignore-file no-explicit-any
 import { doOnlyAfterResolve } from "../Instruction/Defer.ts";
 import PromiseStack from '../Utils/PromiseStack.ts';
 
 // @ts-ignore
 export type WorkerContext = Worker | WorkerGlobalScope;
+
 // FLOW - is web worker library core (low-level)...
 export default class FLOW {
     #worker: WorkerContext | null = null;//new Worker("./FLOW-Unit.ts");
-    #promiseStack: PromiseStack = new PromiseStack();
+    #promiseStack: PromiseStack<unknown> = new PromiseStack<unknown>();
     #imports: any = {};
 
     //
     constructor(
         worker: WorkerContext | null = null,
-        promiseStack: PromiseStack = new PromiseStack()
+        promiseStack: PromiseStack<unknown> = new PromiseStack<unknown>()
     ) {
         this.#worker = worker || new Worker(new URL("./ExChangerUnit.ts", import.meta.url).href, {type: "module"});
         this.#promiseStack = promiseStack ?? new PromiseStack();
@@ -20,7 +22,7 @@ export default class FLOW {
 
         //
         const self: WorkerContext | null = this.#worker;
-        self?.addEventListener("message", (ev)=>{
+        self?.addEventListener("message", (ev: any)=>{
             if (!ev?.data) { console.log(ev); return; }
             const {cmd, uuid, dir, shared} = ev.data;
             if (dir == "req") {
@@ -30,7 +32,6 @@ export default class FLOW {
                 if (cmd == "import") {
                     import(ev.data.source).then((m)=>{
                         Object.assign(this.#imports, (m.default ?? m));
-                        // @ts-ignore
                         self?.postMessage({ cmd, uuid, dir: "res", result: "ok" });
                     });
                 } else
@@ -40,7 +41,6 @@ export default class FLOW {
                         doOnlyAfterResolve(syncOrAsync, (pass)=>{
                             const [$r, transfer] = pass;
                             doOnlyAfterResolve($r, (result)=>{
-                                // @ts-ignore
                                 self?.postMessage({
                                     handler: "$resolver",
                                     cmd,
@@ -70,13 +70,13 @@ export default class FLOW {
     }
 
     //
-    async importToSelf(module) {
+    async importToSelf(module: any) {
         Object.assign(this.#imports, ((await module)?.default ?? (await module)));
         return this;
     }
 
     //
-    importToUnit(source, sync = false) {
+    importToUnit(source: string, sync = false) {
         const remain = this.#promiseStack?.sync;
         const pair = this.#promiseStack?.[sync ? "createSync" : "create"]?.();
         doOnlyAfterResolve(remain, ()=>{
@@ -108,7 +108,7 @@ export default class FLOW {
     }
 
     //
-    callTask($args: any[] = [], transfer = [], sync = false) {
+    callTask($args: any[] = [], transfer: unknown[] = [], sync = false) {
         const remain = this.#promiseStack?.sync;
         const pair = this.#promiseStack?.[sync ? "createSync" : "create"]?.();
         doOnlyAfterResolve(remain, ()=>{

@@ -7,10 +7,11 @@ export const UUIDv4 = () => {
 //
 const timers = new WeakMap();
 const tmpSet = new Set();
-export const hold = (obj: any | unknown, timeout = 1000)=>{
+export const hold = (tmp: any | unknown | WeakRef<any>, timeout = 1000)=>{
 
     // holding from GC
-    if (typeof obj == "object" || typeof obj == "function") {
+    if (typeof tmp == "object" || typeof tmp == "function") {
+        const obj = tmp?.deref?.() ?? tmp;
         if (!tmpSet.has(obj)) {
             tmpSet.add(obj);
             timers.set(obj, setTimeout(
@@ -22,7 +23,7 @@ export const hold = (obj: any | unknown, timeout = 1000)=>{
     }
 
     //
-    return obj;
+    return tmp?.deref?.() ?? tmp;
 }
 
 //

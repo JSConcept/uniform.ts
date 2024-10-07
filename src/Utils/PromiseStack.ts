@@ -17,7 +17,7 @@ export default class PromiseStack<T extends unknown> {
 
     //
     get sync() { return this.#syncExcept(); }
-    #syncExcept(ne = "") { return Promise.allSettled(Array.from(this.#map?.entries?.())?.filter?.(([n,v])=>(ne!=n))?.map?.((([n,v])=>v))); }
+    #syncExcept(ne = "") { return Promise.allSettled(Array.from(this.#map?.entries?.())?.filter?.(([n])=>(ne!=n))?.map?.((([,v])=>v))); }
 
     //
     get(name = "") {

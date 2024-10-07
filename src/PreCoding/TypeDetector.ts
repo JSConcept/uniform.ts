@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 import { extract } from "../Instruction/Defer.ts";
 
 //
@@ -28,8 +29,8 @@ export default class TypeDetector {
             }],
 
             //
-            ["typedarray", (a: any): boolean=>{
-                return (a?.buffer instanceof ArrayBuffer /*|| a?.buffer instanceof SharedArrayBuffer*/);
+            ["typedarray", (a: unknown): boolean=>{
+                return ((a as any)?.buffer instanceof ArrayBuffer /*|| a?.buffer instanceof SharedArrayBuffer*/);
             }],
 
             //

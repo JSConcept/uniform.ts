@@ -1,6 +1,7 @@
+// deno-lint-ignore-file no-explicit-any
 import ObjectProxy from "../Instruction/ObjectProxy.ts";
 import { $data, MakeReference} from "../Instruction/InstructionType.ts"
-import { extract, isPromise } from "../Instruction/Defer.ts";
+import { isPromise } from "../Instruction/Defer.ts";
 import DataHandler from "./DataHandler.ts";
 
 //
@@ -54,5 +55,5 @@ export default class PromiseHandler extends DataHandler {
     }
 
     //
-    $get(uuid: unknown|string|null): any { return null; };
+    $get(_uuid: unknown|string|null): any { return null; };
 }

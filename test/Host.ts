@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 import ExChanger from "../src/FLOW/ExChanger.ts";
 
 //
@@ -5,7 +6,7 @@ export const Host = new ExChanger(new Worker(new URL("./Worker.ts", import.meta.
 await Host.initialize();
 
 //
-const transferCheck = (ab)=>{ console.log(ab); };
+const transferCheck = (ab: any)=>{ console.log(ab); };
 const hostAction = async ()=>{
     //
     const Tungst = Host.access("Tungst");

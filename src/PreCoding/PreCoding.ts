@@ -1,5 +1,6 @@
+// deno-lint-ignore-file no-explicit-any
 // Will be used when result are predictable in the pools or return results
-import { extract, redirect, wrapMeta, wrapWeakMap } from "../Instruction/Defer.ts";
+import { extract, wrapMeta } from "../Instruction/Defer.ts";
 import UUIDMap, {hold} from "../Utils/UUIDMap.ts";
 import TypeDetector from "./TypeDetector.ts";
 import {$data} from "../Instruction/InstructionType.ts"
@@ -19,7 +20,7 @@ export default class PreCoding {
         this.encoder = new Map<string, (organic: boolean, target: unknown, transfer: unknown[])=>boolean>([
             ["array", (organic: boolean, target: unknown, transfer: unknown[] = [])=>{
                 if (!organic) {
-                    const encoded = Array.from(target).map((e)=>this.encode(e, transfer));
+                    const encoded = Array.from((target as []) ||[]).map((e)=>this.encode(e, transfer));
                     return (encoded.some((e)=>(e instanceof Promise || typeof e?.then == "function"))) ? Promise.all(encoded) : encoded;
                 }
                 return target;
@@ -36,7 +37,7 @@ export default class PreCoding {
                 } else {
                     // transfers only when is exists
                     const org  = extract(target);
-                    const node = org?.["@node"] ?? hold(this?.memoryPool?.get(org?.["@uuid"])?.deref?.());
+                    const node = org?.["@node"] ?? hold(this?.memoryPool?.get(org?.["@uuid"]));
 
                     // if exists
                     if (node != null) {
@@ -64,11 +65,11 @@ export default class PreCoding {
             }],
 
             //
-            ["reference", (organic: boolean, target: unknown, transfer: unknown[] = [])=>{
+            ["reference", (organic: boolean, target: unknown, _transfer: unknown[] = [])=>{
                 if (!organic || target?.[$data]) {
                     const meta = {
                         "@type": "reference",
-                        "@uuid": this.memoryPool.add(target, extract(target)?.["@uuid"], !organic)
+                        "@uuid": this.memoryPool.add(target as any, extract(target)?.["@uuid"], !organic)
                     };
                     return meta;
                 }
@@ -80,7 +81,7 @@ export default class PreCoding {
         this.decoder = new Map<string, (organic: boolean, target: unknown, transfer: unknown[])=>boolean>([
             ["array", (organic: boolean, target: unknown, transfer: unknown[] = [])=>{
                 if (!organic) {
-                    const decoded = Array.from(target).map((e)=>this.decode(e, transfer));
+                    const decoded = Array.from(target as []).map((e)=>this.decode(e, transfer));
                     return (decoded.some((e)=>e instanceof Promise || typeof e?.then == "function")) ? Promise.all(decoded) : decoded;
                 }
                 // unusual
@@ -88,10 +89,10 @@ export default class PreCoding {
             }],
 
             //
-            ["transfer", (organic: boolean, target: unknown, transfer: unknown[] = [])=>{
+            ["transfer", (organic: boolean, target: unknown, _transfer: unknown[] = [])=>{
                 if (organic) {
                     const org  = extract(target);
-                    const node = (org?.["@node"]) ?? hold(this?.memoryPool?.get(org?.["@uuid"])?.deref?.());
+                    const node = (org?.["@node"]) ?? hold(this?.memoryPool?.get(org?.["@uuid"]));
 
                     // unable to override exists
                     if (node != null) {
@@ -107,10 +108,10 @@ export default class PreCoding {
             }],
 
             //
-            ["reference", (organic: boolean, target: unknown, transfer: unknown[] = [])=>{
+            ["reference", (organic: boolean, target: unknown, _transfer: unknown[] = [])=>{
                 if (organic) {
                     const org    = extract(target);
-                    const exists = hold(this?.memoryPool?.get(org?.["@uuid"])?.deref?.());
+                    const exists = hold(this?.memoryPool?.get(org?.["@uuid"]));
                     if (exists) { return exists; }
 
                     //

@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 import UniversalHandler from "../Handlers/UniversalHandler.ts";
 import FLOW, { type WorkerContext } from "./FLOW.ts";
 import RemoteReferenceHandler from "../Handlers/RemotePool.ts";
@@ -5,8 +6,8 @@ import ObjectPoolMemberHandler from "../Handlers/ObjectPool.ts";
 import DataHandler from "../Handlers/DataHandler.ts";
 import UUIDMap from "../Utils/UUIDMap.ts";
 import PreCoding from "../PreCoding/PreCoding.ts";
-import { doOnlyAfterResolve, isPromise, wrapMeta } from "../Instruction/Defer.ts";
-import { $data, MakeReference} from "../Instruction/InstructionType.ts"
+import { doOnlyAfterResolve, isPromise } from "../Instruction/Defer.ts";
+import { MakeReference} from "../Instruction/InstructionType.ts"
 import PromiseHandler from "../Handlers/PromiseHandler.ts";
 import ObjectProxy from "../Instruction/ObjectProxy.ts";
 
@@ -53,8 +54,8 @@ export default class ExChanger {
 
     //
     $sync() { return this.#flow?.sync?.(); }
-    $request(cmd: string, meta: any, args : any[]) {
-        const transfer = [];
+    $request(cmd: string, meta: unknown, args : unknown[]) {
+        const transfer: unknown[] = [];
         const encoded = this.#coder?.encode([cmd, meta, ...args], transfer);
         const result = this.#flow?.callTask?.(encoded, transfer);
         const coded = doOnlyAfterResolve(result, (res)=>this.#coder?.decode?.(res, transfer));
@@ -69,8 +70,8 @@ export default class ExChanger {
     //local(name) { return wrapMeta({"@uuid": name, "@type": "reference"}, this.#handler); }
 
     //
-    $importToUnit(source) { return this.#flow?.importToUnit(source); }
-    $importToSelf(module) { return this.#flow?.importToSelf(module); }
+    $importToUnit(source: string) { return this.#flow?.importToUnit(source); }
+    $importToSelf(module: unknown) { return this.#flow?.importToSelf(module); }
 
     //
     async sync() { await this.$sync(); return this; }

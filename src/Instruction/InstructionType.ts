@@ -1,4 +1,4 @@
-// deno-lint-ignore-file ban-types
+// deno-lint-ignore-file ban-types no-explicit-any
 export const $data = Symbol("@data");
 export const MakeReference = (data: any = null): Function => {
     // not ordinal not acceptable
