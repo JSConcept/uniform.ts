@@ -1,4 +1,4 @@
-import ExChanger from "../src/FLOW/ExChanger";
+import ExChanger from "../src/FLOW/ExChanger.ts";
 
 //
 export const Host = new ExChanger(new Worker(new URL("./Worker.ts", import.meta.url).href, {type: "module"}))

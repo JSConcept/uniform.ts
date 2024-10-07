@@ -1,4 +1,4 @@
-import ExChanger from "../src/FLOW/ExChanger";
+import ExChanger from "../src/FLOW/ExChanger.ts";
 
 //
 export const Remote = new ExChanger(self);

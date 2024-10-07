@@ -1,7 +1,7 @@
 import DataHandler from "../Handlers/DataHandler.ts";
 import RemoteReferenceHandler from "../Handlers/RemotePool.ts";
 import UniversalHandler from "../Handlers/UniversalHandler.ts";
-import SharedChannel from "../Utils/SharedChannel";
+import SharedChannel from "../Utils/SharedChannel.ts";
 import { $data, MakeReference } from "./InstructionType.ts";
 import ObjectProxy from "./ObjectProxy.ts";
 

@@ -7,8 +7,8 @@ import UUIDMap from "../Utils/UUIDMap.ts";
 import PreCoding from "../PreCoding/PreCoding.ts";
 import { doOnlyAfterResolve, isPromise, wrapMeta } from "../Instruction/Defer.ts";
 import { $data, MakeReference} from "../Instruction/InstructionType.ts"
-import PromiseHandler from "../Handlers/PromiseHandler";
-import ObjectProxy from "../Instruction/ObjectProxy";
+import PromiseHandler from "../Handlers/PromiseHandler.ts";
+import ObjectProxy from "../Instruction/ObjectProxy.ts";
 
 //
 export default class ExChanger {

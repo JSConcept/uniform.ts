@@ -1,4 +1,4 @@
-import SharedChannel from "./SharedChannel";
+import SharedChannel from "./SharedChannel.ts";
 
 //
 export const UUIDv4 = () => {
