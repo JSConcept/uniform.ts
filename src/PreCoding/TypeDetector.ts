@@ -25,17 +25,18 @@ export default class TypeDetector {
 
             //
             ["arraybuffer", (a: unknown): boolean=>{
-                return (a instanceof ArrayBuffer /*|| a instanceof SharedArrayBuffer*/);
+                return (a instanceof ArrayBuffer || (typeof SharedArrayBuffer != "undefined" && a instanceof SharedArrayBuffer));
             }],
 
             //
             ["typedarray", (a: unknown): boolean=>{
-                return ((a as any)?.buffer instanceof ArrayBuffer /*|| a?.buffer instanceof SharedArrayBuffer*/);
+                const $buffer: unknown = (a as any)?.buffer;
+                return ($buffer instanceof ArrayBuffer || (typeof SharedArrayBuffer != "undefined" && $buffer instanceof SharedArrayBuffer));
             }],
 
             //
             ["promise", (a: unknown|Promise<unknown>): boolean=>{
-                const valid = (typeof a?.then == "function" || a instanceof Promise);
+                const valid = (a instanceof Promise || typeof a?.then == "function");
                 if (valid) {
                     console.warn("Potentially invalid type");
                     console.trace(a);
