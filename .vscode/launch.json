@@ -5,6 +5,20 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "request": "launch",
+            "name": "Debug Deno",
+            "type": "node",
+            "program": "${workspaceFolder}/test/Host.ts", 
+            "cwd": "${workspaceFolder}",
+            "runtimeExecutable": "deno",
+            "runtimeArgs": [
+                "run",
+                "--inspect-wait",
+                "--allow-all"
+            ],
+            "attachSimplePort": 9229
+        },
+        {
             "name": "Attach to Chrome",
             "port": 9222,
             "request": "attach",
