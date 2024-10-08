@@ -17,7 +17,7 @@ export const bindCtx = (gt: any, ref: any|null = null)=>{
 
 //
 export const isPromise = (target: unknown|Promise<unknown>)=>{
-    return target instanceof Promise && typeof target?.then == "function" && target?.then != null;
+    return target instanceof Promise || target?.then != null || typeof target?.then == "function";
 }
 
 //

@@ -5,7 +5,8 @@ import UUIDMap, {hold} from "../Utils/UUIDMap.ts";
 import TypeDetector from "./TypeDetector.ts";
 import {$data} from "../Instruction/InstructionType.ts"
 import UniversalHandler from "../Handlers/UniversalHandler.ts";
-
+import { doOnlyAfterResolve } from "../Instruction/Defer.ts";
+ 
 //
 export default class PreCoding {
     $encoder = new Map<string, (organic: boolean, target: unknown, transfer: unknown[])=>boolean>();
@@ -147,17 +148,11 @@ export default class PreCoding {
 
     //
     decode(target: unknown|Promise<unknown>, transfer: unknown[] = []) {
-        if (target instanceof Promise || typeof target?.then == "function") {
-            return target?.then?.((e: unknown)=>this.$decode(e, transfer));
-        }
-        return this.$decode(target, transfer);
+        return doOnlyAfterResolve(target, (e)=>this.$decode(e, transfer));
     }
 
     //
     encode(target: unknown|Promise<unknown>, transfer: unknown[] = []) {
-        if (target instanceof Promise || typeof target?.then == "function") {
-            return target?.then?.((e: unknown)=>this.$encode(e, transfer));
-        }
-        return this.$encode(target, transfer);
+        return doOnlyAfterResolve(target, (e)=>this.$encode(e, transfer));
     }
 }
