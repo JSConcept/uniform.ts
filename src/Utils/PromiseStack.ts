@@ -60,7 +60,7 @@ export default class PromiseStack<T extends unknown> {
     }
 
     //
-    hook<T extends unknown>(key: string | null = null, buffer: SharedArrayBuffer | ArrayBuffer | null = null): [string, SharedChannel<T>, SharedArrayBuffer|ArrayBuffer|unknown] {
+    hook<T extends unknown>(key: string | null = null, buffer: SharedArrayBuffer | null = null): [string, SharedChannel<T>, SharedArrayBuffer|ArrayBuffer|unknown] {
         const pm = new SharedChannel(buffer);
         this.#smp.set(key ||= UUIDv4(), pm);
         return [key, pm, buffer];

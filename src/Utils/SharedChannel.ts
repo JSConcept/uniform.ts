@@ -12,30 +12,31 @@ import { doOnlyAfterResolve } from "../Instruction/Defer.ts";
  */
 
 export default class SharedChannel<T extends unknown> {
-    #sharedBuffer: SharedArrayBuffer | unknown | null = null;
+    #sharedBuffer: SharedArrayBuffer | null = null;
     #byteOffset: number = 0;
 
     //
-    constructor(sharedBuffer: SharedArrayBuffer | unknown | null, byteOffset = 0) {
+    constructor(sharedBuffer: SharedArrayBuffer | null, byteOffset = 0) {
         this.#sharedBuffer = sharedBuffer;
         this.#byteOffset = byteOffset;
     }
 
     //
     resolve(object: T|Uint8Array|unknown = {}) {
+        // @ts-ignore "no valid type"
         return this.$resolveWith(cbor?.encode?.(object ?? new Uint8Array([])));
     }
 
     //
     reject(e: Error | unknown): unknown { throw e; }
 
-    //
+    // @ts-ignore "DOM isn't recognized"
     waitAuto(timeout = 1000): unknown { return (self?.document ? this.waitAsync(timeout) : this.waitSync(timeout)); }
     waitSync(timeout = 1000): unknown { const result = this.$waitSync(timeout); return result ? cbor.decode(result) : null; }
     waitAsync(timeout = 1000): unknown {
         const result = this.$promised(timeout);
         return doOnlyAfterResolve(result, (bin: unknown|Uint8Array)=>{
-            return bin ? cbor.decode(bin) : null;
+            return bin ? cbor.decode(bin as Uint8Array) : null;
         });
     }
 

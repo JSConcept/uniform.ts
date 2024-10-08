@@ -6,7 +6,8 @@ import TypeDetector from "./TypeDetector.ts";
 import {$data} from "../Instruction/InstructionType.ts"
 import UniversalHandler from "../Handlers/UniversalHandler.ts";
 import { doOnlyAfterResolve } from "../Instruction/Defer.ts";
- 
+import { isPromise } from "../Instruction/Defer.ts";
+
 //
 export default class PreCoding {
     $encoder = new Map<string, (organic: boolean, target: unknown, transfer: unknown[])=>boolean>();
@@ -22,7 +23,7 @@ export default class PreCoding {
             ["array", (organic: boolean, target: unknown, transfer: unknown[] = [])=>{
                 if (!organic) {
                     const encoded = Array.from((target as []) ||[]).map((e)=>this.encode(e, transfer));
-                    return (encoded.some((e)=>(e instanceof Promise || typeof e?.then == "function"))) ? Promise.all(encoded) : encoded;
+                    return encoded.some(isPromise) ? Promise.all(encoded) : encoded;
                 }
                 return target;
             }],
@@ -67,7 +68,7 @@ export default class PreCoding {
 
             //
             ["reference", (organic: boolean, target: unknown, _transfer: unknown[] = [])=>{
-                if (!organic || target?.[$data]) {
+                if (!organic || (target as any)?.[$data]) {
                     const meta = {
                         "@type": "reference",
                         "@uuid": this.$memoryPool.add(target as any, extract(target)?.["@uuid"], !organic)
@@ -83,7 +84,7 @@ export default class PreCoding {
             ["array", (organic: boolean, target: unknown, transfer: unknown[] = [])=>{
                 if (!organic) {
                     const decoded = Array.from(target as []).map((e)=>this.decode(e, transfer));
-                    return (decoded.some((e)=>e instanceof Promise || typeof e?.then == "function")) ? Promise.all(decoded) : decoded;
+                    return decoded.some(isPromise) ? Promise.all(decoded) : decoded;
                 }
                 // unusual
                 return target;

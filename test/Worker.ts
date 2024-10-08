@@ -23,11 +23,11 @@ class Tungst {
 const regrets = new ArrayBuffer(64);
 const workerAction = async ()=>{
     //
-    const transferCheck = Remote.access("transferCheck");
+    const transferCheck = Remote.access("transferCheck") as ((_: ArrayBuffer|unknown)=>unknown)|null;
 
     // (sending as argument, unusual here)
     const bravery = new ArrayBuffer(64);
-    await transferCheck(Remote.transfer("bravery", bravery));
+    await transferCheck?.(Remote.transfer("bravery", bravery));
 
     // should to be detached
     console.warn(bravery);

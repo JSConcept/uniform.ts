@@ -25,6 +25,8 @@ export default class DataHandler {
         //
         try {
             //return bindCtx(Reflect?.[cmd]?.(ref, ...args), ref);
+
+            // @ts-ignore "no-idea"
             return Reflect?.[cmd]?.(ref, ...args);
         } catch(e) {
             const err = e as Error;

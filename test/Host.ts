@@ -9,7 +9,7 @@ await Host.initialize();
 const transferCheck = (ab: any)=>{ console.log(ab); };
 const hostAction = async ()=>{
     //
-    const Tungst = Host.access("Tungst");
+    const Tungst: any = Host.access("Tungst");
     console.log(await Tungst.lab);
 
     //
@@ -31,8 +31,8 @@ Host.register(hostAction, "hostAction");
 await Host.sync();
 
 //
-const workerAction = await Host.access("workerAction");
+const workerAction = (await Host.access("workerAction")) as (()=>unknown)|null;
 
 //
 await hostAction();
-await workerAction();
+await workerAction?.();

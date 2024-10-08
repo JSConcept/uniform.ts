@@ -17,13 +17,13 @@ export const bindCtx = (gt: any, ref: any|null = null)=>{
 
 //
 export const isPromise = (target: unknown|Promise<unknown>)=>{
-    return target instanceof Promise || target?.then != null || typeof target?.then == "function";
+    return target instanceof Promise || (target as any)?.then != null && typeof (target as any)?.then == "function";
 }
 
 //
 export const doOnlyAfterResolve = (meta: unknown|Promise<unknown>, cb: (u: unknown|any)=>unknown): unknown => {
     if (isPromise(meta)) {
-        return meta?.then?.(cb) ?? cb(meta);
+        return (meta as any)?.then?.(cb) ?? cb(meta);
     }
     if (meta instanceof SharedChannel) {
         return doOnlyAfterResolve(meta?.waitAuto?.(), cb);
@@ -34,7 +34,7 @@ export const doOnlyAfterResolve = (meta: unknown|Promise<unknown>, cb: (u: unkno
 //
 export const wrapWeakMap = new WeakMap([]);
 export const wrapMeta = (meta: unknown, handler: UniversalHandler | DataHandler | RemoteReferenceHandler | null = null)=>{
-    const wrap = (!meta?.[$data]) ? (new Proxy(MakeReference(meta), new ObjectProxy(handler || new UniversalHandler()))) : meta;
+    const wrap = (!(meta as any)?.[$data]) ? (new Proxy(MakeReference(meta), new ObjectProxy(handler || new UniversalHandler()))) : meta;
     doOnlyAfterResolve(meta, ($m)=>{
         if ($m) { doOnlyAfterResolve(wrap, (w)=>{
             if (w != null && (typeof w == "object" || typeof w == "function")) {

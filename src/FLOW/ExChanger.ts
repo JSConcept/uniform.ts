@@ -56,7 +56,7 @@ export default class ExChanger {
     $sync() { return this.#flow?.sync?.(); }
     $request(cmd: string, meta: unknown, args : unknown[]) {
         const transfer: unknown[] = [];
-        const encoded = this.#coder?.encode([cmd, meta, ...args], transfer);
+        const encoded = this.#coder?.encode([cmd, meta, ...args], transfer) as any[];
         const result = this.#flow?.callTask?.(encoded, transfer);
         const coded = doOnlyAfterResolve(result, (res)=>this.#coder?.decode?.(res, transfer));
 
@@ -91,7 +91,7 @@ export default class ExChanger {
     }
 
     //
-    transfer(name = "", node: any | null = null) {
+    transfer<T extends unknown>(name = "", node: T | null = null): T {
         let result = null;
         if (node != null) {
             result = this.$request("access", {"@uuid": name, "@type": "transfer", "@node": node}, []);
@@ -99,6 +99,6 @@ export default class ExChanger {
             result = this.$request("transfer", {"@uuid": name, "@type": "reference"}, []);
         }
         //this.#flow?.sync?.();
-        return result;
+        return result as T;
     }
 }

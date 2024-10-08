@@ -1,5 +1,5 @@
 // deno-lint-ignore-file no-explicit-any
-import { extract } from "../Instruction/Defer.ts";
+import { extract, isPromise } from "../Instruction/Defer.ts";
 
 //
 export default class TypeDetector {
@@ -36,7 +36,7 @@ export default class TypeDetector {
 
             //
             ["promise", (a: unknown|Promise<unknown>): boolean=>{
-                const valid = (a instanceof Promise || typeof a?.then == "function");
+                const valid = isPromise(a);
                 if (valid) {
                     console.warn("Potentially invalid type");
                     console.trace(a);
