@@ -1,17 +1,8 @@
 // deno-lint-ignore-file no-explicit-any
 import ObjectProxy from "../Instruction/ObjectProxy.ts";
 import { $data, MakeReference} from "../Instruction/InstructionType.ts"
-import { isPromise } from "../Instruction/Defer.ts";
+import { isPromise, bindCtx } from "../Instruction/Defer.ts";
 import DataHandler from "./DataHandler.ts";
-
-//
-export const bindCtx = (gt: any, ref: any|null = null)=>{
-    if (typeof gt == "function" && typeof gt?.bind == "function" && (typeof ref == "object" || typeof ref == "function")) {
-        // may be organic or context detached
-        return gt?.bind?.(ref) ?? gt;
-    }
-    return gt;
-}
 
 //
 export default class PromiseHandler extends DataHandler {

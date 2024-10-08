@@ -2,15 +2,6 @@
 import { extract } from "../Instruction/Defer.ts";
 
 //
-export const bindCtx = (gt: any, ref: any|null = null)=>{
-    if (typeof gt == "function" && typeof gt?.bind == "function" && (typeof ref == "object" || typeof ref == "function")) {
-        // may be organic or context detached
-        return gt?.bind?.(ref) ?? gt;
-    }
-    return gt;
-}
-
-//
 export default class DataHandler {
     constructor() {
     }

@@ -4,8 +4,8 @@ import { doOnlyAfterResolve } from "../Instruction/Defer.ts";
 
 //
 export const $coders      = new PreCoding();
-export const $memoryPool  = $coders.memoryPool;
-export const $dataHandler = $coders.handler;
+export const $memoryPool  = $coders.$memoryPool;
+export const $dataHandler = $coders.$handler;
 
 //
 export const $handler = (command: any) => {

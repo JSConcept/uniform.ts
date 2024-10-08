@@ -7,6 +7,15 @@ import { $data, MakeReference } from "./InstructionType.ts";
 import ObjectProxy from "./ObjectProxy.ts";
 
 //
+export const bindCtx = (gt: any, ref: any|null = null)=>{
+    if (typeof gt == "function" && typeof gt?.bind == "function" && (typeof ref == "object" || typeof ref == "function")) {
+        // may be organic or context detached
+        return gt?.bind?.(ref) ?? gt;
+    }
+    return gt;
+}
+
+//
 export const isPromise = (target: unknown|Promise<unknown>)=>{
     return target instanceof Promise && typeof target?.then == "function" && target?.then != null;
 }
