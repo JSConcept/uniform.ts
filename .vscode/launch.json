@@ -32,7 +32,8 @@
             "url": "http://localhost:5173/",
             "webRoot": "${workspaceFolder}",
             "port": 9222,
-            "runtimeExecutable": "/usr/bin/yandex-browser-stable",
+            //"runtimeExecutable": "/usr/bin/yandex-browser-stable",
+            "runtimeExecutable": "/usr/bin/google-chrome-stable",
             "runtimeArgs": ["--headless", "--disable-gpu", "--remote-debugging-port=9222"]
         }
     ]
