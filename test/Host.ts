@@ -5,10 +5,8 @@ import ExChanger from "../src/FLOW/ExChanger.ts";
 const isWorker = typeof Worker == "undefined" || typeof WorkerGlobalScope != 'undefined' && self instanceof WorkerGlobalScope;
 const testWorker = !isWorker ? new Worker(new URL("./Worker.ts", import.meta.url).href, {type: "module"}) : self;
 
-//
+// initialize ex-changer
 export const Host = new ExChanger(testWorker)
-
-
 await Host.initialize();
 
 //
@@ -22,8 +20,8 @@ const hostAction = async ()=>{
     const tgn = (new Tungst());
     await tgn?.callback?.(6);
 
-    //
-    console.log(await Host.transfer("regrets"));
+    // get arrayBuffer from registry
+    console.log(await Host.doTransfer("regrets"));
 }
 
 //

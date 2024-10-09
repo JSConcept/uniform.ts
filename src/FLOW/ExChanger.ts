@@ -1,4 +1,5 @@
-// deno-lint-ignore-file no-explicit-any
+// deno-lint-ignore-file no-explicit-any ban-types
+import { UUIDv4 } from './../Utils/UUIDMap.ts';
 import UniversalHandler from "../Handlers/UniversalHandler.ts";
 import FLOW, { type WorkerContext } from "./FLOW.ts";
 import RemoteReferenceHandler from "../Handlers/RemotePool.ts";
@@ -6,11 +7,12 @@ import ObjectPoolMemberHandler from "../Handlers/ObjectPool.ts";
 import DataHandler from "../Handlers/DataHandler.ts";
 import UUIDMap from "../Utils/UUIDMap.ts";
 import PreCoding from "../PreCoding/PreCoding.ts";
-import { doOnlyAfterResolve, isPromise } from "../Instruction/Defer.ts";
+import { doOnlyAfterResolve, extract, isPromise } from "../Instruction/Defer.ts";
 import { MakeReference} from "../Instruction/InstructionType.ts"
 import PromiseHandler from "../Handlers/PromiseHandler.ts";
 import ObjectProxy, { IWrap } from "../Instruction/ObjectProxy.ts";
 import ORG from "../Instruction/InstructionType.ts";
+import { IMeta } from "../Instruction/ObjectProxy.ts";
 
 //
 export default class ExChanger {
@@ -49,12 +51,9 @@ export default class ExChanger {
     }
 
     //
-    get $imports() {
-        return this.#flow?.$imports || {};
-    }
-
-    //
-    $sync() { return this.#flow?.sync?.(); }
+    get $imports() { return this.#flow?.$imports || {}; }
+    get $sync() { return this.#flow?.sync?.(); }
+    async sync() { await this.$sync; return this; }
 
     //
     $request<T extends unknown>(cmd: string, meta: unknown, args : unknown[]): IWrap<T>|null {
@@ -82,10 +81,7 @@ export default class ExChanger {
     $importToSelf(module: unknown) { return this.#flow?.importToSelf(module); }
 
     //
-    async sync() { await this.$sync(); return this; }
-
-    //
-    register(object: any, name = ""): string | null {
+    register<T extends object|Function>(object: T, name = ""): string | null {
         const uuid = this.#memoryPool?.add?.(object, name);
         //this.#flow?.sync?.();
         return uuid||"";
@@ -98,13 +94,23 @@ export default class ExChanger {
         return com;
     }
 
-    //
-    transfer<T extends unknown>(name = "", node: T | null = null): IWrap<T> {
+    // lazy transfer (for passing as arguments)
+    transfer<T extends unknown>(node: T | null = null, uuid: string ="") {
+        if (this.#handler) {
+            return new Proxy(MakeReference({[ORG.uuid]: uuid||UUIDv4(), [ORG.type]: "transfer", [ORG.node]: node}), new ObjectProxy(this.#handler));
+        }
+        return null;
+    }
+
+    // transfer from remote to host, or transfer actively
+    doTransfer<T extends unknown>(name: string|IMeta|IWrap<IMeta> = "", node: T | null = null): IWrap<T> {
         let result = null;
         if (node != null) {
-            result = this.$request("access", {[ORG.uuid]: name, [ORG.type]: "transfer", [ORG.node]: node}, []);
+            // active transfer
+            result = this.$request("access", {[ORG.uuid]: name||UUIDv4(), [ORG.type]: "transfer", [ORG.node]: (extract(node) as IMeta)?.[ORG.node]??node}, []);
         } else {
-            result = this.$request("transfer", {[ORG.uuid]: name, [ORG.type]: "reference"}, []);
+            // also you can do it with wrapped already (i.e. getting)
+            result = this.$request("transfer", {[ORG.uuid]: name||(extract(node) as IMeta)?.[ORG.uuid]||UUIDv4(), [ORG.type]: "reference"}, []);
         }
         //this.#flow?.sync?.();
         return result as IWrap<T>;

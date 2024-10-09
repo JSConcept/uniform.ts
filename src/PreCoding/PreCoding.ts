@@ -9,6 +9,11 @@ import { isPromise } from "../Instruction/Defer.ts";
 import ORG from "../Instruction/InstructionType.ts";
 import { IMeta } from "../Instruction/ObjectProxy.ts";
 
+// mediator
+export const hasMemoryBuffer = (target: any)=>{
+    return (target as any)?.buffer instanceof ArrayBuffer || (typeof SharedArrayBuffer != "undefined" && (target as any)?.buffer instanceof SharedArrayBuffer);
+}
+
 //
 export default class PreCoding {
     $encoder = new Map<string, (organic: boolean, target: unknown, transfer: unknown[])=>unknown>();
@@ -35,7 +40,9 @@ export default class PreCoding {
                     // non-organic just to transfer
                     if (transfer?.indexOf?.(target) < 0 && target != null) {
                         this.$memoryPool.delete(target);
-                        transfer?.push?.(target);
+
+                        // if is typed arrays, they also can be transferred by their buffers
+                        transfer?.push?.(hasMemoryBuffer(target) ? ((target as any)?.buffer ?? target) : target);
                     };
                 } else {
                     // transfers only when is exists
@@ -54,7 +61,7 @@ export default class PreCoding {
                         // add to transfer list
                         if (transfer?.indexOf?.(node) < 0) {
                             this.$memoryPool.delete(node);
-                            transfer?.push?.(node);
+                            transfer?.push?.(hasMemoryBuffer(node) ? ((node as any)?.buffer ?? node) : node);
                         }
 
                         //

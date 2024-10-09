@@ -1,6 +1,6 @@
 import ExChanger from "../src/FLOW/ExChanger.ts";
 
-//
+// initialize ex-changer
 export const Remote = new ExChanger(self);
 await Remote.initialize();
 
@@ -27,7 +27,7 @@ const workerAction = async ()=>{
 
     // (sending as argument, unusual here)
     const bravery = new ArrayBuffer(64);
-    await transferCheck?.(Remote.transfer("bravery", bravery));
+    await transferCheck?.(Remote.transfer(bravery));
 
     // should to be detached
     console.warn(bravery);

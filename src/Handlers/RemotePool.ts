@@ -5,6 +5,9 @@ import { extract } from "../Instruction/Defer.ts";
 import ORG from "../Instruction/InstructionType.ts";
 
 //
+export const isSymbol = (sym: unknown)=>(typeof sym ==='symbol' || typeof sym == 'object' && Object.prototype.toString.call(sym) == '[object Symbol]');
+export const FORBIDDEN_KEYS = new Set(["bind", "toString", "then", "catch", "finally"]);
+export const META_KEYS = new Set(Array.from(Object.keys(ORG)));
 export default class RemoteReferenceHandler extends DataHandler {
     #exChanger: ExChanger|null;
 
@@ -17,21 +20,15 @@ export default class RemoteReferenceHandler extends DataHandler {
     //
     $data(t: unknown) { return extract(t); }
     $handle(cmd: string, meta: unknown, ...args: unknown[]) {
-        if (cmd == "get" && args[0] == ORG.data) {
-            return this.$data(meta);
-        };
+        // return meta as is
+        if (cmd == "get" && args[0] == ORG.data) { return this.$data(meta); };
 
-        //
-        if (cmd == "get" &&
-            (
-            typeof args[0] === 'symbol' || typeof args[0] === 'object' && Object.prototype.toString.call(args[0]) === '[object Symbol]' ||
-            ["bind", "toString", "then", "catch", "finally"].indexOf(args?.[0] as any) >= 0 ||
-            // @ts-ignore "no valid type"
-            new Set(Array.from(Object.keys(ORG))).has(args?.[0])
-        )
-        ) {
-            return null;
-        }
+        // forbidden actions
+        if (cmd == "get" && (
+            isSymbol(args?.[0]) ||
+            FORBIDDEN_KEYS.has(args?.[0] as string) || 
+            META_KEYS?.has?.(args?.[0] as string)
+        )) { return null; };
 
         //
         return this.#exChanger?.$request(cmd, meta, args);
