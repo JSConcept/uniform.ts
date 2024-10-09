@@ -12,6 +12,7 @@
       "npm:rimraf@^5.0.7": "npm:rimraf@5.0.10",
       "npm:sass@^1.77.6": "npm:sass@1.79.4",
       "npm:typescript@^5.5.3": "npm:typescript@5.6.2",
+      "npm:vite-plugin-dynamic-import@^1.6.0": "npm:vite-plugin-dynamic-import@1.6.0",
       "npm:vite@^5.4.8": "npm:vite@5.4.8_@types+node@18.16.19_sass@1.79.4"
     },
     "npm": {
@@ -293,6 +294,10 @@
           "wrap-ansi": "wrap-ansi@8.1.0",
           "wrap-ansi-cjs": "wrap-ansi@7.0.0"
         }
+      },
+      "@jridgewell/sourcemap-codec@1.5.0": {
+        "integrity": "sha512-gv3ZRaISU3fjPAgNsriBRqGWQL6quFx04YMPW/zD8XMLsU32mhCCbfbO6KZFLjvYpCZ8zyDEgqsgf+PwPaM7GQ==",
+        "dependencies": {}
       },
       "@nodelib/fs.scandir@2.1.5": {
         "integrity": "sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==",
@@ -1988,6 +1993,12 @@
         "integrity": "sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ==",
         "dependencies": {}
       },
+      "magic-string@0.30.11": {
+        "integrity": "sha512-+Wri9p0QHMy+545hKww7YAu5NyzF8iomPL/RQazugQ9+Ez4Ic3mERMd8ZTX5rfK944j+560ZJi8iAwgak1Ac7A==",
+        "dependencies": {
+          "@jridgewell/sourcemap-codec": "@jridgewell/sourcemap-codec@1.5.0"
+        }
+      },
       "merge2@1.4.1": {
         "integrity": "sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg==",
         "dependencies": {}
@@ -2759,6 +2770,15 @@
           "spdx-expression-parse": "spdx-expression-parse@3.0.1"
         }
       },
+      "vite-plugin-dynamic-import@1.6.0": {
+        "integrity": "sha512-TM0sz70wfzTIo9YCxVFwS8OA9lNREsh+0vMHGSkWDTZ7bgd1Yjs5RV8EgB634l/91IsXJReg0xtmuQqP0mf+rg==",
+        "dependencies": {
+          "acorn": "acorn@8.12.1",
+          "es-module-lexer": "es-module-lexer@1.5.4",
+          "fast-glob": "fast-glob@3.3.2",
+          "magic-string": "magic-string@0.30.11"
+        }
+      },
       "vite@5.4.8_@types+node@18.16.19_sass@1.79.4": {
         "integrity": "sha512-FqrItQ4DT1NC4zCUqMB4c4AZORMKIa0m8/URVCZ77OZ/QSNeJ54bU1vrFADbDsuwfIPcgknRkmqakQcgnL4GiQ==",
         "dependencies": {
@@ -2866,6 +2886,7 @@
         "npm:rimraf@^5.0.7",
         "npm:sass@^1.77.6",
         "npm:typescript@^5.5.3",
+        "npm:vite-plugin-dynamic-import@^1.6.0",
         "npm:vite@^5.4.8"
       ]
     }

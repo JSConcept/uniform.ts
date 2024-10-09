@@ -34,6 +34,9 @@ export const doOnlyAfterResolve = (meta: unknown|Promise<unknown>, cb: (u: unkno
 //
 export const wrapWeakMap = new WeakMap([]);
 export const wrapMeta = (meta: unknown, handler: UniversalHandler | DataHandler | RemoteReferenceHandler | null = null)=>{
+    if (!(typeof meta == "object" || typeof meta == "function")) return meta;
+
+    //
     const wrap = (!(meta as any)?.[$data]) ? (new Proxy(MakeReference(meta), new ObjectProxy(handler || new UniversalHandler()))) : meta;
     doOnlyAfterResolve(meta, ($m)=>{
         if ($m) { doOnlyAfterResolve(wrap, (w)=>{
