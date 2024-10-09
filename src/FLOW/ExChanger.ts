@@ -116,12 +116,21 @@ export default class ExChanger {
 
     // transfer from remote to host, or transfer actively (default is getter, setter/sender when has node argument)
     doTransfer<T extends unknown>(name: string|IMeta|IWrap<IMeta> = "", node: T | null = null): IWrap<T> {
-        let result = null;
+        let result = node as (IWrap<T>|null);
+
+        // @ts-ignore "sometimes, may got new UUID, or exists"
+        const esm: IMeta = (extract(name) as IMeta);
 
         // also you can do it with wrapped already (i.e. getting)
         const meta: IMeta = (extract(node) as IMeta);
-        const uuid: string = (name||meta?.[ORG.uuid]||UUIDv4()) as string;
-        const real: T = meta?.[ORG.node]??hold(this.#memoryPool?.get?.(uuid))??node;
+        const uuid: string = (esm?.[ORG.uuid]||name||meta?.[ORG.uuid]||UUIDv4()||"") as string;
+        const real: T = meta?.[ORG.node]??hold(this.#memoryPool?.get?.(uuid))??node??esm?.[ORG.node];
+
+        // @ts-ignore "make meta uuid equal"
+        if (esm  != null) {  esm[ORG.uuid] = (uuid||"") as string; }; // assign uuid to meta
+
+        // @ts-ignore "make meta uuid equal"
+        if (meta != null) { meta[ORG.uuid] = (uuid||"") as string; }; // assign uuid to meta
 
         // don't needs to transfer from remote
         if (!node && real) { return real as IWrap<T>; };
@@ -136,10 +145,10 @@ export default class ExChanger {
             }, []);
         } else {
             // access transfer by key from remote
-            result = this.$request("transfer", {
+            result = this.$request("transfer", (esm ?? {
                 [ORG.type]: "reference",
                 [ORG.uuid]: uuid
-            }, []);
+            }), []);
         }
 
         //this.#flow?.sync?.();
