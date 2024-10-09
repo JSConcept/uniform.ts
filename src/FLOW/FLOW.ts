@@ -2,10 +2,10 @@
 import { doOnlyAfterResolve } from "../Instruction/Defer.ts";
 import PromiseStack from '../Utils/PromiseStack.ts';
 
-//
+// @ts-ignore "mixed context"
 const isWorker = typeof Worker == "undefined" || typeof WorkerGlobalScope != 'undefined' && self instanceof WorkerGlobalScope;
 
-// @ts-ignore
+// @ts-ignore "mixed context"
 export type WorkerContext = Worker | WorkerGlobalScope;
 
 // FLOW - is web worker library core (low-level)...
@@ -19,7 +19,7 @@ export default class FLOW {
         worker: WorkerContext | null = null,
         promiseStack: PromiseStack<unknown> = new PromiseStack<unknown>()
     ) {
-        //
+        // @ts-ignore "mixed context"
         const defaultWorker = !worker ? (!isWorker ? new Worker(new URL("./ExChangerUnit.ts", import.meta.url).href, {type: "module"}) : self) : null;
 
         //

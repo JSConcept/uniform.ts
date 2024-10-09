@@ -1,5 +1,6 @@
 // deno-lint-ignore-file no-explicit-any
 import { extract, isPromise } from "../Instruction/Defer.ts";
+import ORG from "../Instruction/InstructionType.ts";
 
 //
 export default class TypeDetector {
@@ -61,8 +62,8 @@ export default class TypeDetector {
     detectType(data: unknown, transfer: unknown[] = []) {
         // are data meta type, skip definition
         const organic = extract(data);
-        if (organic?.["@type"]) {
-            return [true, organic?.["@type"]];
+        if (organic?.[ORG.type]) {
+            return [true, organic?.[ORG.type]];
         } else
 
         //

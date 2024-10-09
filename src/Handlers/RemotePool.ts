@@ -1,8 +1,8 @@
 // deno-lint-ignore-file no-explicit-any
 import ExChanger from "../FLOW/ExChanger.ts";
 import DataHandler from "./DataHandler.ts";
-import {$data} from "../Instruction/InstructionType.ts"
 import { extract } from "../Instruction/Defer.ts";
+import ORG from "../Instruction/InstructionType.ts";
 
 //
 export default class RemoteReferenceHandler extends DataHandler {
@@ -17,19 +17,18 @@ export default class RemoteReferenceHandler extends DataHandler {
     //
     $data(t: unknown) { return extract(t); }
     $handle(cmd: string, meta: unknown, ...args: unknown[]) {
-        if (cmd == "get" && args[0] == $data) {
+        if (cmd == "get" && args[0] == ORG.data) {
             return this.$data(meta);
         };
 
         //
         if (cmd == "get" &&
-            (typeof args[0] === 'symbol' || typeof args[0] === 'object' && Object.prototype.toString.call(args[0]) === '[object Symbol]') ||
-            [
-                "bind", "toString", // system accessors are forbidden!
-
-                "then", "catch", "finally", // promise forbidden
-                "@uuid", "@type", "@payload", "@node", $data // organic forbidden
-            ].indexOf(args?.[0] as any) >= 0
+            (
+            typeof args[0] === 'symbol' || typeof args[0] === 'object' && Object.prototype.toString.call(args[0]) === '[object Symbol]' ||
+            ["bind", "toString", "then", "catch", "finally"].indexOf(args?.[0] as any) >= 0 ||
+            // @ts-ignore "no valid type"
+            new Set(Array.from(Object.keys(ORG))).has(args?.[0])
+        )
         ) {
             return null;
         }

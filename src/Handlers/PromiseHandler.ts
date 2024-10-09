@@ -1,8 +1,9 @@
 // deno-lint-ignore-file no-explicit-any
 import ObjectProxy from "../Instruction/ObjectProxy.ts";
-import { $data, MakeReference} from "../Instruction/InstructionType.ts"
+import { MakeReference} from "../Instruction/InstructionType.ts"
 import { isPromise, bindCtx, doOnlyAfterResolve } from "../Instruction/Defer.ts";
 import DataHandler from "./DataHandler.ts";
+import ORG from "../Instruction/InstructionType.ts";
 
 //
 export default class PromiseHandler extends DataHandler {
@@ -10,7 +11,7 @@ export default class PromiseHandler extends DataHandler {
 
     //
     $data(target: unknown|Promise<unknown>) {
-        return (isPromise((target as any)?.[$data]) ? (target as any)?.[$data] : target) ?? target;
+        return (isPromise((target as any)?.[ORG.data]) ? (target as any)?.[ORG.data] : target) ?? target;
     }
 
     //
@@ -30,8 +31,8 @@ export default class PromiseHandler extends DataHandler {
     $handle(cmd: string, meta: unknown, ...args: unknown[]) {
         //
         const data = this.$data(meta);
-        if (cmd == "get" && ["then", "catch", "finally", $data].indexOf((args as any[])?.[0]) >= 0) {
-            if (args[0] == $data) { return this.$wrapPromise(data); }
+        if (cmd == "get" && ["then", "catch", "finally", ORG.data].indexOf((args as any[])?.[0]) >= 0) {
+            if (args[0] == ORG.data) { return this.$wrapPromise(data); }
             if (data == null || (typeof data != "object" && typeof data != "function")) { return data; };
 
             // @ts-ignore "no idea"

@@ -2,6 +2,7 @@
 import UUIDMap, {hold} from "../Utils/UUIDMap.ts";
 import DataHandler from "./DataHandler.ts";
 import { extract } from "../Instruction/Defer.ts";
+import ORG from "../Instruction/InstructionType.ts";
 
 //
 export default class ObjectPoolMemberHandler extends DataHandler {
@@ -17,7 +18,7 @@ export default class ObjectPoolMemberHandler extends DataHandler {
     $data(t: unknown|string|null): any {
         return super.$data((()=>{
             const wrap = extract(t) ?? t;
-            const uuid = wrap?.["@uuid"] ?? wrap;
+            const uuid = wrap?.[ORG.uuid] ?? wrap;
             if (typeof uuid == "string") {
                 const weak: any = this.#memoryPool?.get(uuid);
                 return hold(weak) ?? t;
@@ -29,7 +30,7 @@ export default class ObjectPoolMemberHandler extends DataHandler {
     //
     $get(t: unknown|string|null): any {
         const wrap = extract(t) ?? t;
-        const uuid = wrap?.["@uuid"] ?? wrap;
+        const uuid = wrap?.[ORG.uuid] ?? wrap;
         if (typeof uuid == "string") {
             const weak: any = this.#memoryPool?.get(uuid);
             return hold(weak) ?? null;

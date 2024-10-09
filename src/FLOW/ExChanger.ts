@@ -10,6 +10,7 @@ import { doOnlyAfterResolve, isPromise } from "../Instruction/Defer.ts";
 import { MakeReference} from "../Instruction/InstructionType.ts"
 import PromiseHandler from "../Handlers/PromiseHandler.ts";
 import ObjectProxy from "../Instruction/ObjectProxy.ts";
+import ORG from "../Instruction/InstructionType.ts";
 
 //
 export default class ExChanger {
@@ -71,7 +72,7 @@ export default class ExChanger {
 
     //
     //unwrap(obj) { return obj?.[$data] ?? obj; }
-    //local(name) { return wrapMeta({"@uuid": name, "@type": "reference"}, this.#handler); }
+    //local(name) { return wrapMeta({ORG.uuid: name, ORG.type: "reference"}, this.#handler); }
 
     //
     $importToUnit(source: string) { return this.#flow?.importToUnit(source); }
@@ -89,7 +90,7 @@ export default class ExChanger {
 
     //
     access(name = "") {
-        const com = this.$request("access", {"@uuid": name, "@type": "reference"}, []);
+        const com = this.$request("access", {[ORG.uuid]: name, [ORG.type]: "reference"}, []);
         //this.#flow?.sync?.();
         return com;
     }
@@ -98,9 +99,9 @@ export default class ExChanger {
     transfer<T extends unknown>(name = "", node: T | null = null): T {
         let result = null;
         if (node != null) {
-            result = this.$request("access", {"@uuid": name, "@type": "transfer", "@node": node}, []);
+            result = this.$request("access", {[ORG.uuid]: name, [ORG.type]: "transfer", [ORG.node]: node}, []);
         } else {
-            result = this.$request("transfer", {"@uuid": name, "@type": "reference"}, []);
+            result = this.$request("transfer", {[ORG.uuid]: name, [ORG.type]: "reference"}, []);
         }
         //this.#flow?.sync?.();
         return result as T;

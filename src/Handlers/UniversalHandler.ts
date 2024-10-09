@@ -1,7 +1,7 @@
 // deno-lint-ignore-file no-explicit-any
 import DataHandler from "./DataHandler.ts";
 import { extract, isPromise } from "../Instruction/Defer.ts";
-import { $data } from "../Instruction/InstructionType.ts"
+import ORG from "../Instruction/InstructionType.ts";
 
 //
 export default class UniversalHandler extends DataHandler {
@@ -21,12 +21,12 @@ export default class UniversalHandler extends DataHandler {
     $handle(cmd = "access", t: any, ...args: unknown[]) {
         //
         let htp = "direct";
-        if (isPromise(t?.[$data] ?? t)) 
+        if (isPromise(t?.[ORG.data] ?? t)) 
             { htp = "promise"; } else
             {
                 const meta = extract(t), local = this.$get(meta);
-                if (typeof meta?.["@type"] == "string") { htp = "local"; }
-                if (typeof meta?.["@uuid"] == "string" && !(local && extract(local)?.["@uuid"] != meta?.["@uuid"])) { htp = "remote"; }
+                if (typeof meta?.[ORG.type] == "string") { htp = "local"; }
+                if (typeof meta?.[ORG.uuid] == "string" && !(local && extract(local)?.[ORG.uuid] != meta?.[ORG.uuid])) { htp = "remote"; }
             }
 
         //

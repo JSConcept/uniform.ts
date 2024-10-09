@@ -1,5 +1,6 @@
 // deno-lint-ignore-file no-explicit-any
 import { extract } from "../Instruction/Defer.ts";
+import ORG from "../Instruction/InstructionType.ts";
 
 //
 export default class DataHandler {
@@ -19,7 +20,7 @@ export default class DataHandler {
         if (cmd == "transfer") {
             // sometimes, `@uuid` may already is known from memory pool
             const wrap = extract(meta);
-            return {"@type": "transfer", "@node": ref, "@uuid": wrap?.["@uuid"] ?? ""}
+            return {[ORG.type]: "transfer", [ORG.node]: ref, [ORG.uuid]: wrap?.[ORG.uuid] ?? ""}
         };
 
         //

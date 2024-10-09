@@ -2,9 +2,9 @@
  * Any message will contains:
  * {
  *   "@ID": "@UUIDv4",
- *   "@type": ["request"|"response"],
+ *   ORG.type: ["request"|"response"],
  *   "@cmd": ["access", "get", "set", "apply", "construct", "deleteProperty", "has"]
- *   "@payload": [...'@payloadType'],
+ *   ORG.payload: [...'@payloadType'],
  *   "@result": '@payloadType' // will resolved into any promise
  * }
  */

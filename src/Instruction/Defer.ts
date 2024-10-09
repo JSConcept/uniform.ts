@@ -3,8 +3,9 @@ import DataHandler from "../Handlers/DataHandler.ts";
 import RemoteReferenceHandler from "../Handlers/RemotePool.ts";
 import UniversalHandler from "../Handlers/UniversalHandler.ts";
 import SharedChannel from "../Utils/SharedChannel.ts";
-import { $data, MakeReference } from "./InstructionType.ts";
+import { MakeReference } from "./InstructionType.ts";
 import ObjectProxy from "./ObjectProxy.ts";
+import ORG from "../Instruction/InstructionType.ts";
 
 //
 export const bindCtx = (gt: any, ref: any|null = null)=>{
@@ -37,13 +38,13 @@ export const wrapMeta = (meta: unknown, handler: UniversalHandler | DataHandler 
     if (!(typeof meta == "object" || typeof meta == "function")) return meta;
 
     //
-    const wrap = (!(meta as any)?.[$data]) ? (new Proxy(MakeReference(meta), new ObjectProxy(handler || new UniversalHandler()))) : meta;
+    const wrap = (!(meta as any)?.[ORG.data]) ? (new Proxy(MakeReference(meta), new ObjectProxy(handler || new UniversalHandler()))) : meta;
     doOnlyAfterResolve(meta, ($m)=>{
         if ($m) { doOnlyAfterResolve(wrap, (w)=>{
             if (w != null && (typeof w == "object" || typeof w == "function")) {
                 const organic = wrapWeakMap.get(w) ?? w;
-                const pt = organic?.[$data] ?? organic;
-                if (pt?.["@uuid"]||pt?.["@type"]) { wrapWeakMap.set(w, pt); };
+                const pt = organic?.[ORG.data] ?? organic;
+                if (pt?.[ORG.uuid]||pt?.[ORG.type]) { wrapWeakMap.set(w, pt); };
             }
         }); };
     });
@@ -53,9 +54,9 @@ export const wrapMeta = (meta: unknown, handler: UniversalHandler | DataHandler 
 //
 export const prepare = (w: unknown): any => {
     return doOnlyAfterResolve(w, (wrap: any)=>{
-        if (wrap?.[$data]) return wrap?.[$data];
+        if (wrap?.[ORG.data]) return wrap?.[ORG.data];
         const organic = wrapWeakMap.get(wrap) ?? wrap;
-        return organic?.[$data] ?? organic;
+        return organic?.[ORG.data] ?? organic;
     });
 }
 
@@ -63,7 +64,7 @@ export const prepare = (w: unknown): any => {
 export const redirect = (w: unknown): any =>{
     return doOnlyAfterResolve(w, (wrap: any)=>{
         const pt = prepare(wrap);
-        return ((pt?.["@uuid"]||pt?.["@type"]) as string|null)?pt:null;
+        return ((pt?.[ORG.uuid]||pt?.[ORG.type]) as string|null)?pt:null;
     });
 }
 
@@ -71,6 +72,6 @@ export const redirect = (w: unknown): any =>{
 export const extract = (w: unknown): any =>{
     return doOnlyAfterResolve(w, (wrap: any)=>{
         const pt = prepare(wrap);
-        return ((pt?.["@uuid"]||pt?.["@type"] as string|null))?pt:null;
+        return ((pt?.[ORG.uuid]||pt?.[ORG.type] as string|null))?pt:null;
     });
 }
