@@ -2,7 +2,13 @@
 import ExChanger from "../src/FLOW/ExChanger.ts";
 
 //
-export const Host = new ExChanger(new Worker(new URL("./Worker.ts", import.meta.url).href, {type: "module"}))
+const isWorker = typeof Worker == "undefined" || typeof WorkerGlobalScope != 'undefined' && self instanceof WorkerGlobalScope;
+const testWorker = !isWorker ? new Worker(new URL("./Worker.ts", import.meta.url).href, {type: "module"}) : self;
+
+//
+export const Host = new ExChanger(testWorker)
+
+
 await Host.initialize();
 
 //

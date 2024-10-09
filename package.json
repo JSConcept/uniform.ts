@@ -1,17 +1,24 @@
 {
-    "private": true,
+    "name": "uniform-ts",
+    "description": "Universal Worker helper library",
+    "private": false,
     "type": "module",
+    "index": "index.ts",
     "scripts": {
         "dev": "vite",
         "build": "vite build",
-        "preview": "vite preview"
+        "preview": "vite preview",
+        "deno-test": "deno ./test/Host.ts"
     },
     "browserslist": [
         "last 1 chrome version",
-        "last 1 firefox version"
+        "last 1 firefox version",
+        "last 1 deno version"
     ],
     "configurations": [
-        { "preLaunchTask": "npm: start" }
+        {
+            "preLaunchTask": "npm: start"
+        }
     ],
     "dependencies": {
         "@effective/eslint-config": "^5.4.7",
@@ -24,6 +31,7 @@
         "rimraf": "^5.0.7",
         "sass": "^1.77.6",
         "typescript": "^5.5.3",
-        "vite": "^5.4.8"
+        "vite": "^5.4.8",
+        "vite-plugin-dynamic-import": "^1.6.0"
     }
 }

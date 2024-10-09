@@ -2,6 +2,9 @@
 import { doOnlyAfterResolve } from "../Instruction/Defer.ts";
 import PromiseStack from '../Utils/PromiseStack.ts';
 
+//
+const isWorker = typeof Worker == "undefined" || typeof WorkerGlobalScope != 'undefined' && self instanceof WorkerGlobalScope;
+
 // @ts-ignore
 export type WorkerContext = Worker | WorkerGlobalScope;
 
@@ -16,7 +19,11 @@ export default class FLOW {
         worker: WorkerContext | null = null,
         promiseStack: PromiseStack<unknown> = new PromiseStack<unknown>()
     ) {
-        this.#worker = worker || new Worker(new URL("./ExChangerUnit.ts", import.meta.url).href, {type: "module"});
+        //
+        const defaultWorker = !worker ? (!isWorker ? new Worker(new URL("./ExChangerUnit.ts", import.meta.url).href, {type: "module"}) : self) : null;
+
+        //
+        this.#worker = worker || defaultWorker;
         this.#promiseStack = promiseStack ?? new PromiseStack();
         this.#imports = {};
 
@@ -30,12 +37,12 @@ export default class FLOW {
                     self?.postMessage({ cmd, uuid, dir: "res", status: "ok", result: "ok" });
                 } else
                 if (cmd == "import") {
-                    import(ev.data.source)?.then?.((m)=>{
+                    import("" + ev.data.source)?.then?.((m)=>{
                         Object.assign(this.#imports, (m.default ?? m));
                         self?.postMessage({ cmd, uuid, dir: "res", status: "ok", result: "ok" });
                     })?.catch?.((e)=>{
                         console.error(e);
-                        self?.postMessage({ cmd, uuid, dir: "res", status: "error", result: "error" });
+                        self?.postMessage({ cmd, uuid, dir: "res", status: "error", result: "unsupported" });
                     });
                 } else
                 if (cmd == "call") {
