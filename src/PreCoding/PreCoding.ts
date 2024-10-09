@@ -53,21 +53,28 @@ export default class PreCoding {
 
                     // if exists
                     if (node != null) {
+
                         // sometimes, `@uuid` may already known in database
+                        const uuid: string = (org?.[ORG.uuid]||this?.$memoryPool?.get?.(node)||"") as string;
                         const meta = { // request to transfer node
                             [ORG.type]: "transfer",
-                            [ORG.uuid]: org?.[ORG.uuid]||this?.$memoryPool?.get?.(node)||"",
+                            [ORG.uuid]: uuid,
                             [ORG.node]: node
                         }
 
                         // add to transfer list (do not transfer shared buffers)
+                        // but if transferred to another external worker, should be here an reference
                         if (transfer?.indexOf?.(node) < 0) {
                             this.$memoryPool.delete(node);
                             transfer?.push?.(hasMemoryBuffer(node) ? ((node as any)?.buffer ?? node) : node);
                         }
 
                         // doesn't holding it anymore
-                        if (org != null) { org[ORG.node] = null; };
+                        if (org != null) {
+                            // @ts-ignore ""
+                            org[ORG.type] = "reference";
+                            org[ORG.node] = null;
+                        };
 
                         //
                         return meta;
@@ -108,6 +115,7 @@ export default class PreCoding {
             //
             ["transfer", (organic: boolean, target: unknown, _transfer: unknown[] = [])=>{
                 if (organic) {
+                    // reformat transfer type, add to registry
                     const org  = extract(target) as IMeta;
                     const node = (org?.[ORG.node]) ?? hold(this?.$memoryPool?.get(org?.[ORG.uuid] as string));
 
@@ -115,13 +123,13 @@ export default class PreCoding {
                     if (node != null) {
                         // @ts-ignore "assign"
                         org[ORG.uuid] = this.$memoryPool.add(node, org?.[ORG.uuid] as string, organic) as string;
-                        return node;
+
+                        // @ts-ignore "assign"
+                        org[ORG.type] = "reference";
                     };
 
-                    // reformat transfer type, add to registry
-                    // @ts-ignore "assign"
-                    org[ORG.type] = "reference";
-                    return wrapMeta(org, this.$handler);
+                    // but if transferred to another external worker, should be here an reference
+                    return node ?? wrapMeta(org, this.$handler);
                 }
                 return target;
             }],
@@ -131,10 +139,7 @@ export default class PreCoding {
                 if (organic) {
                     const org    = extract(target) as IMeta;
                     const exists = hold(this?.$memoryPool?.get(org?.[ORG.uuid] as string));
-                    if (exists) { return exists; }
-
-                    //
-                    return wrapMeta(org, this.$handler);
+                    return exists ?? wrapMeta(org, this.$handler);
                 }
                 // unusual
                 return target;
