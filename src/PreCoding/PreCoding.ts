@@ -64,9 +64,14 @@ export default class PreCoding {
                             transfer?.push?.(hasMemoryBuffer(node) ? ((node as any)?.buffer ?? node) : node);
                         }
 
+                        // doesn't holding it anymore
+                        if (org != null) { org[ORG.node] = null; };
+
                         //
                         return meta;
                     }
+
+                    //
                     return org;
                 }
 
