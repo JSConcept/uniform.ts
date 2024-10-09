@@ -87,11 +87,20 @@ export default class FLOW {
                         // resolve when sync supported
                         this.#promiseStack?.rejectBy?.(uuid, reason);
                     }
+                } else {
+                    console.error("Internal command: " + cmd + " not supported.");
+                    self?.postMessage({ cmd, uuid, dir: "res", status: "error", result: "unknown" });
                 }
             } else
             if (dir == "res") {
-                const resolved = this.#imports[ev.data.handler]?.apply(self, [ev.data]) ?? (ev.data.result);
-                this.#promiseStack?.[status != "error" ? "resolveBy" : "rejectBy"]?.(uuid, resolved);
+                try {
+                    const resolved = this.#imports[ev.data.handler]?.apply(self, [ev.data]) ?? (ev.data.result);
+                    this.#promiseStack?.[status != "error" ? "resolveBy" : "rejectBy"]?.(uuid, resolved);
+                } catch(e) {
+                    console.error(e);
+                    console.trace(e);
+                    this.#promiseStack?.rejectBy?.(uuid, e?.message);
+                }
             }
         });
     }

@@ -8,6 +8,7 @@ import { doOnlyAfterResolve } from "../Instruction/Defer.ts";
 import { isPromise } from "../Instruction/Defer.ts";
 import ORG from "../Instruction/InstructionType.ts";
 import { IMeta } from "../Instruction/ObjectProxy.ts";
+import { UUIDv4 } from "../Utils/UUIDMap.ts";
 
 // mediator
 export const hasMemoryBuffer = (target: any)=>{
@@ -40,15 +41,22 @@ export default class PreCoding {
                 if (!organic) {
                     // non-organic just to transfer
                     if (transfer?.indexOf?.(target) < 0 && target != null) {
+                        const uuid: string = (this.$memoryPool.get(target) || UUIDv4()) as string;
+
+                        //
                         this.$memoryPool.delete(target);
 
                         // if is typed arrays, they also can be transferred by their buffers
                         // do not transfer shared buffers, but we not detecting as transfer initially
                         transfer?.push?.(hasMemoryBuffer(target) ? ((target as any)?.buffer ?? target) : target);
+
+                        // for those who will ask where is original
+                        const meta = {[ORG.type]: "reference", [ORG.uuid]: uuid} as IMeta;
+                        meta[ORG.uuid] = this.$memoryPool.add(wrapMeta(meta, this.$handler) as object, uuid, true);
                     };
                 } else {
                     // transfers only when is exists
-                    const org  = extract(target) as IMeta;
+                    const org  = (extract(target) || {}) as IMeta;
                     const node = org?.[ORG.node] ?? hold(this?.$memoryPool?.get(org?.[ORG.uuid] as string));
 
                     // if exists
@@ -76,6 +84,9 @@ export default class PreCoding {
                             // @ts-ignore ""
                             org[ORG.uuid] = uuid;
                             org[ORG.node] = null;
+
+                            // @ts-ignore "for who will asking where was transferred"
+                            org[ORG.uuid] = this.$memoryPool.add(wrapMeta(org, this.$handler), org[ORG.uuid], true) as string;
                         };
 
                         //
