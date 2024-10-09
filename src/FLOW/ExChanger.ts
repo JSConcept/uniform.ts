@@ -9,7 +9,7 @@ import PreCoding from "../PreCoding/PreCoding.ts";
 import { doOnlyAfterResolve, isPromise } from "../Instruction/Defer.ts";
 import { MakeReference} from "../Instruction/InstructionType.ts"
 import PromiseHandler from "../Handlers/PromiseHandler.ts";
-import ObjectProxy from "../Instruction/ObjectProxy.ts";
+import ObjectProxy, { IWrap } from "../Instruction/ObjectProxy.ts";
 import ORG from "../Instruction/InstructionType.ts";
 
 //
@@ -55,7 +55,9 @@ export default class ExChanger {
 
     //
     $sync() { return this.#flow?.sync?.(); }
-    $request(cmd: string, meta: unknown, args : unknown[]) {
+
+    //
+    $request<T extends unknown>(cmd: string, meta: unknown, args : unknown[]): IWrap<T>|null {
         const transfer: unknown[] = [];
         const encoded = this.#coder?.encode([cmd, meta, ...args], transfer) as any[];
         const result = this.#flow?.callTask?.(encoded, transfer);
@@ -63,11 +65,12 @@ export default class ExChanger {
         //
         try {
             const coded = doOnlyAfterResolve(result, (res)=>this.#coder?.decode?.(res, transfer));
-            if (isPromise(coded)) { return new Proxy(MakeReference(coded), new ObjectProxy(this.#handler?.$getHandler?.("promise"))); }
-            return coded;
+            if (isPromise(coded)) { return ((new Proxy(MakeReference(coded), new ObjectProxy(this.#handler?.$getHandler?.("promise")))) as IWrap<T>); }
+            return coded as IWrap<T>;;
         } catch (e) {
-            console.error(e);
+            console.error(e)
         }
+        return null;
     }
 
     //
@@ -82,21 +85,21 @@ export default class ExChanger {
     async sync() { await this.$sync(); return this; }
 
     //
-    register(object: any, name = "") {
+    register(object: any, name = ""): string | null {
         const uuid = this.#memoryPool?.add?.(object, name);
         //this.#flow?.sync?.();
-        return uuid;
+        return uuid||"";
     }
 
     //
-    access(name = "") {
-        const com = this.$request("access", {[ORG.uuid]: name, [ORG.type]: "reference"}, []);
+    access<T extends unknown>(name = ""): IWrap<T>|null {
+        const com = this.$request("access", {[ORG.uuid]: name, [ORG.type]: "reference"}, []) as IWrap<T>|null;
         //this.#flow?.sync?.();
         return com;
     }
 
     //
-    transfer<T extends unknown>(name = "", node: T | null = null): T {
+    transfer<T extends unknown>(name = "", node: T | null = null): IWrap<T> {
         let result = null;
         if (node != null) {
             result = this.$request("access", {[ORG.uuid]: name, [ORG.type]: "transfer", [ORG.node]: node}, []);
@@ -104,6 +107,6 @@ export default class ExChanger {
             result = this.$request("transfer", {[ORG.uuid]: name, [ORG.type]: "reference"}, []);
         }
         //this.#flow?.sync?.();
-        return result as T;
+        return result as IWrap<T>;
     }
 }

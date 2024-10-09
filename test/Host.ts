@@ -1,7 +1,7 @@
 // deno-lint-ignore-file no-explicit-any
 import ExChanger from "../src/FLOW/ExChanger.ts";
 
-//
+// @ts-ignore "mixed context"
 const isWorker = typeof Worker == "undefined" || typeof WorkerGlobalScope != 'undefined' && self instanceof WorkerGlobalScope;
 const testWorker = !isWorker ? new Worker(new URL("./Worker.ts", import.meta.url).href, {type: "module"}) : self;
 

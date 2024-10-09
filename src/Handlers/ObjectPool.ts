@@ -3,6 +3,7 @@ import UUIDMap, {hold} from "../Utils/UUIDMap.ts";
 import DataHandler from "./DataHandler.ts";
 import { extract } from "../Instruction/Defer.ts";
 import ORG from "../Instruction/InstructionType.ts";
+import { IMeta } from "../Instruction/ObjectProxy.ts";
 
 //
 export default class ObjectPoolMemberHandler extends DataHandler {
@@ -17,7 +18,7 @@ export default class ObjectPoolMemberHandler extends DataHandler {
     // there is may not be meta object
     $data(t: unknown|string|null): any {
         return super.$data((()=>{
-            const wrap = extract(t) ?? t;
+            const wrap = (extract(t) ?? t) as IMeta;
             const uuid = wrap?.[ORG.uuid] ?? wrap;
             if (typeof uuid == "string") {
                 const weak: any = this.#memoryPool?.get(uuid);
@@ -29,8 +30,8 @@ export default class ObjectPoolMemberHandler extends DataHandler {
 
     //
     $get(t: unknown|string|null): any {
-        const wrap = extract(t) ?? t;
-        const uuid = wrap?.[ORG.uuid] ?? wrap;
+        const wrap = (extract(t) ?? t) as IMeta;
+        const uuid = (wrap?.[ORG.uuid] ?? wrap) as string;
         if (typeof uuid == "string") {
             const weak: any = this.#memoryPool?.get(uuid);
             return hold(weak) ?? null;

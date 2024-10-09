@@ -4,6 +4,7 @@ import { MakeReference} from "../Instruction/InstructionType.ts"
 import { isPromise, bindCtx, doOnlyAfterResolve } from "../Instruction/Defer.ts";
 import DataHandler from "./DataHandler.ts";
 import ORG from "../Instruction/InstructionType.ts";
+import { IWrap } from "../Instruction/ObjectProxy.ts";
 
 //
 export default class PromiseHandler extends DataHandler {
@@ -20,11 +21,11 @@ export default class PromiseHandler extends DataHandler {
     }
 
     //
-    $wrapPromise(result: unknown|Promise<unknown>, handler: DataHandler|null = null) {
+    $wrapPromise<T extends unknown>(result: T|Promise<T>, handler: DataHandler|null = null): IWrap<T>|null {
         if (isPromise(result)) {
-            return new Proxy(MakeReference(result), new ObjectProxy(handler ?? this));
+            return new Proxy(MakeReference(result), new ObjectProxy(handler ?? this)) as IWrap<T>|null;
         }
-        return result;
+        return result as IWrap<T>;
     }
 
     //

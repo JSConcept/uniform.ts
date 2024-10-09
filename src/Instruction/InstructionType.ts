@@ -1,15 +1,26 @@
-// deno-lint-ignore-file
-export const ORG = {
-    data: Symbol("@data"),
-    type: "!#type#!",
-    uuid: "!#uuid#!",
-    node: "!#node#!",
-    payload: "!#payload#!",
-    index: "!#index#!"
+// deno-lint-ignore-file ban-types no-explicit-any no-explicit-any ban-types no-explicit-any no-explicit-any
+
+//
+export enum $ORG {
+    type = "!#type#!",
+    uuid = "!#uuid#!",
+    node = "!#node#!",
+    payload = "!#payload#!",
+    index = "!#index#!"
 }
 
-// deno-lint-ignore-file ban-types no-explicit-any no-explicit-any ban-types
-export const MakeReference = (data: any = null): Function => {
+// 
+export const ORG = {
+    data: Symbol("@data"),
+    type: $ORG.type,
+    uuid: $ORG.uuid,
+    node: $ORG.node,
+    payload: $ORG.payload,
+    index: $ORG.index
+}
+
+
+export const MakeReference = (data: any = null): Function|object => {
     // not ordinal not acceptable
     if (data == null || (typeof data != "function" && typeof data != "object")) {
         return data;

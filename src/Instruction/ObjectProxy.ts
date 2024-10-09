@@ -1,5 +1,8 @@
-// deno-lint-ignore-file no-explicit-any
-export default class ObjectProxy {
+// deno-lint-ignore-file no-explicit-any ban-types no-explicit-any
+import {type $ORG} from "./InstructionType.ts";
+
+//
+export default class ObjectProxy<T extends object|Function> implements ProxyHandler<T> {
     #handlerUtils: any = {};
 
     //
@@ -8,42 +11,57 @@ export default class ObjectProxy {
     }
 
     //
-    access(target: unknown, ...args: unknown[]) {
+    access(target: T, ...args: unknown[]) {
         return this.#handlerUtils.$handle("access", target, ...args);
     }
 
     //
-    get(target: unknown, ...args: unknown[]) {
+    get(target: T, ...args: unknown[]) {
         return this.#handlerUtils.$handle("get", target, ...args);
     }
 
     //
-    set(target: unknown, ...args: unknown[]) {
+    set(target: T, ...args: unknown[]) {
         return this.#handlerUtils.$handle("set", target, ...args);
     }
 
     //
-    has(target: unknown, ...args: unknown[]) {
+    has(target: T, ...args: unknown[]) {
         return this.#handlerUtils.$handle("has", target, ...args);
     }
 
     //
-    call(target: unknown, ...args: unknown[]) {
+    call(target: T, ...args: unknown[]) {
         return this.#handlerUtils.$handle("call", target, ...args);
     }
 
     //
-    apply(target: unknown, ...args: unknown[]) {
+    apply(target: T, ...args: unknown[]) {
         return this.#handlerUtils.$handle("apply", target, ...args);
     }
 
     //
-    construct(target: unknown, ...args: unknown[]) {
+    construct(target: T, ...args: unknown[]) {
         return this.#handlerUtils.$handle("construct", target, ...args);
     }
 
     //
-    deleteProperty(target: unknown, ...args: unknown[]) {
+    deleteProperty(target: T, ...args: unknown[]) {
         return this.#handlerUtils.$handle("deleteProperty", target, ...args);
     }
 }
+
+//
+export type MPromise<T extends unknown> = Promise<T>|T|null;
+export type IWrap<T extends unknown> = {
+    [pT in keyof T]: MPromise<pT>|IWrap<pT>;
+};
+
+//
+export interface IMeta {
+    [$ORG.uuid]?: string|null;
+    [$ORG.type]?: string|null;
+    [$ORG.node]?: unknown|null;
+    [$ORG.payload]?: unknown|null;
+    [$ORG.index]?: number|null;
+};

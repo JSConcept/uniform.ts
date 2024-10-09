@@ -7,11 +7,12 @@ import UniversalHandler from "../Handlers/UniversalHandler.ts";
 import { doOnlyAfterResolve } from "../Instruction/Defer.ts";
 import { isPromise } from "../Instruction/Defer.ts";
 import ORG from "../Instruction/InstructionType.ts";
+import { IMeta } from "../Instruction/ObjectProxy.ts";
 
 //
 export default class PreCoding {
-    $encoder = new Map<string, (organic: boolean, target: unknown, transfer: unknown[])=>boolean>();
-    $decoder = new Map<string, (organic: boolean, target: unknown, transfer: unknown[])=>boolean>();
+    $encoder = new Map<string, (organic: boolean, target: unknown, transfer: unknown[])=>unknown>();
+    $decoder = new Map<string, (organic: boolean, target: unknown, transfer: unknown[])=>unknown>();
     $memoryPool = new UUIDMap();
     $handler = new UniversalHandler();
     $typeDetector = new TypeDetector();
@@ -19,7 +20,7 @@ export default class PreCoding {
     //
     constructor(memoryPool = new UUIDMap()) {
         this.$memoryPool = memoryPool;
-        this.$encoder = new Map<string, (organic: boolean, target: unknown, transfer: unknown[])=>boolean>([
+        this.$encoder = new Map<string, (organic: boolean, target: unknown, transfer: unknown[])=>unknown> ([
             ["array", (organic: boolean, target: unknown, transfer: unknown[] = [])=>{
                 if (!organic) {
                     const encoded = Array.from((target as []) ||[]).map((e)=>this.encode(e, transfer));
@@ -38,8 +39,8 @@ export default class PreCoding {
                     };
                 } else {
                     // transfers only when is exists
-                    const org  = extract(target);
-                    const node = org?.[ORG.node] ?? hold(this?.$memoryPool?.get(org?.[ORG.uuid]));
+                    const org  = extract(target) as IMeta;
+                    const node = org?.[ORG.node] ?? hold(this?.$memoryPool?.get(org?.[ORG.uuid] as string));
 
                     // if exists
                     if (node != null) {
@@ -71,7 +72,7 @@ export default class PreCoding {
                 if (!organic || (target as any)?.[ORG.data]) {
                     const meta = {
                         [ORG.type]: "reference",
-                        [ORG.uuid]: this.$memoryPool.add(target as any, extract(target)?.[ORG.uuid], !organic)
+                        [ORG.uuid]: this.$memoryPool.add(target as any, (extract(target) as IMeta)?.[ORG.uuid] as string, !organic)
                     };
                     return meta;
                 }
@@ -93,16 +94,18 @@ export default class PreCoding {
             //
             ["transfer", (organic: boolean, target: unknown, _transfer: unknown[] = [])=>{
                 if (organic) {
-                    const org  = extract(target);
-                    const node = (org?.[ORG.node]) ?? hold(this?.$memoryPool?.get(org?.[ORG.uuid]));
+                    const org  = extract(target) as IMeta;
+                    const node = (org?.[ORG.node]) ?? hold(this?.$memoryPool?.get(org?.[ORG.uuid] as string));
 
                     // unable to override exists
                     if (node != null) {
-                        org[ORG.uuid] = this.$memoryPool.add(node, org?.[ORG.uuid]||"", organic)
+                        // @ts-ignore "assign"
+                        org[ORG.uuid] = this.$memoryPool.add(node, org?.[ORG.uuid] as string, organic) as string;
                         return node;
                     };
 
                     // reformat transfer type, add to registry
+                    // @ts-ignore "assign"
                     org[ORG.type] = "reference";
                     return wrapMeta(org, this.$handler);
                 }
@@ -112,8 +115,8 @@ export default class PreCoding {
             //
             ["reference", (organic: boolean, target: unknown, _transfer: unknown[] = [])=>{
                 if (organic) {
-                    const org    = extract(target);
-                    const exists = hold(this?.$memoryPool?.get(org?.[ORG.uuid]));
+                    const org    = extract(target) as IMeta;
+                    const exists = hold(this?.$memoryPool?.get(org?.[ORG.uuid] as string));
                     if (exists) { return exists; }
 
                     //

@@ -2,6 +2,7 @@
 import DataHandler from "./DataHandler.ts";
 import { extract, isPromise } from "../Instruction/Defer.ts";
 import ORG from "../Instruction/InstructionType.ts";
+import { IMeta } from "../Instruction/ObjectProxy.ts";
 
 //
 export default class UniversalHandler extends DataHandler {
@@ -24,9 +25,9 @@ export default class UniversalHandler extends DataHandler {
         if (isPromise(t?.[ORG.data] ?? t)) 
             { htp = "promise"; } else
             {
-                const meta = extract(t), local = this.$get(meta);
+                const meta = extract(t) as IMeta, local = this.$get(meta);
                 if (typeof meta?.[ORG.type] == "string") { htp = "local"; }
-                if (typeof meta?.[ORG.uuid] == "string" && !(local && extract(local)?.[ORG.uuid] != meta?.[ORG.uuid])) { htp = "remote"; }
+                if (typeof meta?.[ORG.uuid] == "string" && !(local && (extract(local) as IMeta)?.[ORG.uuid] != meta?.[ORG.uuid])) { htp = "remote"; }
             }
 
         //
