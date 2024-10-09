@@ -11,7 +11,8 @@ import { IMeta } from "../Instruction/ObjectProxy.ts";
 
 // mediator
 export const hasMemoryBuffer = (target: any)=>{
-    return (target as any)?.buffer instanceof ArrayBuffer || (typeof SharedArrayBuffer != "undefined" && (target as any)?.buffer instanceof SharedArrayBuffer);
+    // shared array buffer are not transfer, it's sharing
+    return ((target as any)?.buffer instanceof ArrayBuffer) || (typeof SharedArrayBuffer != "undefined" && (target as any)?.buffer instanceof SharedArrayBuffer);
 }
 
 //
@@ -42,6 +43,7 @@ export default class PreCoding {
                         this.$memoryPool.delete(target);
 
                         // if is typed arrays, they also can be transferred by their buffers
+                        // do not transfer shared buffers, but we not detecting as transfer initially
                         transfer?.push?.(hasMemoryBuffer(target) ? ((target as any)?.buffer ?? target) : target);
                     };
                 } else {
@@ -58,7 +60,7 @@ export default class PreCoding {
                             [ORG.node]: node
                         }
 
-                        // add to transfer list
+                        // add to transfer list (do not transfer shared buffers)
                         if (transfer?.indexOf?.(node) < 0) {
                             this.$memoryPool.delete(node);
                             transfer?.push?.(hasMemoryBuffer(node) ? ((node as any)?.buffer ?? node) : node);
