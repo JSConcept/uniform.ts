@@ -10,6 +10,9 @@
         "last 1 chrome version",
         "last 1 firefox version"
     ],
+    "configurations": [
+        { "preLaunchTask": "npm: start" }
+    ],
     "dependencies": {
         "@effective/eslint-config": "^5.4.7",
         "@types/node": "*",
