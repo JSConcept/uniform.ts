@@ -41,9 +41,7 @@ export default class PreCoding {
                 if (!organic) {
                     // non-organic just to transfer
                     if (transfer?.indexOf?.(target) < 0 && target != null) {
-                        const uuid: string = (this.$memoryPool.get(target) || UUIDv4()) as string;
-
-                        //
+                        const uuid: string = (this.$memoryPool.get(target) || "") as string;
                         this.$memoryPool.delete(target);
 
                         // if is typed arrays, they also can be transferred by their buffers
@@ -51,8 +49,11 @@ export default class PreCoding {
                         transfer?.push?.(hasMemoryBuffer(target) ? ((target as any)?.buffer ?? target) : target);
 
                         // for those who will ask where is original
-                        const meta = {[ORG.type]: "reference", [ORG.uuid]: uuid} as IMeta;
-                        meta[ORG.uuid] = this.$memoryPool.add(wrapMeta(meta, this.$handler) as object, uuid, true);
+                        if (uuid) {
+                            const meta = {[ORG.type]: "reference", [ORG.uuid]: uuid} as IMeta;
+                            // @ts-ignore ""
+                            meta[ORG.uuid] = this.$memoryPool.add(wrapMeta(meta, this.$handler) as object, meta[ORG.uuid] = uuid, true);
+                        }
                     };
                 } else {
                     // transfers only when is exists
@@ -78,15 +79,14 @@ export default class PreCoding {
                         }
 
                         // doesn't holding it anymore
-                        if (org != null) {
+                        if (org != null && uuid) {
                             // @ts-ignore ""
                             org[ORG.type] = "reference";
                             // @ts-ignore ""
-                            org[ORG.uuid] = uuid;
                             org[ORG.node] = null;
 
                             // @ts-ignore "for who will asking where was transferred"
-                            org[ORG.uuid] = this.$memoryPool.add(wrapMeta(org, this.$handler), org[ORG.uuid], true) as string;
+                            org[ORG.uuid] = this.$memoryPool.add(wrapMeta(org, this.$handler), org[ORG.uuid] = uuid, true) as string;
                         };
 
                         //
