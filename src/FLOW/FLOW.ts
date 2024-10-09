@@ -24,42 +24,67 @@ export default class FLOW {
         const self: WorkerContext | null = this.#worker;
         self?.addEventListener("message", (ev: any)=>{
             if (!ev?.data) { console.log(ev); return; }
-            const {cmd, uuid, dir, shared} = ev.data;
+            const {cmd, uuid, dir, status, shared} = ev.data;
             if (dir == "req") {
                 if (cmd == "ping") {
-                    self?.postMessage({ cmd, uuid, dir: "res", result: "ok" });
+                    self?.postMessage({ cmd, uuid, dir: "res", status: "ok", result: "ok" });
                 } else
                 if (cmd == "import") {
-                    import(ev.data.source).then((m)=>{
+                    import(ev.data.source)?.then?.((m)=>{
                         Object.assign(this.#imports, (m.default ?? m));
-                        self?.postMessage({ cmd, uuid, dir: "res", result: "ok" });
+                        self?.postMessage({ cmd, uuid, dir: "res", status: "ok", result: "ok" });
+                    })?.catch?.((e)=>{
+                        console.error(e);
+                        self?.postMessage({ cmd, uuid, dir: "res", status: "error", result: "error" });
                     });
                 } else
                 if (cmd == "call") {
-                    // call with FLOW "this" context
-                    doOnlyAfterResolve(this.#imports[ev.data.handler]?.apply?.(self, [ev.data]) ?? ev.data.args, (syncOrAsync)=>{
-                        doOnlyAfterResolve(syncOrAsync, (pass)=>{
-                            const [$r, transfer] = pass;
-                            doOnlyAfterResolve($r, (result)=>{
-                                self?.postMessage({
-                                    handler: "$resolver",
-                                    cmd,
-                                    uuid,
-                                    dir: "res",
-                                    result
-                                }, [...new Set(Array.from(transfer||[]))] as StructuredSerializeOptions);
+                    // hoot shared channels for direct answer
+                    (shared ? this.#promiseStack?.hook?.(uuid, shared) : null);
 
-                                // resolve when sync supported
-                                (shared ? this.#promiseStack?.hook?.(uuid, shared) : null);
-                                this.#promiseStack?.resolveBy?.(uuid, result);
+                    // call with FLOW "this" context
+                    try {
+                        doOnlyAfterResolve(this.#imports[ev.data.handler]?.apply?.(self, [ev.data]) ?? ev.data.args, (syncOrAsync)=>{
+                            doOnlyAfterResolve(syncOrAsync, (pass)=>{
+                                const [$r, transfer] = pass;
+                                doOnlyAfterResolve($r, (result)=>{
+                                    self?.postMessage({
+                                        handler: "$resolver",
+                                        status: "ok",
+                                        cmd,
+                                        uuid,
+                                        dir: "res",
+                                        result
+                                    }, [...new Set(Array.from(transfer||[]))] as StructuredSerializeOptions);
+
+                                    // resolve when sync supported
+                                    this.#promiseStack?.resolveBy?.(uuid, result);
+                                });
                             });
                         });
-                    });
+                    } catch(e) {
+                        console.error(e);
+                        console.trace(e);
+
+                        //
+                        const reason = e.message;
+                        self?.postMessage({
+                            handler: "$resolver",
+                            status: "error",
+                            cmd,
+                            uuid,
+                            dir: "res",
+                            result: reason
+                        }, []);
+
+                        // resolve when sync supported
+                        this.#promiseStack?.rejectBy?.(uuid, reason);
+                    }
                 }
             } else
             if (dir == "res") {
                 const resolved = this.#imports[ev.data.handler]?.apply(self, [ev.data]) ?? (ev.data.result);
-                this.#promiseStack?.resolveBy?.(uuid, resolved);
+                this.#promiseStack?.[status != "error" ? "resolveBy" : "rejectBy"]?.(uuid, resolved);
             }
         });
     }

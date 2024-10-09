@@ -58,11 +58,15 @@ export default class ExChanger {
         const transfer: unknown[] = [];
         const encoded = this.#coder?.encode([cmd, meta, ...args], transfer) as any[];
         const result = this.#flow?.callTask?.(encoded, transfer);
-        const coded = doOnlyAfterResolve(result, (res)=>this.#coder?.decode?.(res, transfer));
 
         //
-        if (isPromise(coded)) { return new Proxy(MakeReference(coded), new ObjectProxy(this.#handler?.$getHandler?.("promise"))); }
-        return coded;
+        try {
+            const coded = doOnlyAfterResolve(result, (res)=>this.#coder?.decode?.(res, transfer));
+            if (isPromise(coded)) { return new Proxy(MakeReference(coded), new ObjectProxy(this.#handler?.$getHandler?.("promise"))); }
+            return coded;
+        } catch (e) {
+            console.error(e);
+        }
     }
 
     //

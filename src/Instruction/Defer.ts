@@ -23,7 +23,7 @@ export const isPromise = (target: unknown|Promise<unknown>)=>{
 //
 export const doOnlyAfterResolve = (meta: unknown|Promise<unknown>, cb: (u: unknown|any)=>unknown): unknown => {
     if (isPromise(meta)) {
-        return (meta as any)?.then?.(cb) ?? cb(meta);
+        return (meta as any)?.then?.(cb)?.catch?.(console.error.bind(console)) ?? cb(meta);
     }
     if (meta instanceof SharedChannel) {
         return doOnlyAfterResolve(meta?.waitAuto?.(), cb);
