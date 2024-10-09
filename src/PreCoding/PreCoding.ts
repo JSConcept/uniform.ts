@@ -73,6 +73,8 @@ export default class PreCoding {
                         if (org != null) {
                             // @ts-ignore ""
                             org[ORG.type] = "reference";
+                            // @ts-ignore ""
+                            org[ORG.uuid] = uuid;
                             org[ORG.node] = null;
                         };
 
