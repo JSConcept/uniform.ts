@@ -12,8 +12,7 @@
     },
     "browserslist": [
         "last 1 chrome version",
-        "last 1 firefox version",
-        "last 1 deno version"
+        "last 1 firefox version"
     ],
     "configurations": [
         {
