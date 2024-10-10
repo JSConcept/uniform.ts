@@ -1,10 +1,10 @@
 import { getContext, transfer } from "../src/ESM/Utils.ts";
 
-//
+// host-based context
 const ctx = getContext(self);
 
 // after sync you can register
-export class Tungst {
+export class TestClass {
     clips: number;
     constructor() {
         console.log("Chips");
@@ -22,7 +22,7 @@ export class Tungst {
 export const regrets = new ArrayBuffer(64);
 export const workerAction = async ()=>{
     //
-    const transferCheck = await ctx["transferCheck"] as ((_: ArrayBuffer|unknown)=>unknown)|null;
+    const transferCheck = await ctx?.["transferCheck"] as ((_: ArrayBuffer|unknown)=>unknown)|null;
 
     // (sending as argument, unusual here)
     const bravery = new ArrayBuffer(64);

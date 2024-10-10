@@ -1,12 +1,11 @@
 // deno-lint-ignore-file
 import ExChanger from "../FLOW/ExChanger.ts";
-import ORG, { MakeReference } from "../Instruction/InstructionType.ts";
-import { doOnlyAfterResolve } from "../Instruction/Defer.ts";
+import { MakeReference } from "../Instruction/InstructionType.ts";
 import ObjectProxy, { IWrap } from "../Instruction/ObjectProxy.ts";
 import PromiseHandler from "../Handlers/PromiseHandler.ts";
 
 //
-const $moduleLoader = async <T extends unknown>(source: string = ""): Promise<any> => {
+const $moduleLoader = async <T extends unknown>(source: string = ""): Promise<T> => {
     // @ts-ignore "mixed co"
     const isWorker = typeof Worker == "undefined" || typeof WorkerGlobalScope != 'undefined' && self instanceof WorkerGlobalScope;
     const  uWorker = !isWorker ? new Worker(new URL("./ModuleWorker.ts", import.meta.url).href, {type: "module"}) : self;

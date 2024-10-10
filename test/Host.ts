@@ -4,25 +4,25 @@ import {doTransfer, getContext} from "../src/ESM/Utils.ts";
 import ORG from "../src/Instruction/InstructionType.ts";
 
 //
-const module = await moduleLoader(new URL("./Worker.ts", import.meta.url).href);
+const module = (await moduleLoader(new URL("./Worker.ts", import.meta.url).href)) as any;
 const ctx = getContext(module);
 
 //
 const transferCheck = (ab: any)=>{ console.log(ab); };
 const hostAction = async ()=>{
     // @ts-ignore ""
-    const Tungst: any = module.Tungst;
-    console.log(await Tungst.lab);
+    const TestClass: any = module.TestClass;
+    console.log(await TestClass.lab);
 
     //
-    const tgn = (new Tungst());
+    const tgn = (new TestClass());
     await tgn?.callback?.(6);
 
-    // get arrayBuffer from registry
-    console.log(await doTransfer(ctx, "", module["regrets"]));
+    // get arrayBuffer from context registry
+    console.log(await doTransfer(ctx, "", module?.regrets));
 }
 
-//
+// set context extras (visible in worker)
 ctx["transferCheck"] = transferCheck;
 ctx["hostAction"] = hostAction;
 
@@ -30,7 +30,7 @@ ctx["hostAction"] = hostAction;
 await ctx[ORG.sync];
 
 //
-const workerAction = (await module?.workerAction) as (()=>unknown)|null;
+const workerAction = (await module?.workerAction);
 
 //
 await hostAction();
