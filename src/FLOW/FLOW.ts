@@ -17,14 +17,12 @@ export default class FLOW {
     //
     constructor(
         worker: WorkerContext | null = null,
-        promiseStack: PromiseStack<unknown> = new PromiseStack<unknown>()
     ) {
         // @ts-ignore "mixed context"
         const defaultWorker = !worker ? (!isWorker ? new Worker(new URL("./ExChangerUnit.ts", import.meta.url).href, {type: "module"}) : self) : null;
 
         //
         this.#worker = worker || defaultWorker;
-        this.#promiseStack = promiseStack ?? new PromiseStack();
         this.#imports = {};
 
         //
@@ -33,15 +31,15 @@ export default class FLOW {
             const {cmd, uuid, dir, status, shared} = ev.data;
             if (dir == "req") {
                 if (cmd == "ping") {
-                    worker?.postMessage({ cmd, uuid, dir: "res", status: "ok", result: "ok" });
+                    worker?.postMessage({ cmd, uuid, dir: "res", status: "ok", result: "ok", shared: null });
                 } else
                 if (cmd == "import") {
                     import("" + ev.data.source)?.then?.((m)=>{
                         Object.assign(this.#imports, (m.default ?? m));
-                        worker?.postMessage({ cmd, uuid, dir: "res", status: "ok", result: "ok" });
+                        worker?.postMessage({ cmd, uuid, dir: "res", status: "ok", result: "ok", shared: null });
                     })?.catch?.((e)=>{
                         console.error(e);
-                        worker?.postMessage({ cmd, uuid, dir: "res", status: "error", result: "unsupported" });
+                        worker?.postMessage({ cmd, uuid, dir: "res", status: "error", result: "unsupported", shared: null });
                     });
                 } else
                 if (cmd == "call") {
@@ -60,7 +58,8 @@ export default class FLOW {
                                         cmd,
                                         uuid,
                                         dir: "res",
-                                        result
+                                        result,
+                                        shared
                                     }, [...new Set(Array.from(transfer||[]))] as StructuredSerializeOptions);
 
                                     // resolve when sync supported
@@ -80,7 +79,8 @@ export default class FLOW {
                             cmd,
                             uuid,
                             dir: "res",
-                            result: reason
+                            result: reason,
+                            shared: null
                         }, []);
 
                         // resolve when sync supported
@@ -93,8 +93,9 @@ export default class FLOW {
             } else
             if (dir == "res") {
                 try {
-                    const resolved = this.#imports[ev.data.handler]?.apply(self, [ev.data]) ?? (ev.data.result);
-                    this.#promiseStack?.[status != "error" ? "resolveBy" : "rejectBy"]?.(uuid, resolved);
+                    const resolved = this.#imports?.[ev.data.handler]?.apply?.(self, [ev.data]) ?? (ev.data.result) ?? null;
+                    //console.log(cmd, uuid, dir, shared, resolved);
+                    this.#promiseStack?.[status != "error" ? "resolveBy" : "rejectBy"]?.(uuid, resolved ?? null);
                 } catch(e) {
                     console.error(e);
                     console.trace(e);
@@ -117,10 +118,11 @@ export default class FLOW {
 
     //
     importToUnit(source: string, sync = false) {
-        const remain = this.#promiseStack?.sync;
+        //const remain = this.#promiseStack?.sync;
         const pair = this.#promiseStack?.[sync ? "createSync" : "create"]?.();
-        doOnlyAfterResolve(remain, ()=>{
+        //doOnlyAfterResolve(remain, ()=>{
             this.#worker?.postMessage?.({
+                status: "pending",
                 handler: "$import",
                 cmd: "import",
                 dir: "req",
@@ -128,32 +130,35 @@ export default class FLOW {
                 uuid: pair?.[0] || "",
                 source
             });
-        });
+        //});
         return pair?.[1];
     }
 
     //
     sync(sync = false) {
-        const remain = this.#promiseStack?.sync;
+        //const remain = this.#promiseStack?.sync;
         const pair = this.#promiseStack?.[sync ? "createSync" : "create"]?.();
-        doOnlyAfterResolve(remain, ()=>{
+        //doOnlyAfterResolve(remain, ()=>{
             this.#worker?.postMessage?.({
+                status: "pending",
                 shared: pair?.[2],
+                handler: null,
                 cmd: "ping",
                 dir: "req",
                 uuid: pair?.[0] || ""
             });
-        });
-        return Promise.all([pair?.[1], remain]);
+        //});
+        return pair?.[1];
     }
 
     //
     callTask($args: any[] = [], transfer: unknown[] = [], sync = false) {
-        const remain = this.#promiseStack?.sync;
+        //const remain = this.#promiseStack?.sync;
         const pair = this.#promiseStack?.[sync ? "createSync" : "create"]?.();
-        doOnlyAfterResolve(remain, ()=>{
+        //doOnlyAfterResolve(remain, ()=>{
             doOnlyAfterResolve($args, (args)=>{
                 this.#worker?.postMessage?.({
+                    status: "pending",
                     handler: "$handler",
                     cmd: "call",
                     dir: "req",
@@ -162,7 +167,7 @@ export default class FLOW {
                     args
                 }, [...new Set(transfer||[])] as StructuredSerializeOptions);
             });
-        });
+        //});
         return pair?.[1];
     }
 }

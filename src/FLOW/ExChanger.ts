@@ -59,7 +59,8 @@ export default class ExChanger {
     $makePromise<T extends unknown>(target: T|Promise<T>): IWrap<T>|null {
         //
         try {
-            if (isPromise(target)) { return ((new Proxy(MakeReference(target), new ObjectProxy(this.#handler?.$getHandler?.("promise")))) as IWrap<T>); }
+            const ext = (target as any)?.[ORG.data] ?? target;
+            if (isPromise(target)) { return ((new Proxy(MakeReference(ext), new ObjectProxy(this.#handler?.$getHandler?.("promise")))) as IWrap<T>); }
             return target as IWrap<T>;
         } catch (e) {
             console.error(e);

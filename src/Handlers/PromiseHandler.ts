@@ -1,9 +1,10 @@
 // deno-lint-ignore-file no-explicit-any
 import ObjectProxy from "../Instruction/ObjectProxy.ts";
-import ORG, { MakeReference} from "../Instruction/InstructionType.ts"
+import ORG, { MakeReference } from "../Instruction/InstructionType.ts"
 import { isPromise, bindCtx, doOnlyAfterResolve } from "../Instruction/Defer.ts";
 import DataHandler from "./DataHandler.ts";
 import { IWrap } from "../Instruction/ObjectProxy.ts";
+import { isSymbol, FORBIDDEN_KEYS, META_KEYS } from "./DataHandler.ts";
 
 //
 export default class PromiseHandler extends DataHandler {
@@ -32,14 +33,20 @@ export default class PromiseHandler extends DataHandler {
         //
         const data = this.$data(meta);
         if (cmd == "get" && ["then", "catch", "finally", ORG.data, ORG.exchanger].indexOf((args as any[])?.[0]) >= 0) {
-            if (args[0] == ORG.data) { return this.$wrapPromise(data); }
-            if (args[0] == ORG.exchanger) { return null; };
-
-            //
-            if (data == null || (typeof data != "object" && typeof data != "function")) { return data; };
+            // if primitive form
+            if (data == null || (typeof data != "object" && typeof data != "function") || args[0] == ORG.data) { return data; };
 
             // @ts-ignore "no idea"
             return bindCtx(Reflect?.[cmd]?.(data, ...args), data);
+        }
+
+        // return meta as is
+        if (cmd == "get") {
+            if ( // forbidden actions
+                isSymbol(args?.[0]) ||
+                FORBIDDEN_KEYS.has(args?.[0] as string) || 
+                META_KEYS.has?.(args?.[0] as any)
+            ) { return null; };
         }
 
         // unwrap first-level promise

@@ -50,9 +50,16 @@ export default class PreCoding {
 
                         // for those who will ask where is original
                         if (uuid) {
-                            const meta = {[ORG.type]: "reference", [ORG.uuid]: uuid} as IMeta;
+                            //const meta = {[ORG.type]: "reference", [ORG.uuid]: uuid} as IMeta;
                             // @ts-ignore ""
-                            meta[ORG.uuid] = this.$memoryPool.add(wrapMeta(meta, this.$handler) as object, meta[ORG.uuid] = uuid, true);
+                            //meta[ORG.uuid] = this.$memoryPool.add(wrapMeta(meta, this.$handler) as object, meta[ORG.uuid] = uuid, true);
+
+                            // export as organic transfer
+                            return {
+                                [ORG.type]: "transfer",
+                                [ORG.uuid]: uuid,
+                                [ORG.node]: toTransfer
+                            }
                         }
                     };
                 } else {
@@ -86,7 +93,7 @@ export default class PreCoding {
                             org[ORG.node] = null;
 
                             // @ts-ignore "for who will asking where was transferred"
-                            org[ORG.uuid] = this.$memoryPool.add(wrapMeta(org, this.$handler), org[ORG.uuid] = uuid, true) as string;
+                            //org[ORG.uuid] = this.$memoryPool.add(wrapMeta(org, this.$handler), org[ORG.uuid] = uuid, true) as string;
                         };
 
                         //
@@ -159,8 +166,6 @@ export default class PreCoding {
             }]
         ]);
     }
-
-
 
     //
     $decode(target: unknown, transfer: unknown[] = []) {

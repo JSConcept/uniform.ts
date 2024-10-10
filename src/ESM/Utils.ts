@@ -1,6 +1,6 @@
 // deno-lint-ignore-file no-explicit-any
 import ExChanger from "../FLOW/ExChanger.ts";
-import { isSymbol, FORBIDDEN_KEYS, META_KEYS } from "../Handlers/RemotePool.ts";
+import { isSymbol, FORBIDDEN_KEYS, META_KEYS } from "../Handlers/DataHandler.ts";
 import { doOnlyAfterResolve } from "../Instruction/Defer.ts";
 import ORG from "../Instruction/InstructionType.ts";
 

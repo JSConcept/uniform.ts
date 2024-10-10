@@ -3,6 +3,7 @@ import DataHandler from "./DataHandler.ts";
 import { extract, isPromise } from "../Instruction/Defer.ts";
 import ORG from "../Instruction/InstructionType.ts";
 import { IMeta } from "../Instruction/ObjectProxy.ts";
+import { isSymbol, FORBIDDEN_KEYS, META_KEYS } from "./DataHandler.ts";
 
 //
 export default class UniversalHandler extends DataHandler {
@@ -23,7 +24,16 @@ export default class UniversalHandler extends DataHandler {
 
     //
     $handle(cmd = "access", t: any, ...args: unknown[]) {
-        if (cmd == "get" && args[0] == ORG.exchanger) { return this.$exChanger; };
+        // return meta as is
+        if (cmd == "get") {
+            if (args[0] == ORG.data) { return (t?.[ORG.data] ?? t); };
+            if (args[0] == ORG.exchanger) { return this.$exChanger; };
+            if ( // forbidden actions
+                isSymbol(args?.[0]) ||
+                FORBIDDEN_KEYS.has(args?.[0] as string) || 
+                META_KEYS.has?.(args?.[0] as any)
+            ) { return null; };
+        }
 
         //
         let htp = "direct";
@@ -32,7 +42,7 @@ export default class UniversalHandler extends DataHandler {
             {
                 const meta = extract(t) as IMeta, local = this.$get(meta);
                 if (typeof (meta as any)?.[ORG.type] == "string") { htp = "local"; }
-                if (typeof (meta as any)?.[ORG.uuid] == "string" && !(local && (extract(local) as any)?.[ORG.uuid] != (meta as any)?.[ORG.uuid])) { htp = "remote"; }
+                if (typeof (meta as any)?.[ORG.uuid] == "string" && (!local || ((extract(local) as any)?.[ORG.uuid] == (meta as any)?.[ORG.uuid]))) { htp = "remote"; }
             }
 
         //

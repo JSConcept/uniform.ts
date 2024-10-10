@@ -17,22 +17,17 @@ export default class PromiseStack<T extends unknown> {
 
     // reject by UUID
     rejectBy(name: string, why: unknown) {
-        if (this.#map.has(name)) {
-            const pm = this.#map.get(name);
-            this.#map.delete(name);
-            // unsupported?
-            pm?.reject?.(why);
-        }
+        const pm = this.#map.get(name);
+        this.#map.delete(name);
+        pm?.reject?.(why ?? null);
         return this;
     }
 
     // resolve by UUID
     resolveBy(name: string, why: unknown) {
-        if (this.#map.has(name)) {
-            const pm = this.#map.get(name);
-            this.#map.delete(name);
-            pm?.resolve?.(why as any);
-        }
+        const pm = this.#map.get(name);
+        this.#map.delete(name);
+        pm?.resolve?.((why as any) ?? null);
         return this;
     }
 
