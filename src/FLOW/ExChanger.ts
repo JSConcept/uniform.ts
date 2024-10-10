@@ -56,6 +56,29 @@ export default class ExChanger {
     get $sync() { return this.#flow?.sync?.(); }
     async sync() { await this.$sync; return this; }
 
+    //doOnlyAfterResolve
+    $makePromise<T extends unknown>(target: T|Promise<T>): IWrap<T>|null {
+        //
+        try {
+            if (isPromise(target)) { return ((new Proxy(MakeReference(target), new ObjectProxy(this.#handler?.$getHandler?.("promise")))) as IWrap<T>); }
+            return target as IWrap<T>;
+        } catch (e) {
+            console.error(e);
+            return null;
+        }
+        //return null;
+    }
+
+    //
+    $act<T extends unknown>(result: T|Promise<T>, cb: (result: T) => void): IWrap<T>|null {
+        try {
+            return this.$makePromise(doOnlyAfterResolve(result, cb));
+        } catch (e) {
+            console.error(e);
+            return null;
+        }
+    }
+
     //
     $request<T extends unknown>(cmd: string, meta: unknown, args : unknown[]): IWrap<T>|null {
         const transfer: unknown[] = [];
@@ -64,13 +87,11 @@ export default class ExChanger {
 
         //
         try {
-            const coded = doOnlyAfterResolve(result, (res)=>this.#coder?.decode?.(res, transfer));
-            if (isPromise(coded)) { return ((new Proxy(MakeReference(coded), new ObjectProxy(this.#handler?.$getHandler?.("promise")))) as IWrap<T>); }
-            return coded as IWrap<T>;;
+            return this.$act(result, (res)=>this.#coder?.decode?.(res, transfer)) as IWrap<T>|null;
         } catch (e) {
             console.error(e)
+            return null;
         }
-        return null;
     }
 
     //
@@ -96,62 +117,68 @@ export default class ExChanger {
     }
 
     // lazy transfer (for passing as arguments)
-    transfer<T extends unknown>(node: T | null = null, name: string = "") {
-        const meta: IMeta = (extract(node) as IMeta);
-        const uuid: string = (name||meta?.[ORG.uuid]||UUIDv4()) as string;
-        const real: T = meta?.[ORG.node]??hold(this.#memoryPool?.get?.(uuid))??node;
+    transfer<T extends unknown>($node: T | null = null, name: string = "") {
+        return this.$act($node, (node)=>{
+            const meta: IMeta = (extract(node) as IMeta);
+            const uuid: string = (name || meta?.[ORG.uuid] || UUIDv4()) as string;
+            const real: T = meta?.[ORG.node] ?? hold(this.#memoryPool?.get?.(uuid)) ?? node;
 
-        //
-        if (this.#handler) {
-            return new Proxy(MakeReference({
-                [ORG.type]: "transfer", 
-                [ORG.uuid]: uuid, 
-                [ORG.node]: real
-            }), new ObjectProxy(this.#handler));
-        }
+            //
+            if (this.#handler) {
+                return new Proxy(MakeReference({
+                    [ORG.type]: "transfer", 
+                    [ORG.uuid]: uuid, 
+                    [ORG.node]: real
+                }), new ObjectProxy(this.#handler));
+            }
 
-        //
-        return null;
+            //
+            return null;
+        });
+        
     }
 
     // transfer from remote to host, or transfer actively (default is getter, setter/sender when has node argument)
-    doTransfer<T extends unknown>(name: string|IMeta|IWrap<IMeta> = "", node: T | null = null): IWrap<T> {
-        let result = node as (IWrap<T>|null);
+    doTransfer<T extends unknown>($name: string|IMeta|IWrap<IMeta> = "", node: T | null = null): IWrap<T>|null {
+        return this.$act<any>($name, (name: any): IWrap<T>|null => {
+            return this.$act(node, (result: any): IWrap<T>|null =>{
 
-        // @ts-ignore "sometimes, may got new UUID, or exists"
-        const esm: IMeta = (extract(name) as IMeta);
+                // @ts-ignore "sometimes, may got new UUID, or exists"
+                const esm: IMeta = (extract(name) as IMeta);
 
-        // also you can do it with wrapped already (i.e. getting)
-        const meta: IMeta = (extract(node) as IMeta);
-        const uuid: string = (esm?.[ORG.uuid]||name||meta?.[ORG.uuid]||UUIDv4()||"") as string;
-        const real: T = meta?.[ORG.node]??hold(this.#memoryPool?.get?.(uuid))??node??esm?.[ORG.node];
+                // also you can do it with wrapped already (i.e. getting)
+                const meta: IMeta = (extract(result) as IMeta);
+                const uuid: string = (esm?.[ORG.uuid]||name||meta?.[ORG.uuid]||UUIDv4()||"") as string;
+                const real: T = meta?.[ORG.node]??hold(this.#memoryPool?.get?.(uuid))??result??esm?.[ORG.node];
 
-        // @ts-ignore "make meta uuid equal"
-        if (esm  != null) {  esm[ORG.uuid] = (uuid||"") as string; }; // assign uuid to meta
+                // @ts-ignore "make meta uuid equal"
+                if (esm  != null) {  esm[ORG.uuid] = (uuid||"") as string; }; // assign uuid to meta
 
-        // @ts-ignore "make meta uuid equal"
-        if (meta != null) { meta[ORG.uuid] = (uuid||"") as string; }; // assign uuid to meta
+                // @ts-ignore "make meta uuid equal"
+                if (meta != null) { meta[ORG.uuid] = (uuid||"") as string; }; // assign uuid to meta
 
-        // don't needs to transfer from remote
-        if (!node && real) { return real as IWrap<T>; };
+                // don't needs to transfer from remote
+                if (!result && real) { return real as IWrap<T>; };
 
-        //
-        if (real != null) {
-            // active transfer as argument to remote
-            result = this.$request("access", {
-                [ORG.type]: "transfer", 
-                [ORG.uuid]: uuid, 
-                [ORG.node]: real
-            }, []);
-        } else {
-            // access transfer by key from remote
-            result = this.$request("transfer", (esm ?? {
-                [ORG.type]: "reference",
-                [ORG.uuid]: uuid
-            }), []);
-        }
+                //
+                if (real != null) {
+                    // active transfer as argument to remote
+                    result = this.$request("access", {
+                        [ORG.type]: "transfer", 
+                        [ORG.uuid]: uuid, 
+                        [ORG.node]: real
+                    }, []);
+                } else {
+                    // access transfer by key from remote
+                    result = this.$request("transfer", (esm ?? {
+                        [ORG.type]: "reference",
+                        [ORG.uuid]: uuid
+                    }), []);
+                }
 
-        //this.#flow?.sync?.();
-        return result as IWrap<T>;
+                //this.#flow?.sync?.();
+                return result as IWrap<T>;
+            });
+        });
     }
 }

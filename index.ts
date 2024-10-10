@@ -1,7 +1,3 @@
-export * from "./src/FLOW/ExChanger.ts";
-
-//
-import ExChanger from "./src/FLOW/ExChanger.ts";
-
-//
-export default ExChanger;
+export * from "./src/ESM/ModuleLoader.ts";
+import ModuleLoader from "./src/ESM/ModuleLoader.ts";
+export default ModuleLoader;

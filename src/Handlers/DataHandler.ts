@@ -9,6 +9,9 @@ export default class DataHandler {
     }
 
     //
+    get $exChanger(): any { return null;};
+
+    //
     $data(target: unknown|string|null) { return target; };
     $handle(cmd: string, meta: unknown, ...args: unknown[]) {
         const ref = this.$data(meta);

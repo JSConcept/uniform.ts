@@ -27,13 +27,13 @@ export default class PromiseStack<T extends unknown> {
             // unsupported?
             pm?.reject?.(why);
         }
-        this.#syncExcept(name).then(()=>{
+        //this.#syncExcept(name).then(()=>{
             if (this.#map.has(name)) {
                 const pm = this.#map.get(name);
                 this.#map.delete(name);
                 pm?.reject?.(why);
             }
-        });
+        //});
         return this;
     }
 

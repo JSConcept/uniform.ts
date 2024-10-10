@@ -46,7 +46,8 @@ export default class PreCoding {
 
                         // if is typed arrays, they also can be transferred by their buffers
                         // do not transfer shared buffers, but we not detecting as transfer initially
-                        transfer?.push?.(hasMemoryBuffer(target) ? ((target as any)?.buffer ?? target) : target);
+                        const toTransfer = hasMemoryBuffer(target) ? ((target as any)?.buffer ?? target) : target;
+                        if (toTransfer != null) { transfer?.push?.(toTransfer); };
 
                         // for those who will ask where is original
                         if (uuid) {
@@ -73,7 +74,7 @@ export default class PreCoding {
 
                         // add to transfer list (do not transfer shared buffers)
                         // but if transferred to another external worker, should be here an reference
-                        if (transfer?.indexOf?.(node) < 0) {
+                        if (node != null && transfer?.indexOf?.(node) < 0) {
                             this.$memoryPool.delete(node);
                             transfer?.push?.(hasMemoryBuffer(node) ? ((node as any)?.buffer ?? node) : node);
                         }
@@ -166,7 +167,7 @@ export default class PreCoding {
     $decode(target: unknown, transfer: unknown[] = []) {
         const [o, t] = this.$typeDetector.detectType(target, transfer);
         if (this.$decoder.has(t)) {
-            return this.$decoder.get(t)?.(o, target, transfer);
+            return this.$decoder.get(t)?.(o, target, transfer) ?? target;
         }
         return target;
     }
@@ -175,7 +176,7 @@ export default class PreCoding {
     $encode(target: unknown, transfer: unknown[] = []) {
         const [o, t] = this.$typeDetector.detectType(target, transfer);
         if (this.$encoder.has(t)) {
-            return this.$encoder.get(t)?.(o, target, transfer);
+            return this.$encoder.get(t)?.(o, target, transfer) ?? target;
         }
         return target;
     }

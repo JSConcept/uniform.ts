@@ -1,6 +1,6 @@
 // deno-lint-ignore-file no-explicit-any
 import ObjectProxy from "../Instruction/ObjectProxy.ts";
-import { MakeReference} from "../Instruction/InstructionType.ts"
+import ORG, { MakeReference} from "../Instruction/InstructionType.ts"
 import { isPromise, bindCtx, doOnlyAfterResolve } from "../Instruction/Defer.ts";
 import DataHandler from "./DataHandler.ts";
 import ORG from "../Instruction/InstructionType.ts";
@@ -32,8 +32,11 @@ export default class PromiseHandler extends DataHandler {
     $handle(cmd: string, meta: unknown, ...args: unknown[]) {
         //
         const data = this.$data(meta);
-        if (cmd == "get" && ["then", "catch", "finally", ORG.data].indexOf((args as any[])?.[0]) >= 0) {
+        if (cmd == "get" && ["then", "catch", "finally", ORG.data, ORG.exchanger].indexOf((args as any[])?.[0]) >= 0) {
             if (args[0] == ORG.data) { return this.$wrapPromise(data); }
+            //if (args[0] == ORG.exchanger) { return this.#exChanger; };
+
+            //
             if (data == null || (typeof data != "object" && typeof data != "function")) { return data; };
 
             // @ts-ignore "no idea"

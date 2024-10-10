@@ -6,12 +6,15 @@ export enum $ORG {
     uuid = "!#uuid#!",
     node = "!#node#!",
     payload = "!#payload#!",
-    index = "!#index#!"
+    index = "!#index#!",
+    exchanger = "!#exchanger#!"
 }
 
 // 
 export const ORG = {
+    sync: Symbol("@sync"),
     data: Symbol("@data"),
+    exchanger: $ORG.exchanger,//Symbol("@exchanger"),
     type: $ORG.type,
     uuid: $ORG.uuid,
     node: $ORG.node,
@@ -19,7 +22,7 @@ export const ORG = {
     index: $ORG.index
 }
 
-
+//
 export const MakeReference = (data: any = null): Function|object => {
     // not ordinal not acceptable
     if (data == null || (typeof data != "function" && typeof data != "object")) {

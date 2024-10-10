@@ -1,11 +1,10 @@
-import ExChanger from "../src/FLOW/ExChanger.ts";
+import { getContext, transfer } from "../src/ESM/Utils.ts";
 
-// initialize ex-changer
-export const Remote = new ExChanger(self);
-await Remote.initialize();
+//
+const ctx = getContext(self);
 
 // after sync you can register
-class Tungst {
+export class Tungst {
     clips: number;
     constructor() {
         console.log("Chips");
@@ -20,26 +19,15 @@ class Tungst {
 }
 
 // after, prefers sync with receiver
-const regrets = new ArrayBuffer(64);
-const workerAction = async ()=>{
+export const regrets = new ArrayBuffer(64);
+export const workerAction = async ()=>{
     //
-    const transferCheck = Remote.access("transferCheck") as ((_: ArrayBuffer|unknown)=>unknown)|null;
+    const transferCheck = await ctx["transferCheck"] as ((_: ArrayBuffer|unknown)=>unknown)|null;
 
     // (sending as argument, unusual here)
     const bravery = new ArrayBuffer(64);
-    await transferCheck?.(Remote.transfer(bravery));
+    await (transferCheck?.(transfer(ctx, bravery)));
 
     // should to be detached
     console.warn(bravery);
 }
-
-//
-await Remote.sync();
-
-//
-Remote.register(Tungst, "Tungst");
-Remote.register(regrets, "regrets");
-Remote.register(workerAction, "workerAction");
-
-//
-await Remote.sync();

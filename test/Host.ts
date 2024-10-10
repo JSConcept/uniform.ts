@@ -1,19 +1,17 @@
 // deno-lint-ignore-file no-explicit-any
-import ExChanger from "../src/FLOW/ExChanger.ts";
+import moduleLoader from "../src/ESM/ModuleLoader.ts";
+import {doTransfer, getContext} from "../src/ESM/Utils.ts";
+import ORG from "../src/Instruction/InstructionType.ts";
 
-// @ts-ignore "mixed context"
-const isWorker = typeof Worker == "undefined" || typeof WorkerGlobalScope != 'undefined' && self instanceof WorkerGlobalScope;
-const testWorker = !isWorker ? new Worker(new URL("./Worker.ts", import.meta.url).href, {type: "module"}) : self;
-
-// initialize ex-changer
-export const Host = new ExChanger(testWorker)
-await Host.initialize();
+//
+const module = await moduleLoader(new URL("./Worker.ts", import.meta.url).href);
+const ctx = getContext(module);
 
 //
 const transferCheck = (ab: any)=>{ console.log(ab); };
 const hostAction = async ()=>{
-    //
-    const Tungst: any = Host.access("Tungst");
+    // @ts-ignore ""
+    const Tungst: any = module.Tungst;
     console.log(await Tungst.lab);
 
     //
@@ -21,21 +19,18 @@ const hostAction = async ()=>{
     await tgn?.callback?.(6);
 
     // get arrayBuffer from registry
-    console.log(await Host.doTransfer("regrets"));
+    console.log(await doTransfer(ctx, "", module["regrets"]));
 }
 
 //
-await Host.sync();
+ctx["transferCheck"] = transferCheck;
+ctx["hostAction"] = hostAction;
+
+// synchronize
+await ctx[ORG.sync];
 
 //
-Host.register(transferCheck, "transferCheck");
-Host.register(hostAction, "hostAction");
-
-//
-await Host.sync();
-
-//
-const workerAction = (await Host.access("workerAction")) as (()=>unknown)|null;
+const workerAction = (await module?.workerAction) as (()=>unknown)|null;
 
 //
 await hostAction();

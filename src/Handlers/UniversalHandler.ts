@@ -15,11 +15,16 @@ export default class UniversalHandler extends DataHandler {
     }
 
     //
+    get $exChanger() { return this.#dataHandler?.get?.("remote")?.$exChanger; }
+
+    //
     $addHandler(name: string, handler: DataHandler) { this.#dataHandler.set(name, handler); }
     $getHandler(name: string) { return this.#dataHandler.get(name); }
 
     //
     $handle(cmd = "access", t: any, ...args: unknown[]) {
+        if (cmd == "get" && args[0] == ORG.exchanger) { return this.$exChanger; };
+
         //
         let htp = "direct";
         if (isPromise(t?.[ORG.data] ?? t)) 

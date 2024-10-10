@@ -18,17 +18,21 @@ export default class RemoteReferenceHandler extends DataHandler {
     }
 
     //
+    get $exChanger() { return this.#exChanger; }
+
+    //
     $data(t: unknown) { return extract(t); }
     $handle(cmd: string, meta: unknown, ...args: unknown[]) {
         // return meta as is
-        if (cmd == "get" && args[0] == ORG.data) { return this.$data(meta); };
-
-        // forbidden actions
-        if (cmd == "get" && (
-            isSymbol(args?.[0]) ||
-            FORBIDDEN_KEYS.has(args?.[0] as string) || 
-            META_KEYS?.has?.(args?.[0] as string)
-        )) { return null; };
+        if (cmd == "get") {
+            if (args[0] == ORG.data) { return this.$data(meta); };
+            if (args[0] == ORG.exchanger) { return this.#exChanger; };
+            if ( // forbidden actions
+                isSymbol(args?.[0]) ||
+                FORBIDDEN_KEYS.has(args?.[0] as string) || 
+                META_KEYS?.has?.(args?.[0] as string)
+            ) { return null; };
+        }
 
         //
         return this.#exChanger?.$request(cmd, meta, args);
