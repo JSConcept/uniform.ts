@@ -13,9 +13,7 @@ export const $handler = (command: any) => {
 
     //
     const transfer: unknown[] = [];
-    if (cmd == "apply" && args.length >= 3) {
-        transfer.push(...args.splice(2));
-    }
+    if (cmd == "apply" && args.length >= 3) { transfer.push(...args.splice(2)); }
 
     // before you needs decode its
     return doOnlyAfterResolve($coders.decode([cmd, target, ...args], transfer), ([cmd, target, ...args])=>{

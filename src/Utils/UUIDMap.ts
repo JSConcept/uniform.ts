@@ -1,8 +1,5 @@
-// deno-lint-ignore-file no-explicit-any
-//
-export const UUIDv4 = () => {
-    return crypto?.randomUUID ? crypto?.randomUUID() : "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c => (+c ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (+c / 4)))).toString(16));
-};
+// deno-lint-ignore-file no-explicit-any ban-types
+import { UUIDv4 } from "../Instruction/InstructionType.ts";
 
 //
 const timers = new WeakMap();
@@ -27,7 +24,6 @@ export const hold = (tmp: any | unknown | WeakRef<any>, timeout = 1000)=>{
 }
 
 //
-// deno-lint-ignore ban-types
 export type dT = object | Function;
 export type rT = WeakRef<dT>;
 

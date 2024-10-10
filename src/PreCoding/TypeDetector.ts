@@ -63,8 +63,8 @@ export default class TypeDetector {
     detectType(data: unknown, transfer: unknown[] = []): [boolean, string] {
         // are data meta type, skip definition
         const organic = extract(data) as IMeta;
-        if (organic?.[ORG.type]) {
-            return [true, organic?.[ORG.type] as string];
+        if ((organic as any)?.[ORG.type]) {
+            return [true, (organic as any)?.[ORG.type] as string];
         } else
 
         //

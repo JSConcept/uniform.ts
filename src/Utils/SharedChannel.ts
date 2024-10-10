@@ -1,4 +1,3 @@
-// deno-lint-ignore-file
 // deno-lint-ignore-file ban-ts-comment
 // @ts-ignore
 import * as cbor from "cbor-x";

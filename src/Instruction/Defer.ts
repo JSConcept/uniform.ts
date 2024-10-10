@@ -24,7 +24,7 @@ export const isPromise = <T extends object|Function|unknown>(target: T|Promise<T
 //
 export const doOnlyAfterResolve = <T extends unknown|any>(meta: MPromise<T>, cb: (u: T)=>MPromise<T>|null|void): MPromise<any>|null|void => {
     if (isPromise(meta)) {
-        return (meta as any)?.then?.(cb)?.catch?.(console.error.bind(console)) ?? cb(meta as T);
+        return (meta as any)?.then?.(cb)?.catch?.(console.warn.bind(console)) ?? cb(meta as T);
     }
     if (meta instanceof SharedChannel) {
         return doOnlyAfterResolve((meta as SharedChannel<T>)?.waitAuto?.() as T, cb);

@@ -1,5 +1,4 @@
 // deno-lint-ignore-file no-explicit-any ban-types
-import { UUIDv4 } from './../Utils/UUIDMap.ts';
 import UniversalHandler from "../Handlers/UniversalHandler.ts";
 import FLOW, { type WorkerContext } from "./FLOW.ts";
 import RemoteReferenceHandler from "../Handlers/RemotePool.ts";
@@ -11,7 +10,7 @@ import { doOnlyAfterResolve, extract, isPromise } from "../Instruction/Defer.ts"
 import { MakeReference} from "../Instruction/InstructionType.ts"
 import PromiseHandler from "../Handlers/PromiseHandler.ts";
 import ObjectProxy, { IWrap } from "../Instruction/ObjectProxy.ts";
-import ORG from "../Instruction/InstructionType.ts";
+import ORG, { UUIDv4 }  from "../Instruction/InstructionType.ts";
 import { IMeta } from "../Instruction/ObjectProxy.ts";
 import { hold } from "../Utils/UUIDMap.ts";
 
@@ -120,8 +119,8 @@ export default class ExChanger {
     transfer<T extends unknown>($node: T | null = null, name: string = "") {
         return this.$act($node, (node)=>{
             const meta: IMeta = (extract(node) as IMeta);
-            const uuid: string = (name || meta?.[ORG.uuid] || UUIDv4()) as string;
-            const real: T = meta?.[ORG.node] ?? hold(this.#memoryPool?.get?.(uuid)) ?? node;
+            const uuid: string = (name || (meta as any)?.[ORG.uuid] || UUIDv4()) as string;
+            const real: T = (meta as any)?.[ORG.node] ?? hold(this.#memoryPool?.get?.(uuid)) ?? node;
 
             //
             if (this.#handler) {
@@ -148,8 +147,8 @@ export default class ExChanger {
 
                 // also you can do it with wrapped already (i.e. getting)
                 const meta: IMeta = (extract(result) as IMeta);
-                const uuid: string = (esm?.[ORG.uuid]||name||meta?.[ORG.uuid]||UUIDv4()||"") as string;
-                const real: T = meta?.[ORG.node]??hold(this.#memoryPool?.get?.(uuid))??result??esm?.[ORG.node];
+                const uuid: string = ((esm as any)?.[ORG.uuid]||name||(meta as any)?.[ORG.uuid]||UUIDv4()||"") as string;
+                const real: T = (meta as any)?.[ORG.node]??hold(this.#memoryPool?.get?.(uuid))??result??(esm as any)?.[ORG.node];
 
                 // @ts-ignore "make meta uuid equal"
                 if (esm  != null) {  esm[ORG.uuid] = (uuid||"") as string; }; // assign uuid to meta
@@ -160,21 +159,15 @@ export default class ExChanger {
                 // don't needs to transfer from remote
                 if (!result && real) { return real as IWrap<T>; };
 
-                //
-                if (real != null) {
-                    // active transfer as argument to remote
-                    result = this.$request("access", {
-                        [ORG.type]: "transfer", 
-                        [ORG.uuid]: uuid, 
-                        [ORG.node]: real
-                    }, []);
-                } else {
-                    // access transfer by key from remote
-                    result = this.$request("transfer", (esm ?? {
-                        [ORG.type]: "reference",
-                        [ORG.uuid]: uuid
-                    }), []);
-                }
+                // active transfer as argument to remote
+                result = (real != null ? this.$request("access", {
+                    [ORG.type]: "transfer", 
+                    [ORG.uuid]: uuid, 
+                    [ORG.node]: real
+                }, []) : this.$request("transfer", (esm ?? {
+                    [ORG.type]: "reference",
+                    [ORG.uuid]: uuid
+                }), []));
 
                 //this.#flow?.sync?.();
                 return result as IWrap<T>;

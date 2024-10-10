@@ -7,7 +7,7 @@ import ORG from "../Instruction/InstructionType.ts";
 //
 export const isSymbol = (sym: unknown)=>(typeof sym ==='symbol' || typeof sym == 'object' && Object.prototype.toString.call(sym) == '[object Symbol]');
 export const FORBIDDEN_KEYS = new Set(["bind", "toString", "then", "catch", "finally"]);
-export const META_KEYS = new Set(Array.from(Object.keys(ORG)));
+export const META_KEYS = new Set(Array.from(Object.values(ORG)));
 export default class RemoteReferenceHandler extends DataHandler {
     #exChanger: ExChanger|null;
 
@@ -30,7 +30,7 @@ export default class RemoteReferenceHandler extends DataHandler {
             if ( // forbidden actions
                 isSymbol(args?.[0]) ||
                 FORBIDDEN_KEYS.has(args?.[0] as string) || 
-                META_KEYS?.has?.(args?.[0] as string)
+                META_KEYS.has?.(args?.[0] as any)
             ) { return null; };
         }
 

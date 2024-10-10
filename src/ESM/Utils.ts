@@ -13,13 +13,11 @@ const wrapExChanger = (exChanger: ExChanger|null): any => {
         get(target: ExChanger, prop: any): any {
             if (prop == ORG.sync) { return target.sync; };
             if (prop == ORG.exchanger) { return target; };
-
             if ( // forbidden actions
                 isSymbol(prop) ||
                 FORBIDDEN_KEYS.has(prop as string) || 
-                META_KEYS?.has?.(prop as string)
+                META_KEYS?.has?.(prop as any)
             ) { return null; };
-
             return target.access(prop);
         },
         set(target: ExChanger, prop: string, value: any): any {

@@ -59,9 +59,9 @@ export type IWrap<T extends unknown> = {
 
 //
 export interface IMeta {
-    [$ORG.uuid]?: string|null;
-    [$ORG.type]?: string|null;
-    [$ORG.node]?: unknown|null;
-    [$ORG.payload]?: unknown|null;
-    [$ORG.index]?: number|null;
+    [$ORG.uuid]?: string;
+    [$ORG.type]?: string;
+    [$ORG.node]?: unknown;
+    [$ORG.payload]?: unknown;
+    [$ORG.index]?: number;
 };

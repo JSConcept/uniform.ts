@@ -28,21 +28,20 @@ export default class FLOW {
         this.#imports = {};
 
         //
-        const self: WorkerContext | null = this.#worker;
-        self?.addEventListener("message", (ev: any)=>{
+        (worker = this.#worker)?.addEventListener("message", (ev: any)=>{
             if (!ev?.data) { console.log(ev); return; }
             const {cmd, uuid, dir, status, shared} = ev.data;
             if (dir == "req") {
                 if (cmd == "ping") {
-                    self?.postMessage({ cmd, uuid, dir: "res", status: "ok", result: "ok" });
+                    worker?.postMessage({ cmd, uuid, dir: "res", status: "ok", result: "ok" });
                 } else
                 if (cmd == "import") {
                     import("" + ev.data.source)?.then?.((m)=>{
                         Object.assign(this.#imports, (m.default ?? m));
-                        self?.postMessage({ cmd, uuid, dir: "res", status: "ok", result: "ok" });
+                        worker?.postMessage({ cmd, uuid, dir: "res", status: "ok", result: "ok" });
                     })?.catch?.((e)=>{
                         console.error(e);
-                        self?.postMessage({ cmd, uuid, dir: "res", status: "error", result: "unsupported" });
+                        worker?.postMessage({ cmd, uuid, dir: "res", status: "error", result: "unsupported" });
                     });
                 } else
                 if (cmd == "call") {
@@ -55,7 +54,7 @@ export default class FLOW {
                             doOnlyAfterResolve(syncOrAsync, (pass)=>{
                                 const [$r, transfer] = pass;
                                 doOnlyAfterResolve($r, (result)=>{
-                                    self?.postMessage({
+                                    worker?.postMessage({
                                         handler: "$resolver",
                                         status: "ok",
                                         cmd,
@@ -75,7 +74,7 @@ export default class FLOW {
 
                         //
                         const reason = e.message;
-                        self?.postMessage({
+                        worker?.postMessage({
                             handler: "$resolver",
                             status: "error",
                             cmd,
@@ -89,7 +88,7 @@ export default class FLOW {
                     }
                 } else {
                     console.error("Internal command: " + cmd + " not supported.");
-                    self?.postMessage({ cmd, uuid, dir: "res", status: "error", result: "unknown" });
+                    worker?.postMessage({ cmd, uuid, dir: "res", status: "error", result: "unknown" });
                 }
             } else
             if (dir == "res") {

@@ -31,8 +31,8 @@ export default class UniversalHandler extends DataHandler {
             { htp = "promise"; } else
             {
                 const meta = extract(t) as IMeta, local = this.$get(meta);
-                if (typeof meta?.[ORG.type] == "string") { htp = "local"; }
-                if (typeof meta?.[ORG.uuid] == "string" && !(local && (extract(local) as IMeta)?.[ORG.uuid] != meta?.[ORG.uuid])) { htp = "remote"; }
+                if (typeof (meta as any)?.[ORG.type] == "string") { htp = "local"; }
+                if (typeof (meta as any)?.[ORG.uuid] == "string" && !(local && (extract(local) as any)?.[ORG.uuid] != (meta as any)?.[ORG.uuid])) { htp = "remote"; }
             }
 
         //
