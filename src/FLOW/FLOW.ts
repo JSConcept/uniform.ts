@@ -1,5 +1,6 @@
 // deno-lint-ignore-file no-explicit-any
 import { doOnlyAfterResolve } from "../Instruction/Defer.ts";
+import { Transferable } from "../Instruction/InstructionType.ts";
 import PromiseStack from '../Utils/PromiseStack.ts';
 
 // @ts-ignore "mixed context"
@@ -60,7 +61,7 @@ export default class FLOW {
                                         dir: "res",
                                         result,
                                         shared
-                                    }, [...new Set(Array.from(transfer||[]))] as StructuredSerializeOptions);
+                                    }, [...new Set(Array.from(transfer||[]))].filter((e)=>Transferable.some((I)=>e instanceof I)) as StructuredSerializeOptions);
 
                                     // resolve when sync supported
                                     this.#promiseStack?.resolveBy?.(uuid, result);

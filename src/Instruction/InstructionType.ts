@@ -64,3 +64,20 @@ export const MakeReference = (data: any = null): Function|object => {
 
 //
 export default ORG;
+
+// If someone not in list, will just copy or sharing
+// @ts-ignore "Transferable list for web workers (automatic)"
+export const Transferable = [
+    /* @ts-ignore "" */ typeof ArrayBuffer               != "undefined" ? ArrayBuffer               : null,
+    /* @ts-ignore "" */ typeof MessagePort               != "undefined" ? MessagePort               : null,
+    /* @ts-ignore "" */ typeof ReadableStream            != "undefined" ? ReadableStream            : null,
+    /* @ts-ignore "" */ typeof WritableStream            != "undefined" ? WritableStream            : null,
+    /* @ts-ignore "" */ typeof TransformStream           != "undefined" ? TransformStream           : null,
+    /* @ts-ignore "" */ typeof WebTransportReceiveStream != "undefined" ? WebTransportReceiveStream : null,
+    /* @ts-ignore "" */ typeof WebTransportSendStream    != "undefined" ? WebTransportSendStream    : null,
+    /* @ts-ignore "" */ typeof AudioData                 != "undefined" ? AudioData                 : null,
+    /* @ts-ignore "" */ typeof ImageBitmap               != "undefined" ? ImageBitmap               : null,
+    /* @ts-ignore "" */ typeof VideoFrame                != "undefined" ? VideoFrame                : null,
+    /* @ts-ignore "" */ typeof OffscreenCanvas           != "undefined" ? OffscreenCanvas           : null,
+    /* @ts-ignore "" */ typeof RTCDataChannel            != "undefined" ? RTCDataChannel            : null
+].filter((E)=>(E!=null));
