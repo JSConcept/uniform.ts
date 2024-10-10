@@ -3,7 +3,6 @@ import ObjectProxy from "../Instruction/ObjectProxy.ts";
 import ORG, { MakeReference} from "../Instruction/InstructionType.ts"
 import { isPromise, bindCtx, doOnlyAfterResolve } from "../Instruction/Defer.ts";
 import DataHandler from "./DataHandler.ts";
-import ORG from "../Instruction/InstructionType.ts";
 import { IWrap } from "../Instruction/ObjectProxy.ts";
 
 //
