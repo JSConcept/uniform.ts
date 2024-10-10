@@ -111,9 +111,11 @@ export default class PreCoding {
             //
             ["reference", (organic: boolean, target: unknown, _transfer: unknown[] = [])=>{
                 if (!organic || (target as any)?.[ORG.data]) {
+                    const ext = (extract(target) as any)?.[ORG.uuid] as string;
+                    const exists = hold(this?.$memoryPool?.get(ext)) ?? target;
                     const meta = {
                         [ORG.type]: "reference",
-                        [ORG.uuid]: this.$memoryPool.add(target as any, (extract(target) as any)?.[ORG.uuid] as string, !organic)
+                        [ORG.uuid]: this.$memoryPool.add(exists as any, ext, !organic)
                     };
                     return meta;
                 }
