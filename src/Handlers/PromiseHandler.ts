@@ -30,18 +30,24 @@ export default class PromiseHandler extends DataHandler {
 
     //
     $handle(cmd: string, meta: unknown, ...args: unknown[]) {
-        //
+        // isn't promise itself
         const data = this.$data(meta);
-        if (cmd == "get" && ["then", "catch", "finally", ORG.data, ORG.exchanger].indexOf((args as any[])?.[0]) >= 0) {
-            // if primitive form
-            if (data == null || (typeof data != "object" && typeof data != "function") || args[0] == ORG.data) { return data; };
 
-            // @ts-ignore "no idea"
-            return bindCtx(Reflect?.[cmd]?.(data, ...args), data);
-        }
+        // primitive value or non-object/function
+        if (data == null || (typeof data != "object" && typeof data != "function")) { return data; };
 
-        // return meta as is
+        //
         if (cmd == "get") {
+            if (args[0] == ORG.data) { return data; };
+            if (args[0] == ORG.exchanger) { return this.$exChanger ?? null; };
+
+            //
+            if (["then", "catch", "finally"].indexOf((args as any[])?.[0]) >= 0) {
+                // @ts-ignore "no idea"
+                return bindCtx(Reflect?.[cmd]?.(data, ...args), data);
+            }
+
+            //
             if ( // forbidden actions
                 isSymbol(args?.[0]) ||
                 FORBIDDEN_KEYS.has(args?.[0] as string) || 

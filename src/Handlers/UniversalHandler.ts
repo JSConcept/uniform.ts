@@ -19,14 +19,21 @@ export default class UniversalHandler extends DataHandler {
     get $exChanger() { return this.#dataHandler?.get?.("remote")?.$exChanger; }
 
     //
+    $data(t: unknown | string | null): unknown {
+        return (t as any)?.[ORG.data] ?? t;
+    }
+
+    //
     $addHandler(name: string, handler: DataHandler) { this.#dataHandler.set(name, handler); }
     $getHandler(name: string) { return this.#dataHandler.get(name); }
 
     //
     $handle(cmd = "access", t: any, ...args: unknown[]) {
-        // return meta as is
+        const data = this.$data(t);
+
+        // isn't promise itself
         if (cmd == "get") {
-            if (args[0] == ORG.data) { return (t?.[ORG.data] ?? t); };
+            if (args[0] == ORG.data) { return data; };
             if (args[0] == ORG.exchanger) { return this.$exChanger; };
             if ( // forbidden actions
                 isSymbol(args?.[0]) ||
@@ -37,12 +44,15 @@ export default class UniversalHandler extends DataHandler {
 
         //
         let htp = "direct";
-        if (isPromise(t?.[ORG.data] ?? t)) 
+        if (isPromise(data)) 
             { htp = "promise"; } else
             {
-                const meta = extract(t) as IMeta, local = this.$get(meta);
+                const meta = (extract(t) as IMeta), local = this.$get(meta);
+                const overlap = (extract(local) as any)?.[ORG.uuid] == (meta as any)?.[ORG.uuid];
+
+                //
                 if (typeof (meta as any)?.[ORG.type] == "string") { htp = "local"; }
-                if (typeof (meta as any)?.[ORG.uuid] == "string" && (!local || ((extract(local) as any)?.[ORG.uuid] == (meta as any)?.[ORG.uuid]))) { htp = "remote"; }
+                if (typeof (meta as any)?.[ORG.uuid] == "string" && (!local || overlap)) { htp = "remote"; }
             }
 
         //
