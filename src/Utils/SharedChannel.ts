@@ -1,7 +1,7 @@
 // deno-lint-ignore-file ban-ts-comment no-explicit-any
 
-// @ts-ignore
-import * as cbor from "cbor-x";
+// @ts-ignore "extra `KB` for library..."
+//import * as cbor from "cbor-x";
 
 /*
  * Note about:
@@ -14,17 +14,19 @@ export default class SharedChannel<T extends unknown> {
     //[x: string]: (timeout?: number) => unknown; // @ts-ignore
     #sharedBuffer: SharedArrayBuffer | null = null;
     #byteOffset: number = 0;
+    #binCoder: any = null;
 
     //
-    constructor(sharedBuffer: SharedArrayBuffer | null, byteOffset = 0) {
+    constructor(sharedBuffer: SharedArrayBuffer | null, byteOffset = 0, binCoder: any = null) {
         this.#sharedBuffer = sharedBuffer;
         this.#byteOffset = byteOffset;
+        this.#binCoder = binCoder;
     }
 
     //
     resolve(object: T|Uint8Array|unknown = {}) {
         // @ts-ignore "no valid type"
-        return this.$resolveWith(cbor?.encode?.(object ?? new Uint8Array([])));
+        return this.$resolveWith(this.#binCoder?.encode?.(object ?? {}) ?? new Uint8Array([]));
     }
 
     //
@@ -32,7 +34,7 @@ export default class SharedChannel<T extends unknown> {
 
     // @ts-ignore "DOM isn't recognized"
     waitAuto(timeout = 1000): unknown { return (self?.document ? this.waitAsync(timeout) : this.waitSync(timeout)); }
-    waitSync(timeout = 1000): unknown { const result = this.$waitSync(timeout); return result ? cbor.decode(result) : null; }
+    waitSync(timeout = 1000): unknown { const result = this.$waitSync(timeout); return result ? this.#binCoder.decode(result ?? new Uint8Array([])) : null; }
 
     // not implemented directly
     waitAsync(_timeout = 1000): unknown { return null; };

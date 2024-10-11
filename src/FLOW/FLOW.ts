@@ -1,6 +1,6 @@
 // deno-lint-ignore-file no-explicit-any
 import { Transferable, doOnlyAfterResolve } from "../Instruction/InstructionType.ts";
-import { WorkerContext, loadWorker } from "./WorkerLib.ts";
+import { type WorkerContext, loadWorker } from "./WorkerLib.ts";
 import PromiseStack from '../Utils/PromiseStack.ts';
 
 // should be converted to inline code

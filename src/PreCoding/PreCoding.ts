@@ -1,6 +1,6 @@
 // deno-lint-ignore-file no-explicit-any
 // Will be used when result are predictable in the pools or return results
-import UUIDMap, {hold} from "../Utils/UUIDMap.ts";
+import UUIDMap from "../Utils/UUIDMap.ts";
 import TypeDetector from "./TypeDetector.ts";
 import UniversalHandler from "../Handlers/UniversalHandler.ts";
 import ORG, { isPromise, doOnlyAfterResolve, type IMeta, extract } from "../Instruction/InstructionType.ts";
@@ -62,7 +62,7 @@ export default class PreCoding {
                 } else {
                     // transfers only when is exists
                     const org  = (extract(target) || {}) as IMeta;
-                    const node = (org as any)?.[ORG.node] ?? hold(this?.$memoryPool?.get((org as any)?.[ORG.uuid] as string));
+                    const node = (org as any)?.[ORG.node] ?? this?.$memoryPool?.get((org as any)?.[ORG.uuid] as string);
 
                     // if exists
                     if (node != null) {
@@ -109,7 +109,7 @@ export default class PreCoding {
             ["reference", (organic: boolean, target: unknown, _transfer: unknown[] = [])=>{
                 if (!organic || (target as any)?.[ORG.data]) {
                     const ext = (extract(target) as any)?.[ORG.uuid] as string;
-                    const exists = hold(this?.$memoryPool?.get(ext)) ?? target;
+                    const exists = this?.$memoryPool?.get(ext) ?? target;
                     const meta = {
                         [ORG.type]: "reference",
                         [ORG.uuid]: this.$memoryPool.add(exists as any, ext, !organic)
@@ -136,7 +136,7 @@ export default class PreCoding {
                 if (organic) {
                     // reformat transfer type, add to registry
                     const org  = extract(target) as IMeta;
-                    const node = ((org as any)?.[ORG.node]) ?? hold(this?.$memoryPool?.get((org as any)?.[ORG.uuid] as string));
+                    const node = ((org as any)?.[ORG.node]) ?? this?.$memoryPool?.get((org as any)?.[ORG.uuid] as string);
 
                     // unable to override exists
                     if (node != null) {
@@ -157,7 +157,7 @@ export default class PreCoding {
             ["reference", (organic: boolean, target: unknown, _transfer: unknown[] = [])=>{
                 if (organic) {
                     const org    = extract(target) as IMeta;
-                    const exists = hold(this?.$memoryPool?.get((org as any)?.[ORG.uuid] as string));
+                    const exists = this?.$memoryPool?.get((org as any)?.[ORG.uuid] as string);
                     return exists ?? wrapMeta(org, this.$handler);
                 }
                 // unusual

@@ -7,7 +7,6 @@ import ObjectPoolMemberHandler from "../Handlers/ObjectPool.ts";
 import DataHandler from "../Handlers/DataHandler.ts";
 import PromiseHandler from "../Handlers/PromiseHandler.ts";
 import ObjectProxy from "../Instruction/ObjectProxy.ts";
-import { hold } from "../Utils/UUIDMap.ts";
 
 //
 import type UniversalHandler from "../Handlers/UniversalHandler.ts";
@@ -133,7 +132,7 @@ export default class ExChanger {
         return this.$act($node, (node)=>{
             const meta: IMeta = (extract(node) as IMeta);
             const uuid: string = (name || (meta as any)?.[ORG.uuid] || UUIDv4()) as string;
-            const real: T = (meta as any)?.[ORG.node] ?? hold(this.#memoryPool?.get?.(uuid)) ?? node;
+            const real: T = (meta as any)?.[ORG.node] ?? this.#memoryPool?.get?.(uuid) ?? node;
 
             //
             if (this.#handler) {
@@ -161,7 +160,7 @@ export default class ExChanger {
                 // also you can do it with wrapped already (i.e. getting)
                 const meta: IMeta = (extract(result) as IMeta);
                 const uuid: string = ((esm as any)?.[ORG.uuid]||name||(meta as any)?.[ORG.uuid]||UUIDv4()||"") as string;
-                const real: T = (meta as any)?.[ORG.node]??hold(this.#memoryPool?.get?.(uuid))??result??(esm as any)?.[ORG.node];
+                const real: T = (meta as any)?.[ORG.node] ?? this.#memoryPool?.get?.(uuid) ?? result??(esm as any)?.[ORG.node];
 
                 // @ts-ignore "make meta uuid equal"
                 if (esm  != null) {  esm[ORG.uuid] = (uuid||"") as string; }; // assign uuid to meta

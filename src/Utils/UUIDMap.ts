@@ -73,6 +73,6 @@ export default class UUIDMap<T=dT> {
         if (typeof key == "object" || typeof key == "function") {
             return this.#weakMap.get(<dT>(<unknown>key));
         }
-        return this.#refMap.get(<string>(<unknown>key));
+        return hold(this.#refMap.get(<string>(<unknown>key)));
     }
 }
