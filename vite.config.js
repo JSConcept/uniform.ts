@@ -42,7 +42,23 @@ export default defineConfig({
         origin: "http://localhost:5173",
     },
     worker: {
-        format: "es"
+        plugins: [
+            typescript(),
+            terser(terserOptions),
+            optimizer({}),
+            compression()
+        ],
+        format: "es",
+        rollupOptions: {
+            treeshake: 'smallest',
+            output: {
+                minifyInternalExports: true,
+                compact: true,
+                exports: "named",
+                inlineDynamicImports: true,
+                globals: {},
+            }
+        }
     },
     build: {
         chunkSizeWarningLimit: 1600,
@@ -57,8 +73,11 @@ export default defineConfig({
             fileName: 'uniform',
         },
         rollupOptions: {
+            treeshake: 'smallest',
             external: [],
             output: {
+                minifyInternalExports: true,
+                compact: true,
                 exports: "named",
                 inlineDynamicImports: true,
                 globals: {},
