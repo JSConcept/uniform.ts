@@ -76,9 +76,15 @@ export default defineConfig({
             "./src/**/*.ts", 
             "./src/*.mjs", 
             "./src/*.js",
-            "./src/*.ts"
+            "./src/*.ts",
+            "./test/*.mjs", 
+            "./test/*.js",
+            "./test/*.ts"
         ],
-        entries: resolve(__dirname, './index.ts'),
+        entries: [
+            resolve(__dirname, './index.ts'), 
+            resolve(__dirname, './test/Host.ts')
+        ],
         force: true
     }
 });
