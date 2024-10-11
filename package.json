@@ -1,6 +1,7 @@
 {
     "name": "uniform-ts",
     "description": "Universal Worker helper library",
+    "version": "1.0.0alpha",
     "private": false,
     "type": "module",
     "index": "./uniform.js",
@@ -14,29 +15,26 @@
         "last 1 chrome version",
         "last 1 firefox version"
     ],
-    "configurations": [
-        {
-            "preLaunchTask": "npm: start"
-        }
-    ],
     "dependencies": {
-        "@effective/eslint-config": "^5.4.7",
         "@types/node": "*",
-        "autoprefixer": "^10.4.16",
         "cbor-x": "^1.5.9",
+        "jsox": "^1.2.119"
+    },
+    "devDependencies": {
+        "@effective/eslint-config": "^5.4.7",
+        "@rollup/plugin-terser": "^0.4.4",
+        "@rollup/plugin-typescript": "^12.1.0",
+        "autoprefixer": "^10.4.16",
         "eslint-config-prettier": "^9.1.0",
         "glob": "^10.4.2",
-        "jsox": "^1.2.119",
         "rimraf": "^5.0.7",
         "sass": "^1.77.6",
         "terser": "^5.34.1",
         "typescript": "^5.5.3",
-        "vite": "^5.4.8"
-    },
-    "devDependencies": {
-        "@rollup/plugin-typescript": "^12.1.0",
+        "vite": "^5.4.8",
         "vite-plugin-compression2": "^1.3.0",
         "vite-plugin-dynamic-import": "^1.6.0",
+        "vite-plugin-minify": "^2.0.0",
         "vite-plugin-optimizer": "^1.4.3",
         "vite-plugin-singlefile": "^2.0.2"
     }

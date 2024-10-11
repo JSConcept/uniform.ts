@@ -5,18 +5,42 @@ import optimizer from 'vite-plugin-optimizer'
 import { viteSingleFile } from "vite-plugin-singlefile"
 import typescript from '@rollup/plugin-typescript';
 import dynamicImport from 'vite-plugin-dynamic-import'
+//import { ViteMinifyPlugin } from 'vite-plugin-minify'
+import terser from '@rollup/plugin-terser';
 
 //
 const __dirname = import.meta.dirname;
+const terserOptions = {
+    keep_classnames: true,
+    keep_fnames: true,
+    module: true,
+    ecma: 2020,
+    compress: {
+        arguments: true,
+        expression: true,
+        inline: 3,
+        module: true,
+        passes: 2,
+        side_effects: true,
+        unsafe: true,
+        unsafe_comps: true,
+        unsafe_arrows: true,
+        unsafe_math: true,
+        unsafe_symbols: true,
+        warnings: true
+    }
+};
 
 //
 export default defineConfig({
     plugins: [
         typescript(),
-        dynamicImport(/* options */),
+        //dynamicImport(/* options */),
         compression(),
         optimizer({}),
-        viteSingleFile()
+        viteSingleFile(),
+        terser(terserOptions)
+        //ViteMinifyPlugin({}),
     ],
     server: {
         port: 5173,
@@ -27,10 +51,11 @@ export default defineConfig({
         format: "es"
     },
     build: {
+        chunkSizeWarningLimit: 1600,
         assetsInlineLimit: 1024 * 1024,
-        minify: 'esbuild',
-        sourcemap: "inline",
-        target: "ESNext",
+        minify: "terser",
+        sourcemap: false,//"inline",
+        target: "esnext",
         lib: {
             formats: ["es"],
             entry: resolve(__dirname, './index.ts'),
@@ -45,14 +70,6 @@ export default defineConfig({
                 globals: {},
             },
         },
-    },
-    esbuild: {
-        sourcemap: "inline",
-        minify: true
-    },
-    optimizeDeps: {
-        esbuildOptions: {
-            target: "ESNext"
-        }
+        terserOptions
     }
 });
