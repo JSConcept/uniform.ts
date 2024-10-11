@@ -1,5 +1,5 @@
 //import {getContext, transfer} from "../dist/uniform.js"
-import {getContext, transfer} from "../index.ts"
+import {getContext, transfer} from "../utils.ts"
 
 // host-based context
 const ctx = getContext(self);
