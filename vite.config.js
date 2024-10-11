@@ -82,6 +82,10 @@ export default defineConfig({
             "./test/*.ts"
         ],
         entries: [
+            resolve(__dirname, './src/Workers/ExChangerUnit.ts'), 
+            resolve(__dirname, './src/Workers/InlineWorkers.ts'), 
+            resolve(__dirname, './src/Workers/ModuleWorker.ts'),
+            resolve(__dirname, './utils.ts'), 
             resolve(__dirname, './index.ts'), 
             resolve(__dirname, './test/Host.ts')
         ],
