@@ -1,13 +1,10 @@
 // deno-lint-ignore-file no-explicit-any
 // Will be used when result are predictable in the pools or return results
-import { extract, wrapMeta } from "../Instruction/Defer.ts";
 import UUIDMap, {hold} from "../Utils/UUIDMap.ts";
 import TypeDetector from "./TypeDetector.ts";
 import UniversalHandler from "../Handlers/UniversalHandler.ts";
-import { doOnlyAfterResolve } from "../Instruction/Defer.ts";
-import { isPromise } from "../Instruction/Defer.ts";
-import ORG  from "../Instruction/InstructionType.ts";
-import { IMeta } from "../Instruction/ObjectProxy.ts";
+import ORG, { isPromise, doOnlyAfterResolve, type IMeta, extract } from "../Instruction/InstructionType.ts";
+import { wrapMeta } from "../Handlers/UniversalHandler.ts";
 
 // mediator
 export const hasMemoryBuffer = (target: any)=>{

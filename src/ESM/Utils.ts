@@ -1,8 +1,6 @@
 // deno-lint-ignore-file no-explicit-any
-import ExChanger from "../FLOW/ExChanger.ts";
-import { isSymbol, FORBIDDEN_KEYS, META_KEYS } from "../Handlers/DataHandler.ts";
-import { doOnlyAfterResolve } from "../Instruction/Defer.ts";
-import ORG from "../Instruction/InstructionType.ts";
+import type ExChanger from "../FLOW/ExChanger.ts";
+import ORG, { doOnlyAfterResolve, isSymbol, FORBIDDEN_KEYS, META_KEYS } from "../Instruction/InstructionType.ts";
 
 //
 const wrapExChanger = (exChanger: ExChanger|null): any => {

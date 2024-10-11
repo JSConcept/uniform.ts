@@ -1,9 +1,8 @@
 // deno-lint-ignore-file no-explicit-any
 import DataHandler from "./DataHandler.ts";
-import { extract, isPromise } from "../Instruction/Defer.ts";
-import ORG from "../Instruction/InstructionType.ts";
-import { IMeta } from "../Instruction/ObjectProxy.ts";
-import { isSymbol, FORBIDDEN_KEYS, META_KEYS } from "./DataHandler.ts";
+import ORG, { MPromise, extract, FORBIDDEN_KEYS, META_KEYS, isSymbol, type IMeta, type IWrap, MakeReference, doOnlyAfterResolve, wrapWeakMap, isPromise  } from "../Instruction/InstructionType.ts";
+import RemoteReferenceHandler from "../Handlers/RemotePool.ts";
+import ObjectProxy from "../Instruction/ObjectProxy.ts";
 
 //
 export default class UniversalHandler extends DataHandler {
@@ -61,4 +60,22 @@ export default class UniversalHandler extends DataHandler {
 
     //
     $get(uuid: unknown|string|null) { return this.#dataHandler.get("local")?.$get?.(uuid); };
+}
+
+//
+export const wrapMeta = <T extends IMeta|unknown>(meta: MPromise<T>|IWrap<T>|null, handler: UniversalHandler | DataHandler | RemoteReferenceHandler | null = null)=>{
+    if (!(typeof meta == "object" || typeof meta == "function")) return meta;
+
+    //
+    const wrap = (!(meta as any)?.[ORG.data]) ? (new Proxy(MakeReference(meta), new ObjectProxy(handler || new UniversalHandler()))) : meta;
+    doOnlyAfterResolve<IMeta>(meta as MPromise<IMeta>, ($m: IMeta) => {
+        if ($m) { doOnlyAfterResolve(wrap, (w)=>{
+            if (w != null && (typeof w == "object" || typeof w == "function")) {
+                const organic = (wrapWeakMap.get(w) ?? w) as any;
+                const pt = organic?.[ORG.data] ?? organic;
+                if (pt?.[ORG.uuid]||pt?.[ORG.type]) { wrapWeakMap.set(w, pt); };
+            }
+        }); };
+    });
+    return wrap;
 }

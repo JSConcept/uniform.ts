@@ -1,7 +1,5 @@
 // deno-lint-ignore-file no-explicit-any
-import { extract, isPromise } from "../Instruction/Defer.ts";
-import ORG from "../Instruction/InstructionType.ts";
-import { IMeta } from "../Instruction/ObjectProxy.ts";
+import ORG, { extract, isPromise, type IMeta } from "../Instruction/InstructionType.ts";
 
 //
 export default class TypeDetector {

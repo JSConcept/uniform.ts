@@ -1,6 +1,5 @@
 // deno-lint-ignore-file no-explicit-any
-import { doOnlyAfterResolve } from "../Instruction/Defer.ts";
-import { Transferable } from "../Instruction/InstructionType.ts";
+import { Transferable, doOnlyAfterResolve } from "../Instruction/InstructionType.ts";
 import PromiseStack from '../Utils/PromiseStack.ts';
 
 // @ts-ignore "mixed context"

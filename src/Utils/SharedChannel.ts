@@ -1,7 +1,7 @@
-// deno-lint-ignore-file ban-ts-comment
+// deno-lint-ignore-file ban-ts-comment no-explicit-any
+
 // @ts-ignore
 import * as cbor from "cbor-x";
-import { doOnlyAfterResolve } from "../Instruction/Defer.ts";
 
 /*
  * Note about:
@@ -11,6 +11,7 @@ import { doOnlyAfterResolve } from "../Instruction/Defer.ts";
  */
 
 export default class SharedChannel<T extends unknown> {
+    //[x: string]: (timeout?: number) => unknown; // @ts-ignore
     #sharedBuffer: SharedArrayBuffer | null = null;
     #byteOffset: number = 0;
 
@@ -32,15 +33,12 @@ export default class SharedChannel<T extends unknown> {
     // @ts-ignore "DOM isn't recognized"
     waitAuto(timeout = 1000): unknown { return (self?.document ? this.waitAsync(timeout) : this.waitSync(timeout)); }
     waitSync(timeout = 1000): unknown { const result = this.$waitSync(timeout); return result ? cbor.decode(result) : null; }
-    waitAsync(timeout = 1000): unknown {
-        const result = this.$promised(timeout);
-        return doOnlyAfterResolve(result, (bin: unknown|Uint8Array)=>{
-            return bin ? cbor.decode(bin as Uint8Array) : null;
-        });
-    }
+
+    // not implemented directly
+    waitAsync(_timeout = 1000): unknown { return null; };
 
     //
-    $resolveWith(binaryData: Uint8Array | Uint8ClampedArray | Int8Array) {
+    $resolveWith(binaryData: Uint8Array | Uint8ClampedArray | Int8Array): any {
         if (this.#sharedBuffer) {
             // grow when is possible...
             if ((this.#sharedBuffer.byteLength-this.#byteOffset) < (binaryData.byteLength+8)) {

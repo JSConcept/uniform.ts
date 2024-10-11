@@ -1,12 +1,5 @@
-// deno-lint-ignore-file no-explicit-any
-import { extract } from "../Instruction/Defer.ts";
-import { IMeta } from "../Instruction/ObjectProxy.ts";
-import ORG from "../Instruction/InstructionType.ts";
-
-//
-export const isSymbol = (sym: unknown)=>(typeof sym ==='symbol' || typeof sym == 'object' && Object.prototype.toString.call(sym) == '[object Symbol]');
-export const FORBIDDEN_KEYS = new Set(["bind", "toString", "then", "catch", "finally"]);
-export const META_KEYS = new Set(Array.from(Object.values(ORG)));
+// deno-lint-ignore-file no-explicit-any 
+import ORG, { extract, FORBIDDEN_KEYS, META_KEYS, isSymbol, type IMeta  } from "../Instruction/InstructionType.ts";
 
 //
 export default class DataHandler {

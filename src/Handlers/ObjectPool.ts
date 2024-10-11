@@ -1,9 +1,7 @@
 // deno-lint-ignore-file no-explicit-any
 import UUIDMap, {hold} from "../Utils/UUIDMap.ts";
 import DataHandler from "./DataHandler.ts";
-import { extract } from "../Instruction/Defer.ts";
-import ORG from "../Instruction/InstructionType.ts";
-import { IMeta } from "../Instruction/ObjectProxy.ts";
+import ORG, { extract, type IMeta }  from "../Instruction/InstructionType.ts";
 
 //
 export default class ObjectPoolMemberHandler extends DataHandler {

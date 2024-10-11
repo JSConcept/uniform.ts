@@ -6,12 +6,9 @@ import ObjectPoolMemberHandler from "../Handlers/ObjectPool.ts";
 import DataHandler from "../Handlers/DataHandler.ts";
 import UUIDMap from "../Utils/UUIDMap.ts";
 import PreCoding from "../PreCoding/PreCoding.ts";
-import { doOnlyAfterResolve, extract, isPromise } from "../Instruction/Defer.ts";
-import { MakeReference} from "../Instruction/InstructionType.ts"
+import ORG, { MakeReference, doOnlyAfterResolve, extract, isPromise, type IWrap, type IMeta, UUIDv4 } from "../Instruction/InstructionType.ts"
 import PromiseHandler from "../Handlers/PromiseHandler.ts";
-import ObjectProxy, { IWrap } from "../Instruction/ObjectProxy.ts";
-import ORG, { UUIDv4 }  from "../Instruction/InstructionType.ts";
-import { IMeta } from "../Instruction/ObjectProxy.ts";
+import ObjectProxy from "../Instruction/ObjectProxy.ts";
 import { hold } from "../Utils/UUIDMap.ts";
 
 //

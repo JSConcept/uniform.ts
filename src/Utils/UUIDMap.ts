@@ -1,9 +1,10 @@
-// deno-lint-ignore-file no-explicit-any ban-types
-import { UUIDv4 } from "../Instruction/InstructionType.ts";
+// deno-lint-ignore-file no-explicit-any
+import { UUIDv4, type dT, type rT } from "../Instruction/InstructionType.ts";
 
 //
-const timers = new WeakMap();
-const tmpSet = new Set();
+const timers = new WeakMap(), tmpSet = new Set();
+
+//
 export const hold = (tmp: any | unknown | WeakRef<any>, timeout = 1000)=>{
 
     // holding from GC
@@ -22,10 +23,6 @@ export const hold = (tmp: any | unknown | WeakRef<any>, timeout = 1000)=>{
     //
     return tmp?.deref?.() ?? tmp;
 }
-
-//
-export type dT = object | Function;
-export type rT = WeakRef<dT>;
 
 // TODO! planned promised...
 export default class UUIDMap<T=dT> {

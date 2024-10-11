@@ -1,7 +1,4 @@
 // deno-lint-ignore-file no-explicit-any ban-types no-explicit-any
-import {type $ORG} from "./InstructionType.ts";
-
-//
 export default class ObjectProxy<T extends object|Function> implements ProxyHandler<T> {
     #handlerUtils: any = {};
 
@@ -51,17 +48,3 @@ export default class ObjectProxy<T extends object|Function> implements ProxyHand
     }
 }
 
-//
-export type MPromise<T extends unknown> = Promise<T>|T|null;
-export type IWrap<T extends unknown> = {
-    [pT in keyof T]: MPromise<pT>|IWrap<pT>;
-};
-
-//
-export interface IMeta {
-    [$ORG.uuid]?: string;
-    [$ORG.type]?: string;
-    [$ORG.node]?: unknown;
-    [$ORG.payload]?: unknown;
-    [$ORG.index]?: number;
-};

@@ -1,7 +1,7 @@
 // deno-lint-ignore-file
 import ExChanger from "../FLOW/ExChanger.ts";
-import { MakeReference } from "../Instruction/InstructionType.ts";
-import ObjectProxy, { IWrap } from "../Instruction/ObjectProxy.ts";
+import { MakeReference, type IWrap } from "../Instruction/InstructionType.ts";
+import ObjectProxy from "../Instruction/ObjectProxy.ts";
 import PromiseHandler from "../Handlers/PromiseHandler.ts";
 
 //
