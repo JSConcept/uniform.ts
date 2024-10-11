@@ -15,7 +15,7 @@ const terserOptions = {
     compress: {
         arguments: true,
         expression: true,
-        inline: 0,
+        inline: 3,
         module: true,
         passes: 2,
         side_effects: true,
@@ -46,7 +46,7 @@ export default defineConfig({
     },
     build: {
         chunkSizeWarningLimit: 1600,
-        assetsInlineLimit: 0,
+        assetsInlineLimit: 1024 * 1024,
         minify: "terser",
         sourcemap: true,
         target: "esnext",
@@ -60,7 +60,7 @@ export default defineConfig({
             external: [],
             output: {
                 exports: "named",
-                inlineDynamicImports: false,
+                inlineDynamicImports: true,
                 globals: {},
             },
         },

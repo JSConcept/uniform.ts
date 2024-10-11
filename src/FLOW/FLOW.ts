@@ -5,7 +5,8 @@ import PromiseStack from '../Utils/PromiseStack.ts';
 
 // should be converted to inline code
 // @ts-ignore "mixed context"
-import $default$ from "../Workers/ExChangerUnit.ts?worker&inline";
+//import $default$ from "../Workers/ModuleWorker.ts?worker&inline";
+import {$default$} from "../Workers/InlineWorkers.ts";
 
 // FLOW - is web worker library core (low-level)...
 export default class FLOW {

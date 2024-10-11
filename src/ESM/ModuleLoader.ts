@@ -5,12 +5,12 @@ import ObjectProxy from "../Instruction/ObjectProxy.ts";
 import PromiseHandler from "../Handlers/PromiseHandler.ts";
 
 // should be converted to inline code, and compiled from TS
-import $inline$ from "../Workers/ModuleWorker.ts?worker&inline";
+import {$default$} from "../Workers/InlineWorkers.ts";
 import loadWorker from "../FLOW/WorkerLib.ts";
 
 //
 const $moduleLoader = async <T extends unknown>(source: string = ""): Promise<T> => {
-    const  uWorker  = loadWorker($inline$);
+    const  uWorker  = loadWorker($default$);
     const exChanger = new ExChanger(uWorker);
 
     //
