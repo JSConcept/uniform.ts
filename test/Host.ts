@@ -4,7 +4,10 @@ import {doTransfer, getContext} from "../src/ESM/Utils.ts";
 import ORG from "../src/Instruction/InstructionType.ts";
 
 //
-const module = (await moduleLoader(new URL("./Worker.ts", import.meta.url).href)) as any;
+const $inline$ = new URL("./Worker.ts", import.meta.url).href;
+
+//
+const module = (await moduleLoader($inline$)) as any;
 const ctx = getContext(module);
 
 //

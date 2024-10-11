@@ -1,15 +1,21 @@
 // deno-lint-ignore-file no-explicit-any ban-types
-import UniversalHandler from "../Handlers/UniversalHandler.ts";
-import FLOW, { type WorkerContext } from "./FLOW.ts";
+import ORG, { MakeReference, doOnlyAfterResolve, extract, isPromise, type IWrap, type IMeta, UUIDv4 } from "../Instruction/InstructionType.ts"
+
+//
 import RemoteReferenceHandler from "../Handlers/RemotePool.ts";
 import ObjectPoolMemberHandler from "../Handlers/ObjectPool.ts";
 import DataHandler from "../Handlers/DataHandler.ts";
-import UUIDMap from "../Utils/UUIDMap.ts";
-import PreCoding from "../PreCoding/PreCoding.ts";
-import ORG, { MakeReference, doOnlyAfterResolve, extract, isPromise, type IWrap, type IMeta, UUIDv4 } from "../Instruction/InstructionType.ts"
 import PromiseHandler from "../Handlers/PromiseHandler.ts";
 import ObjectProxy from "../Instruction/ObjectProxy.ts";
 import { hold } from "../Utils/UUIDMap.ts";
+
+//
+import type UniversalHandler from "../Handlers/UniversalHandler.ts";
+import type PreCoding from "../PreCoding/PreCoding.ts";
+import type UUIDMap from "../Utils/UUIDMap.ts";
+
+//
+import FLOW, { type WorkerContext } from "./FLOW.ts";
 
 //
 export default class ExChanger {

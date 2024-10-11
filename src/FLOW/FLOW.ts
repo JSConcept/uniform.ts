@@ -2,6 +2,9 @@
 import { Transferable, doOnlyAfterResolve } from "../Instruction/InstructionType.ts";
 import PromiseStack from '../Utils/PromiseStack.ts';
 
+// should be converted to inline code
+const $inline$ = new URL("./ExChangerUnit.ts", import.meta.url).href;
+
 // @ts-ignore "mixed context"
 const isWorker = typeof Worker == "undefined" || typeof WorkerGlobalScope != 'undefined' && self instanceof WorkerGlobalScope;
 
@@ -19,7 +22,7 @@ export default class FLOW {
         worker: WorkerContext | null = null,
     ) {
         // @ts-ignore "mixed context"
-        const defaultWorker = !worker ? (!isWorker ? new Worker(new URL("./ExChangerUnit.ts", import.meta.url).href, {type: "module"}) : self) : null;
+        const defaultWorker = !worker ? (!isWorker ? new Worker($inline$, {type: "module"}) : self) : null;
 
         //
         this.#worker = worker || defaultWorker;
