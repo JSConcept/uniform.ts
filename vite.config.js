@@ -2,10 +2,7 @@ import { defineConfig, loadEnv } from "vite";
 import { resolve } from "node:path";
 import { compression } from 'vite-plugin-compression2'
 import optimizer from 'vite-plugin-optimizer'
-import { viteSingleFile } from "vite-plugin-singlefile"
 import typescript from '@rollup/plugin-typescript';
-import dynamicImport from 'vite-plugin-dynamic-import'
-//import { ViteMinifyPlugin } from 'vite-plugin-minify'
 import terser from '@rollup/plugin-terser';
 
 //
@@ -18,7 +15,7 @@ const terserOptions = {
     compress: {
         arguments: true,
         expression: true,
-        inline: 3,
+        inline: 0,
         module: true,
         passes: 2,
         side_effects: true,
@@ -35,12 +32,9 @@ const terserOptions = {
 export default defineConfig({
     plugins: [
         typescript(),
-        //dynamicImport(/* options */),
-        compression(),
+        terser(terserOptions),
         optimizer({}),
-        viteSingleFile(),
-        terser(terserOptions)
-        //ViteMinifyPlugin({}),
+        compression()
     ],
     server: {
         port: 5173,
@@ -52,9 +46,9 @@ export default defineConfig({
     },
     build: {
         chunkSizeWarningLimit: 1600,
-        assetsInlineLimit: 1024 * 1024,
+        assetsInlineLimit: 0,
         minify: "terser",
-        sourcemap: false,//"inline",
+        sourcemap: true,
         target: "esnext",
         lib: {
             formats: ["es"],
@@ -66,7 +60,7 @@ export default defineConfig({
             external: [],
             output: {
                 exports: "named",
-                inlineDynamicImports: true,
+                inlineDynamicImports: false,
                 globals: {},
             },
         },

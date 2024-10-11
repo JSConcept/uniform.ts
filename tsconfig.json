@@ -17,7 +17,8 @@
         "emitDeclarationOnly": true,
         "declaration": true,
         "noImplicitThis": false,
-        "inlineSources": true,
+        "inlineSources": false,
+        "inlineSourceMap": false,
         "outDir": "./dist/",
         "declarationDir": "./dist/uniform.d.ts/"
     }

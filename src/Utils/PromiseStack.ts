@@ -3,7 +3,7 @@ import SharedChannel from "./SharedChannel.ts";
 import { UUIDv4 } from "../Instruction/InstructionType.ts";
 
 // for your web worker project...
-export const HANG_TIMEOUT = 1000;
+export const HANG_TIMEOUT = 2000;
 export default class PromiseStack<T extends unknown> {
     #map = new Map<string, PromiseWithResolvers<T> | SharedChannel<T>>();
 
