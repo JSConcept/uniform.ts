@@ -8,8 +8,8 @@ import terser from '@rollup/plugin-terser';
 //
 const __dirname = import.meta.dirname;
 const terserOptions = {
-    keep_classnames: true,
-    keep_fnames: true,
+    keep_classnames: false,
+    keep_fnames: false,
     module: true,
     ecma: 2020,
     compress: {
@@ -65,5 +65,20 @@ export default defineConfig({
             },
         },
         terserOptions
+    },
+    optimizeDeps: {
+        include: [
+            "./node_modules/**/*.mjs", 
+            "./node_modules/**/*.js", 
+            "./node_modules/**/*.ts", 
+            "./src/**/*.mjs", 
+            "./src/**/*.js", 
+            "./src/**/*.ts", 
+            "./src/*.mjs", 
+            "./src/*.js",
+            "./src/*.ts"
+        ],
+        entries: resolve(__dirname, './index.ts'),
+        force: true
     }
 });
