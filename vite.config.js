@@ -48,7 +48,7 @@ export default defineConfig({
         chunkSizeWarningLimit: 1600,
         assetsInlineLimit: 1024 * 1024,
         minify: "terser",
-        sourcemap: true,
+        sourcemap: 'hidden',
         target: "esnext",
         lib: {
             formats: ["es"],
