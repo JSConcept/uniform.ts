@@ -3,7 +3,8 @@ import { resolve } from "node:path";
 import { compression } from 'vite-plugin-compression2'
 import optimizer from 'vite-plugin-optimizer'
 import { viteSingleFile } from "vite-plugin-singlefile"
-//import dynamicImport from 'vite-plugin-dynamic-import'
+import typescript from '@rollup/plugin-typescript';
+import dynamicImport from 'vite-plugin-dynamic-import'
 
 //
 const __dirname = import.meta.dirname;
@@ -11,7 +12,8 @@ const __dirname = import.meta.dirname;
 //
 export default defineConfig({
     plugins: [
-        //dynamicImport(/* options */),
+        typescript(),
+        dynamicImport(/* options */),
         compression(),
         optimizer({}),
         viteSingleFile()
@@ -25,7 +27,7 @@ export default defineConfig({
         format: "es"
     },
     build: {
-        assetsInlineLimit: (1024 * 1024),
+        assetsInlineLimit: 1024 * 1024,
         minify: 'esbuild',
         sourcemap: "inline",
         target: "ESNext",

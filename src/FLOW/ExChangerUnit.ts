@@ -4,6 +4,7 @@ import ORG from "../Instruction/InstructionType.ts";
 
 //
 const exChanger = new ExChanger(self);
+await exChanger.initialize();
 
 //
 if (typeof self != "undefined") {
@@ -12,5 +13,4 @@ if (typeof self != "undefined") {
 }
 
 //
-await exChanger.initialize();
 export default exChanger;

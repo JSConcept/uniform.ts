@@ -18,11 +18,11 @@ import type UUIDMap from "../Utils/UUIDMap.ts";
 import FLOW from "./FLOW.ts";
 import { type WorkerContext } from "./WorkerLib.ts";
 
+//
+import * as $M from "./MessageChannel.ts";
+
 // should be converted to inline code, and compiled from TS
 //const $module$ = new URL("./MessageChannel.ts", import.meta.url).href;
-
-// @ts-ignore ""
-import $module$ from "./MessageChannel.ts?url";
 
 //
 export default class ExChanger {
@@ -38,8 +38,10 @@ export default class ExChanger {
 
     //
     async initialize() {
-        await this.#flow?.importToUnit($module$);
-        await this.#flow?.importToSelf(import($module$));
+        //await this.#flow?.importToUnit($module$);
+        await this.sync();
+        await this.#flow?.importToSelf($M);
+        await this.sync();
 
         //
         this.#coder      = this.#flow?.$imports?.$coders      ?? this.#coder;

@@ -1,12 +1,9 @@
 // deno-lint-ignore-file no-explicit-any
-//import moduleLoader, {doTransfer, getContext, ORG} from "../dist/uniform.js"; // 
-import moduleLoader, {doTransfer, getContext, ORG} from "../index.ts";
+import moduleLoader, {doTransfer, getContext, ORG} from "../dist/uniform.js"; // 
+//import moduleLoader, {doTransfer, getContext, ORG} from "../index.ts";
 
-//
-const $module$ = new URL("./Worker.ts", import.meta.url).href;
-
-//
-const module = (await moduleLoader($module$)) as any;
+// typescript modules doesn't supported directly...
+const module = (await moduleLoader( new URL("./Worker.mjs", import.meta.url).href )) as any;
 const ctx = getContext(module);
 
 //

@@ -21,5 +21,8 @@
         "inlineSources": true,
         "inlineSourceMap": true,
         "sourceMap": true,
+
+        "outDir": "./dist/",
+        "declarationDir": "./dist/uniform.d.ts/"
     }
 }

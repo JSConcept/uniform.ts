@@ -1,12 +1,12 @@
-//import {getContext, transfer} from "../dist/uniform.js"
-import {getContext, transfer} from "../utils.ts"
+import {getContext, transfer} from "../dist/uniform.js"
+//import {getContext, transfer} from "../utils.ts"
 
 // host-based context
 const ctx = getContext(self);
 
 // after sync you can register
 export class TestClass {
-    clips: number;
+    //clips: number;
     constructor() {
         console.log("Chips");
         this.clips = 0;
@@ -23,7 +23,7 @@ export class TestClass {
 export const regrets = new ArrayBuffer(64);
 export const workerAction = async ()=>{
     //
-    const transferCheck = await ctx?.["transferCheck"] as ((_: ArrayBuffer|unknown)=>unknown)|null;
+    const transferCheck = await ctx?.["transferCheck"]; //as ((_: ArrayBuffer|unknown)=>unknown)|null;
 
     // (sending as argument, unusual here)
     const bravery = new ArrayBuffer(64);
