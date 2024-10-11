@@ -2,7 +2,7 @@
 import exChanger from "../FLOW/ExChangerUnit.ts";
 
 // make import loader support
-exChanger.register((src: string = ""): Promise<any> => import(src), "!!import!!");
+exChanger.register((src: string = ""): Promise<any> => import(/* @vite-ignore */ src), "!!import!!");
 
 //
 export default exChanger;

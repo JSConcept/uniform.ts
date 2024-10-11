@@ -37,7 +37,7 @@ export default class FLOW {
                     worker?.postMessage({ cmd, uuid, dir: "res", status: "ok", result: "ok", shared: null });
                 } else
                 if (cmd == "import") {
-                    import("" + ev.data.source)?.then?.((m)=>{
+                    import(/* @vite-ignore */ ("" + ev.data.source))?.then?.((m)=>{
                         Object.assign(this.#imports, (m.default ?? m));
                         worker?.postMessage({ cmd, uuid, dir: "res", status: "ok", result: "ok", shared: null });
                     })?.catch?.((e)=>{
