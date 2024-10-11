@@ -16,6 +16,10 @@
         "allowImportingTsExtensions": true,
         "emitDeclarationOnly": true,
         "declaration": true,
-        "noImplicitThis": false
+        "noImplicitThis": false,
+
+        "inlineSources": true,
+        "inlineSourceMap": true,
+        "sourceMap": true,
     }
 }

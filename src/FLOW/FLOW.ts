@@ -1,19 +1,15 @@
 // deno-lint-ignore-file no-explicit-any
 import { Transferable, doOnlyAfterResolve } from "../Instruction/InstructionType.ts";
+import { WorkerContext, loadWorker } from "./WorkerLib.ts";
 import PromiseStack from '../Utils/PromiseStack.ts';
 
 // should be converted to inline code
-const $inline$ = new URL("./ExChangerUnit.ts", import.meta.url).href;
-
 // @ts-ignore "mixed context"
-const isWorker = typeof Worker == "undefined" || typeof WorkerGlobalScope != 'undefined' && self instanceof WorkerGlobalScope;
-
-// @ts-ignore "mixed context"
-export type WorkerContext = Worker | WorkerGlobalScope;
+import $inline$ from "./ExChangerUnit.ts?worker";
 
 // FLOW - is web worker library core (low-level)...
 export default class FLOW {
-    #worker: WorkerContext | null = null;//new Worker("./FLOW-Unit.ts");
+    #worker: WorkerContext | null = null;
     #promiseStack: PromiseStack<unknown> = new PromiseStack<unknown>();
     #imports: any = {};
 
@@ -22,7 +18,7 @@ export default class FLOW {
         worker: WorkerContext | null = null,
     ) {
         // @ts-ignore "mixed context"
-        const defaultWorker = !worker ? (!isWorker ? new Worker($inline$, {type: "module"}) : self) : null;
+        const defaultWorker = !worker ? loadWorker($inline$) : null;
 
         //
         this.#worker = worker || defaultWorker;

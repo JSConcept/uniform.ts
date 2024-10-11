@@ -1,4 +1,5 @@
-import { getContext, transfer } from "../src/ESM/Utils.ts";
+//import {getContext, transfer} from "../dist/uniform.js"
+import {getContext, transfer} from "../index.ts"
 
 // host-based context
 const ctx = getContext(self);

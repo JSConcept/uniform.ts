@@ -1,13 +1,12 @@
 // deno-lint-ignore-file no-explicit-any
-import moduleLoader from "../src/ESM/ModuleLoader.ts";
-import {doTransfer, getContext} from "../src/ESM/Utils.ts";
-import ORG from "../src/Instruction/InstructionType.ts";
+//import moduleLoader, {doTransfer, getContext, ORG} from "../dist/uniform.js"; // 
+import moduleLoader, {doTransfer, getContext, ORG} from "../index.ts";
 
 //
-const $inline$ = new URL("./Worker.ts", import.meta.url).href;
+const $module$ = new URL("./Worker.ts", import.meta.url).href;
 
 //
-const module = (await moduleLoader($inline$)) as any;
+const module = (await moduleLoader($module$)) as any;
 const ctx = getContext(module);
 
 //

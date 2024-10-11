@@ -4,4 +4,9 @@ export * from "./src/ESM/Utils.ts";
 
 //
 import ModuleLoader from "./src/ESM/ModuleLoader.ts";
+
+// default export
 export default ModuleLoader;
+
+//
+export {ModuleLoader as moduleLoader};
