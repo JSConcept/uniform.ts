@@ -11,11 +11,8 @@ import loadWorker from "../FLOW/WorkerLib.ts";
 //
 const $moduleLoader = async <T extends unknown>(source: string = ""): Promise<T> => {
     const  uWorker  = loadWorker($default$);
-    const exChanger = new ExChanger(uWorker);
-
-    //
-    await exChanger.initialize();
-    const module = await (await exChanger?.access?.("!!import!!") as any)?.(source);
+    const exChanger = await (new ExChanger(uWorker)).initialize();
+    const module    = await (await exChanger?.access?.("!!import!!") as any)?.(source);
     return module ?? exChanger;
 }
 

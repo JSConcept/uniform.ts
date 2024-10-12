@@ -3,8 +3,7 @@ import ExChanger from "../FLOW/ExChanger.ts";
 import ORG from "../Instruction/InstructionType.ts";
 
 //
-const exChanger = new ExChanger(self);
-await exChanger.initialize();
+const exChanger = await (new ExChanger(self)).initialize();
 
 //
 if (typeof self != "undefined") {

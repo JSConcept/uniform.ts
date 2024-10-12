@@ -2,7 +2,7 @@
     "compilerOptions": {
         "target": "ESNext",
         "module": "ESNext",
-        "lib": ["esnext", "dom"],
+        "lib": ["ESNext", "DOM", "WebWorker"],
         "esModuleInterop": true,
         "strict": true,
         "forceConsistentCasingInFileNames": true,
@@ -13,13 +13,14 @@
         "allowUnreachableCode": true,
         "allowUnusedLabels": true,
         "noImplicitAny": false,
-        "allowImportingTsExtensions": true,
-        "emitDeclarationOnly": true,
         "declaration": true,
         "noImplicitThis": false,
-        "inlineSources": false,
-        "inlineSourceMap": false,
+        "inlineSources": true,
+        "inlineSourceMap": true,
+        "sourceMap": false,
         "outDir": "./dist/",
-        "declarationDir": "./dist/uniform.d.ts/"
+        "declarationDir": "./dist/uniform.d.ts/",
+        "allowImportingTsExtensions": true,
+        "emitDeclarationOnly": true
     }
 }

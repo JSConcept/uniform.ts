@@ -4,12 +4,12 @@
     "version": "1.0.0alpha",
     "private": false,
     "type": "module",
-    "index": "./uniform.js",
+    "index": "./dist/uniform.js",
     "scripts": {
         "dev": "vite",
         "build": "vite build",
         "preview": "vite preview",
-        "deno-test": "deno ./test/Host.ts"
+        "test": "deno --allow-all ./test/Host.ts"
     },
     "browserslist": [
         "last 1 chrome version",

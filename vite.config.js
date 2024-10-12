@@ -4,6 +4,8 @@ import { compression } from 'vite-plugin-compression2'
 import optimizer from 'vite-plugin-optimizer'
 import typescript from '@rollup/plugin-typescript';
 import terser from '@rollup/plugin-terser';
+import { viteSingleFile } from "vite-plugin-singlefile"
+import fs from "node:fs/promises";
 
 //
 const __dirname = import.meta.dirname;
@@ -29,36 +31,43 @@ const terserOptions = {
 };
 
 //
+const TSConfig = JSON.parse(await fs.readFile("./tsconfig.json", {encoding: "utf8"}));
+
+//
+const plugins = [
+    typescript(TSConfig),
+    terser(terserOptions),
+    optimizer({}),
+    compression(),
+    //viteSingleFile()
+];
+
+//
+const rollupOptions = {
+    treeshake: 'smallest',
+    external: [],
+    output: [{
+        minifyInternalExports: true,
+        compact: true,
+        exports: "auto",
+        inlineDynamicImports: true,
+        globals: {},
+    }],
+};
+
+//
 export default defineConfig({
-    plugins: [
-        typescript(),
-        terser(terserOptions),
-        optimizer({}),
-        compression()
-    ],
+    plugins,
     server: {
         port: 5173,
         open: false,
         origin: "http://localhost:5173",
     },
     worker: {
-        plugins: [
-            typescript(),
-            terser(terserOptions),
-            optimizer({}),
-            compression()
-        ],
+        name: "u-worker",
+        plugins: ()=> plugins,
         format: "es",
-        rollupOptions: {
-            treeshake: 'smallest',
-            output: {
-                minifyInternalExports: true,
-                compact: true,
-                exports: "named",
-                inlineDynamicImports: true,
-                globals: {},
-            }
-        }
+        rollupOptions
     },
     build: {
         chunkSizeWarningLimit: 1600,
@@ -66,23 +75,14 @@ export default defineConfig({
         minify: "terser",
         sourcemap: 'hidden',
         target: "esnext",
+        name: "uniform",
         lib: {
             formats: ["es"],
             entry: resolve(__dirname, './index.ts'),
             name: 'uniform',
             fileName: 'uniform',
         },
-        rollupOptions: {
-            treeshake: 'smallest',
-            external: [],
-            output: {
-                minifyInternalExports: true,
-                compact: true,
-                exports: "named",
-                inlineDynamicImports: true,
-                globals: {},
-            },
-        },
+        rollupOptions,
         terserOptions
     },
     optimizeDeps: {
