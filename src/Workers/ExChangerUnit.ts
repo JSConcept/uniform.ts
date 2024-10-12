@@ -1,6 +1,6 @@
 // Web Worker Unit...
-import ExChanger from "../FLOW/ExChanger.ts";
-import ORG from "../Instruction/InstructionType.ts";
+import ExChanger from "../Library/FLOW/ExChanger.ts";
+import ORG from "../Library/Instruction/InstructionType.ts";
 
 //
 const exChanger = await (new ExChanger(self)).initialize();

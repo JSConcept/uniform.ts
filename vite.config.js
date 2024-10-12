@@ -78,7 +78,7 @@ export default defineConfig({
         name: "uniform",
         lib: {
             formats: ["es"],
-            entry: resolve(__dirname, './index.ts'),
+            entry: resolve(__dirname, './src/index.ts'),
             name: 'uniform',
             fileName: 'uniform',
         },
@@ -104,8 +104,8 @@ export default defineConfig({
             resolve(__dirname, './src/Workers/ExChangerUnit.ts'), 
             resolve(__dirname, './src/Workers/InlineWorkers.ts'), 
             resolve(__dirname, './src/Workers/ModuleWorker.ts'),
-            resolve(__dirname, './utils.ts'), 
-            resolve(__dirname, './index.ts'), 
+            resolve(__dirname, './src/utils.ts'), 
+            resolve(__dirname, './src/index.ts'), 
             resolve(__dirname, './test/Host.ts')
         ],
         force: true

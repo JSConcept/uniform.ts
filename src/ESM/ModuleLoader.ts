@@ -1,12 +1,12 @@
 // deno-lint-ignore-file
-import ExChanger from "../FLOW/ExChanger.ts";
-import { MakeReference, type IWrap } from "../Instruction/InstructionType.ts";
-import ObjectProxy from "../Instruction/ObjectProxy.ts";
-import PromiseHandler from "../Handlers/PromiseHandler.ts";
+import ExChanger from "../Library/FLOW/ExChanger.ts";
+import { MakeReference, type IWrap } from "../Library/Instruction/InstructionType.ts";
+import ObjectProxy from "../Library/Instruction/ObjectProxy.ts";
+import PromiseHandler from "../Library/Handlers/PromiseHandler.ts";
 
 // should be converted to inline code, and compiled from TS
 import {$default$} from "../Workers/InlineWorkers.ts";
-import loadWorker from "../FLOW/WorkerLib.ts";
+import loadWorker from "../Library/FLOW/WorkerLib.ts";
 
 //
 const $moduleLoader = async <T extends unknown>(source: string = ""): Promise<T> => {
