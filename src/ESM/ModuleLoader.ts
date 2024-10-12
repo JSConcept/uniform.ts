@@ -1,25 +1,27 @@
 // deno-lint-ignore-file
-import ExChanger from "../Library/FLOW/ExChanger.ts";
-import { MakeReference, type IWrap } from "../Library/Instruction/InstructionType.ts";
-import ObjectProxy from "../Library/Instruction/ObjectProxy.ts";
-import PromiseHandler from "../Library/Handlers/PromiseHandler.ts";
 
 // should be converted to inline code, and compiled from TS
-import {$default$} from "../Workers/InlineWorkers.ts";
-import loadWorker from "../Library/FLOW/WorkerLib.ts";
+import W from "../Workers/ModuleWorker.ts?worker&inline";
+import loadWorker from "../Atomic/WorkerLib.ts";
+import ObjectProxy from "../Atomic/ObjectProxy.ts";
 
 //
-const $moduleLoader = async <T extends unknown>(source: string = ""): Promise<T> => {
-    const  uWorker  = loadWorker($default$);
-    const exChanger = await (new ExChanger(uWorker)).initialize();
-    const module    = await (await exChanger?.access?.("!!import!!") as any)?.(source);
-    return module ?? exChanger;
+const $moduleLoader = async <T extends unknown>(moduleSource: string): Promise<T> => {
+    if (!moduleSource || typeof moduleSource != "string") throw new Error("Invalid module source");
+
+    //
+    const  uWorker  = loadWorker(W);
+    const EXChanger = (await import("../Library/FLOW/ExChanger.ts")).default;
+    const exChanger = new EXChanger(uWorker)?.initialize?.();
+    const module    = await (await exChanger?.access?.("!!import!!") as any)?.(moduleSource);
+
+    //
+    return module;
 }
 
 //
-export const moduleLoader = async <T extends unknown>(source: string = "")=>{
-    return (new Proxy(MakeReference($moduleLoader<T>(source)), new ObjectProxy(new PromiseHandler())) as IWrap<T>);
+import {MakeReference, PromiseHandler} from "../Library/Shared.ts";
+export const moduleLoader = <T extends unknown>(source: string)=>{
+    return new Proxy(MakeReference($moduleLoader<T>(source)?.catch?.(console.trace.bind(console))), new ObjectProxy(new PromiseHandler()));
 }
-
-//
 export default moduleLoader;

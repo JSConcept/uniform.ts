@@ -1,8 +1,13 @@
 // deno-lint-ignore-file no-explicit-any
+import ObjectProxy from "../../Atomic/ObjectProxy.ts";
+
+//
 import DataHandler from "./DataHandler.ts";
-import ORG, { MPromise, extract, FORBIDDEN_KEYS, META_KEYS, isSymbol, type IMeta, type IWrap, MakeReference, doOnlyAfterResolve, wrapWeakMap, isPromise  } from "../Instruction/InstructionType.ts";
+import { 
+    ORG, MPromise, extract, FORBIDDEN_KEYS, META_KEYS, isSymbol, MakeReference, doOnlyAfterResolve, wrapWeakMap, isPromise, 
+    type IMeta, type IWrap
+} from "../Utils/InstructionType.ts";
 import RemoteReferenceHandler from "../Handlers/RemotePool.ts";
-import ObjectProxy from "../Instruction/ObjectProxy.ts";
 
 //
 export default class UniversalHandler extends DataHandler {

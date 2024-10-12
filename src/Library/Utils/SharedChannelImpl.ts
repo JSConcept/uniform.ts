@@ -1,4 +1,4 @@
-import { doOnlyAfterResolve } from "../Instruction/InstructionType.ts";
+import { doOnlyAfterResolve } from "./InstructionType.ts";
 import SharedChannel from "./SharedChannel.ts";
 
 //

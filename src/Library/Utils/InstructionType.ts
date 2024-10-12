@@ -1,6 +1,7 @@
 // deno-lint-ignore-file ban-types no-explicit-any no-explicit-any ban-types no-explicit-any no-explicit-any
-import SharedChannel from "../Utils/SharedChannel.ts";
-import type ExChanger from "../FLOW/ExChanger.ts";
+import SharedChannel from "./SharedChannel.ts";
+//import type ExChanger from "../FLOW/ExChanger.ts";
+type ExChanger = any;
 
 //
 const wrapExChanger = (exChanger: ExChanger|null): any => {
@@ -209,4 +210,4 @@ export const extract = <T extends unknown>(w: IWrap<T>|MPromise<T>|MPromise<IMet
 }
 
 //
-import * as _ from "../Utils/SharedChannelImpl.ts";
+import * as _ from "./SharedChannelImpl.ts";

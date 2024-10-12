@@ -1,5 +1,5 @@
 // deno-lint-ignore-file no-explicit-any
-import { UUIDv4, type dT, type rT } from "../Instruction/InstructionType.ts";
+import { UUIDv4, type dT, type rT } from "./InstructionType.ts";
 
 //
 const timers = new WeakMap(), tmpSet = new Set();

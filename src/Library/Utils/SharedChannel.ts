@@ -86,7 +86,7 @@ export default class SharedChannel<T extends unknown> {
                     return new Uint8Array(this.#sharedBuffer, this.#byteOffset + 8, int32[1]);
                 }
                 return null;
-            });
+            })?.catch?.(console.trace.bind(console));
         }
 
         //

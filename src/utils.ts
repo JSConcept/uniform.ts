@@ -1,1 +1,1 @@
-export * from "./Library/Instruction/InstructionType.ts";
+export * from "./Library/Utils/InstructionType.ts";

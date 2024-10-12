@@ -1,31 +1,20 @@
 // deno-lint-ignore-file no-explicit-any
-import { Transferable, doOnlyAfterResolve } from "../Instruction/InstructionType.ts";
-import { type WorkerContext, loadWorker } from "./WorkerLib.ts";
+import { Transferable, doOnlyAfterResolve } from "../Utils/InstructionType.ts";
 import PromiseStack from '../Utils/PromiseStack.ts';
-
-// should be converted to inline code
-// @ts-ignore "mixed context"
-import {$default$} from "../../Workers/InlineWorkers.ts";
 
 // FLOW - is web worker library core (low-level)...
 export default class FLOW {
-    #worker: WorkerContext | null = null;
+    #worker: any | null = null;
     #promiseStack: PromiseStack<unknown> = new PromiseStack<unknown>();
     #imports: any = {};
 
     //
-    constructor(
-        worker: WorkerContext | null = null,
-    ) {
-        // @ts-ignore "mixed context"
-        const defaultWorker = !worker ? loadWorker($default$) : null;
-
-        //
-        this.#worker = worker || defaultWorker;
+    constructor(worker: any | null = null) {
+        this.#worker = worker;// || defaultWorker;
         this.#imports = {};
 
         //
-        (worker = this.#worker)?.addEventListener("message", (ev: any)=>{
+        (worker ??= this.#worker)?.addEventListener("message", (ev: any)=>{
             if (!ev?.data) { console.log(ev); return; }
             const {cmd, uuid, dir, status, shared} = ev.data;
             if (dir == "req") {
@@ -38,6 +27,7 @@ export default class FLOW {
                         worker?.postMessage({ cmd, uuid, dir: "res", status: "ok", result: "ok", shared: null });
                     })?.catch?.((e)=>{
                         console.error(e);
+                        console.trace(e);
                         worker?.postMessage({ cmd, uuid, dir: "res", status: "error", result: "unsupported", shared: null });
                     });
                 } else
@@ -110,8 +100,8 @@ export default class FLOW {
     }
 
     //
-    async importToSelf(module: any) {
-        Object.assign(this.#imports, ((await module)?.default ?? (await module)));
+    importToSelf(module: any) {
+        Object.assign(this.#imports, (module)?.default ?? module);
         return this;
     }
 

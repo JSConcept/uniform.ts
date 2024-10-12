@@ -1,14 +1,13 @@
 // deno-lint-ignore-file no-explicit-any
-import ExChanger from "../FLOW/ExChanger.ts";
 import DataHandler from "./DataHandler.ts";
-import ORG, { extract, isSymbol, FORBIDDEN_KEYS, META_KEYS } from "../Instruction/InstructionType.ts";
+import ORG, { extract, isSymbol, FORBIDDEN_KEYS, META_KEYS } from "../Utils/InstructionType.ts";
 
 //
 export default class RemoteReferenceHandler extends DataHandler {
-    #exChanger: ExChanger|null;
+    #exChanger: any|null;
 
     //
-    constructor(exChanger: ExChanger|null){
+    constructor(exChanger: any|null){
         super();
         this.#exChanger = exChanger;
     }

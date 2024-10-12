@@ -1,27 +1,21 @@
 // deno-lint-ignore-file no-explicit-any ban-types
-import ORG, { MakeReference, doOnlyAfterResolve, extract, isPromise, type IWrap, type IMeta, UUIDv4 } from "../Instruction/InstructionType.ts"
+import ObjectProxy from "../../Atomic/ObjectProxy.ts";
 
 //
+import ORG, { MakeReference, doOnlyAfterResolve, extract, isPromise, type IWrap, type IMeta, UUIDv4 } from "../Utils/InstructionType.ts"
 import RemoteReferenceHandler from "../Handlers/RemotePool.ts";
 import ObjectPoolMemberHandler from "../Handlers/ObjectPool.ts";
 import DataHandler from "../Handlers/DataHandler.ts";
 import PromiseHandler from "../Handlers/PromiseHandler.ts";
-import ObjectProxy from "../Instruction/ObjectProxy.ts";
+import type UniversalHandler from "../Handlers/UniversalHandler.ts";
 
 //
-import type UniversalHandler from "../Handlers/UniversalHandler.ts";
 import type PreCoding from "../PreCoding/PreCoding.ts";
 import type UUIDMap from "../Utils/UUIDMap.ts";
-
-//
 import FLOW from "./FLOW.ts";
-import { type WorkerContext } from "./WorkerLib.ts";
 
 //
 import * as $M from "./MessageChannel.ts";
-
-// should be converted to inline code, and compiled from TS
-//const $module$ = new URL("./MessageChannel.ts", import.meta.url).href;
 
 //
 export default class ExChanger {
@@ -31,16 +25,16 @@ export default class ExChanger {
     #coder: PreCoding | null = null;
 
     //
-    constructor(context: WorkerContext) {
+    constructor(context: any) {
         this.#flow = new FLOW(context);
     }
 
     //
-    async initialize() {
+    initialize() {
         //await this.#flow?.importToUnit($module$);
-        await this.sync();
-        await this.#flow?.importToSelf($M);
-        await this.sync();
+        //await this.sync();
+        this.#flow?.importToSelf($M);
+        //await this.sync();
 
         //
         this.#coder      = this.#flow?.$imports?.$coders      ?? this.#coder;
@@ -58,7 +52,7 @@ export default class ExChanger {
         }
 
         //
-        return this.sync();
+        return this;//.sync();
     }
 
     //

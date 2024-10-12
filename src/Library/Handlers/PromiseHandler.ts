@@ -1,6 +1,8 @@
 // deno-lint-ignore-file no-explicit-any
-import ObjectProxy from "../Instruction/ObjectProxy.ts";
-import ORG, { MakeReference, isSymbol, FORBIDDEN_KEYS, META_KEYS, isPromise, bindCtx, doOnlyAfterResolve, type IWrap } from "../Instruction/InstructionType.ts"
+import ObjectProxy from "../../Atomic/ObjectProxy.ts";
+
+//
+import ORG, { MakeReference, isSymbol, FORBIDDEN_KEYS, META_KEYS, isPromise, bindCtx, doOnlyAfterResolve, type IWrap } from "../Utils/InstructionType.ts"
 import DataHandler from "./DataHandler.ts";
 
 //

@@ -3,7 +3,7 @@
 import UUIDMap from "../Utils/UUIDMap.ts";
 import TypeDetector from "./TypeDetector.ts";
 import UniversalHandler from "../Handlers/UniversalHandler.ts";
-import ORG, { isPromise, doOnlyAfterResolve, type IMeta, extract } from "../Instruction/InstructionType.ts";
+import ORG, { isPromise, doOnlyAfterResolve, extract, type IMeta } from "../Utils/InstructionType.ts";
 import { wrapMeta } from "../Handlers/UniversalHandler.ts";
 
 // mediator
