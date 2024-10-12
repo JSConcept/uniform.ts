@@ -56,7 +56,7 @@ export default class FLOW {
                                 });
                             });
                         });
-                    } catch(e) {
+                    } catch(e: any) {
                         console.error(e);
                         console.trace(e);
 
@@ -85,7 +85,7 @@ export default class FLOW {
                     const resolved = this.#imports?.[ev.data.handler]?.apply?.(self, [ev.data]) ?? (ev.data.result) ?? null;
                     //console.log(cmd, uuid, dir, shared, resolved);
                     this.#promiseStack?.[status != "error" ? "resolveBy" : "rejectBy"]?.(uuid, resolved ?? null);
-                } catch(e) {
+                } catch(e: any) {
                     console.error(e);
                     console.trace(e);
                     this.#promiseStack?.rejectBy?.(uuid, e?.message);

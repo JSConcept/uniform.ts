@@ -1,5 +1,6 @@
 import fs from "node:fs/promises";
 import { createRequire } from "node:module";
+import { type } from "node:os";
 import path, { dirname, resolve } from "node:path";
 
 //
@@ -34,45 +35,26 @@ const terserOptions = {
 export default {
     output: {
         filename: './[name].mjs',
-        path: resolve(__dirname, 'dist/'),
+        path: resolve(__dirname, 'dist/uniform.mjs'),
         crossOriginLoading: 'anonymous',
         chunkFilename: "./deps/[name].mjs",
-        module: true
-        //assetModuleFilename: fname
+        library: {
+            type: "module",
+        },
+        chunkFormat: 'module',
+		module: true,
     },
-    entry: './src/index.ts',
+    entry: resolve(__dirname, 'src/index.mjs'),
     module: {
         rules: [
-            {   // library itself
-                //target: ["es2020", "webworker"],
+            {   // library...
                 include: [
-                    resolve(__dirname, 'src/utils.ts'),
-                    resolve(__dirname, 'src/Worker/**/*.ts'),
+                    resolve(__dirname, "src")
                 ],
                 test: /\.ts$/,
-                use: [
-                    'ts-loader',
-                    'raw-loader',
-                    'url-loader'
-                ]
-            },
-            {   // library itself
-                //target: ["web", "es2020"],
-                include: [
-                    resolve(__dirname, 'src/index.ts'),
-                    resolve(__dirname, 'src/ESM/*.ts'),
-                    resolve(__dirname, 'src/Library/**/*.ts'),
-                ],
-                test: /\.ts$/,
-                use: [
-                    'ts-loader'
-                ]
+                loader: "ts-loader"
             }
-        ],
-        generator: {
-            'javascript/esm': {
-            }
-        }
+        ]
     },
     context: __dirname,
     cache: true,
@@ -116,7 +98,7 @@ export default {
             },
         }
     },
-    target: ["web", "es2020", "webworker"],
+    target: ["es2024","web","webworker"],
     plugins: [
         new CleanWebpackPlugin({
             verbose: true,

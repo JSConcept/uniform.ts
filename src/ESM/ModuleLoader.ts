@@ -1,7 +1,11 @@
 // deno-lint-ignore-file
 
-// should be converted to inline code, and compiled from TS
+//
 import W from "../Workers/ModuleWorker.ts?worker&inline";
+//const W = new URL("./Workers/ModuleWorker.ts", import.meta.url).href;
+
+// should be converted to inline code, and compiled from TS
+//
 import loadWorker from "../Atomic/WorkerLib.ts";
 import ObjectProxy from "../Atomic/ObjectProxy.ts";
 
