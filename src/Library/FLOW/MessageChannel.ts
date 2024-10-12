@@ -1,6 +1,6 @@
 // deno-lint-ignore-file no-explicit-any
 import PreCoding from "../PreCoding/PreCoding.ts";
-import { doOnlyAfterResolve } from "../Utils/InstructionType.ts";
+import { doOnlyAfterResolve } from "../Utils/Useful.ts";
 
 //
 export const $coders      = new PreCoding();

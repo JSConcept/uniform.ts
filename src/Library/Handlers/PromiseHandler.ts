@@ -2,7 +2,10 @@
 import ObjectProxy from "../../Atomic/ObjectProxy.ts";
 
 //
-import ORG, { MakeReference, isSymbol, FORBIDDEN_KEYS, META_KEYS, isPromise, bindCtx, doOnlyAfterResolve, type IWrap } from "../Utils/InstructionType.ts"
+import { ORG, isSymbol, FORBIDDEN_KEYS, META_KEYS, isPromise, doOnlyAfterResolve, type IWrap } from "../Utils/Useful.ts"
+import { bindCtx, MakeReference } from "../Utils/InstructionType.ts";
+
+//
 import DataHandler from "./DataHandler.ts";
 
 //

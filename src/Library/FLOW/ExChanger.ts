@@ -2,7 +2,10 @@
 import ObjectProxy from "../../Atomic/ObjectProxy.ts";
 
 //
-import ORG, { MakeReference, doOnlyAfterResolve, extract, isPromise, type IWrap, type IMeta, UUIDv4 } from "../Utils/InstructionType.ts"
+import { ORG, doOnlyAfterResolve, isPromise, type IWrap, type IMeta, UUIDv4 } from "../Utils/Useful.ts";
+import { extract, MakeReference } from "../Utils/InstructionType.ts";
+
+//
 import RemoteReferenceHandler from "../Handlers/RemotePool.ts";
 import ObjectPoolMemberHandler from "../Handlers/ObjectPool.ts";
 import DataHandler from "../Handlers/DataHandler.ts";

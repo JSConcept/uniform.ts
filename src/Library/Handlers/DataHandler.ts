@@ -1,5 +1,6 @@
 // deno-lint-ignore-file no-explicit-any 
-import ORG, { extract, FORBIDDEN_KEYS, META_KEYS, isSymbol, type IMeta  } from "../Utils/InstructionType.ts";
+import { ORG, FORBIDDEN_KEYS, META_KEYS, isSymbol, type IMeta  } from "../Utils/Useful.ts";
+import { extract } from "../Utils/InstructionType.ts";
 
 //
 export default class DataHandler {

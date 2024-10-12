@@ -1,6 +1,6 @@
 // deno-lint-ignore-file no-explicit-any
 import SharedChannel from "./SharedChannel.ts";
-import { UUIDv4 } from "./InstructionType.ts";
+import { UUIDv4 } from "./Useful.ts";
 
 // for your web worker project...
 export const HANG_TIMEOUT = 2000;

@@ -3,7 +3,8 @@
 import UUIDMap from "../Utils/UUIDMap.ts";
 import TypeDetector from "./TypeDetector.ts";
 import UniversalHandler from "../Handlers/UniversalHandler.ts";
-import ORG, { isPromise, doOnlyAfterResolve, extract, type IMeta } from "../Utils/InstructionType.ts";
+import { ORG, isPromise, doOnlyAfterResolve } from "../Utils/Useful.ts";
+import { extract } from "../Utils/InstructionType.ts";
 import { wrapMeta } from "../Handlers/UniversalHandler.ts";
 
 // mediator
@@ -61,7 +62,7 @@ export default class PreCoding {
                     };
                 } else {
                     // transfers only when is exists
-                    const org  = (extract(target) || {}) as IMeta;
+                    const org  = (extract(target) || {}) as any;
                     const node = (org as any)?.[ORG.node] ?? this?.$memoryPool?.get((org as any)?.[ORG.uuid] as string);
 
                     // if exists
@@ -135,7 +136,7 @@ export default class PreCoding {
             ["transfer", (organic: boolean, target: unknown, _transfer: unknown[] = [])=>{
                 if (organic) {
                     // reformat transfer type, add to registry
-                    const org  = extract(target) as IMeta;
+                    const org  = extract(target) as any;
                     const node = ((org as any)?.[ORG.node]) ?? this?.$memoryPool?.get((org as any)?.[ORG.uuid] as string);
 
                     // unable to override exists
@@ -156,7 +157,7 @@ export default class PreCoding {
             //
             ["reference", (organic: boolean, target: unknown, _transfer: unknown[] = [])=>{
                 if (organic) {
-                    const org    = extract(target) as IMeta;
+                    const org    = extract(target) as any;
                     const exists = this?.$memoryPool?.get((org as any)?.[ORG.uuid] as string);
                     return exists ?? wrapMeta(org, this.$handler);
                 }

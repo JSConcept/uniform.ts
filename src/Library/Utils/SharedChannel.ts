@@ -1,5 +1,7 @@
 // deno-lint-ignore-file ban-ts-comment no-explicit-any
 
+import { type MPromise, isPromise } from "./Useful.ts";
+
 // @ts-ignore "extra `KB` for library..."
 //import * as cbor from "cbor-x";
 
@@ -103,4 +105,25 @@ export default class SharedChannel<T extends unknown> {
         }
         return null;
     }
+}
+
+//
+export const doOnlyAfterResolve = <T extends unknown|any>(meta: MPromise<T>, cb: (u: T)=>MPromise<T>|null|void): MPromise<any>|null|void => {
+    if (isPromise(meta)) {
+        const chain = (meta as any)?.then?.(cb)?.catch?.(console.trace.bind(console)) ?? cb(meta as T);
+        //console.trace(chain);
+        return chain;
+    }
+    if (typeof SharedChannel != "undefined" && meta instanceof SharedChannel) {
+        return doOnlyAfterResolve((meta as SharedChannel<T>)?.waitAuto?.() as T, cb);
+    }
+    return cb(meta as T);
+}
+
+//
+SharedChannel.prototype.waitAsync = function (timeout = 1000): unknown {
+    const result = this.$promised(timeout);
+    return doOnlyAfterResolve(result, (bin: unknown|Uint8Array)=>{
+        return bin ? this.$binCoder?.decode?.(bin as Uint8Array) : null;
+    });
 }

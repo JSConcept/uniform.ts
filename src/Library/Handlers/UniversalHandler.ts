@@ -4,10 +4,13 @@ import ObjectProxy from "../../Atomic/ObjectProxy.ts";
 //
 import DataHandler from "./DataHandler.ts";
 import { 
-    ORG, MPromise, extract, FORBIDDEN_KEYS, META_KEYS, isSymbol, MakeReference, doOnlyAfterResolve, wrapWeakMap, isPromise, 
+    ORG, MPromise, FORBIDDEN_KEYS, META_KEYS, isSymbol, doOnlyAfterResolve, isPromise, 
     type IMeta, type IWrap
-} from "../Utils/InstructionType.ts";
+} from "../Utils/Useful.ts";
 import RemoteReferenceHandler from "../Handlers/RemotePool.ts";
+import { extract, MakeReference, wrapWeakMap } from "../Utils/InstructionType.ts";
+
+//wrapWeakMap, extract, MakeReference
 
 //
 export default class UniversalHandler extends DataHandler {

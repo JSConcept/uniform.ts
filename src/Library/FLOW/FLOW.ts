@@ -1,5 +1,5 @@
 // deno-lint-ignore-file no-explicit-any
-import { Transferable, doOnlyAfterResolve } from "../Utils/InstructionType.ts";
+import { Transferable, doOnlyAfterResolve } from "../Utils/Useful.ts";
 import PromiseStack from '../Utils/PromiseStack.ts';
 
 // FLOW - is web worker library core (low-level)...
