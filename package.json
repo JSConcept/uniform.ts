@@ -7,7 +7,8 @@
     "index": "./dist/uniform.js",
     "scripts": {
         "dev": "vite",
-        "build": "vite build",
+        "worker": "vite build --config worker.config.js --mode developer",
+        "build": "vite build --config uniform.config.js --mode developer",
         "preview": "vite preview",
         "test": "deno --allow-all ./test/Host.ts"
     },
@@ -27,6 +28,7 @@
         "autoprefixer": "^10.4.16",
         "clean-webpack-plugin": "^4.0.0",
         "eslint-config-prettier": "^9.1.0",
+        "fflate": "^0.8.2",
         "glob": "^10.4.2",
         "rimraf": "^5.0.7",
         "sass": "^1.77.6",

@@ -1163,6 +1163,7 @@
         "npm:cbor-x@^1.5.9",
         "npm:clean-webpack-plugin@^4.0.0",
         "npm:eslint-config-prettier@^9.1.0",
+        "npm:fflate@^0.8.2",
         "npm:glob@^10.4.2",
         "npm:jsox@^1.2.119",
         "npm:rimraf@^5.0.7",

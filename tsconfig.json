@@ -18,9 +18,8 @@
         "inlineSources": true,
         "inlineSourceMap": true,
         "sourceMap": false,
-        "outDir": "./dist/",
-        "declarationDir": "./dist/uniform.d.ts/",
         "allowImportingTsExtensions": true,
-        "emitDeclarationOnly": true
+        "emitDeclarationOnly": true,
+        "typeRoots": ["plugins/global.d.ts"]
     }
 }
