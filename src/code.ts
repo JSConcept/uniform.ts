@@ -1,5 +1,5 @@
 /*@__PURE__*/ 
-import $raw$ from "./worker.ts?worker&compress.ts"; const IW = $raw$;
+import $raw$ from "./worker.ts?worker&compress"; const IW = $raw$;
 
 /*@__PURE__*/ 
 const loadCompressed = async (b64c: string): Promise<string|null> => {
