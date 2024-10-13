@@ -1,32 +1,35 @@
 // deno-lint-ignore-file no-explicit-any
 // Will be used when result are predictable in the pools or return results
-/*@__PURE__*/ import UUIDMap from "../Utils/UUIDMap.ts";
-/*@__PURE__*/ import TypeDetector from "./TypeDetector.ts";
-/*@__PURE__*/ import UniversalHandler from "../Handlers/UniversalHandler.ts";
-/*@__PURE__*/ import { isPromise, doOnlyAfterResolve } from "../Utils/Useful.ts";
-/*@__PURE__*/ import { extract } from "../Utils/InstructionType.ts";
-/*@__PURE__*/ import { wrapMeta } from "../Handlers/UniversalHandler.ts";
-/*@__PURE__*/ import ORG from "../Utils/OrganicType.ts";
-/*@__PURE__*/ import PMS from "../Utils/Alias.ts";
+import UUIDMap from "../Utils/UUIDMap.ts";
+import TypeDetector from "./TypeDetector.ts";
+import UniversalHandler from "../Handlers/UniversalHandler.ts";
+import { isPromise, doOnlyAfterResolve } from "../Utils/Useful.ts";
+import { extract } from "../Utils/InstructionType.ts";
+import { wrapMeta } from "../Handlers/UniversalHandler.ts";
+import ORG from "../Utils/OrganicType.ts";
+import PMS from "../Utils/Alias.ts";
 
-/*@__PURE__*/ 
+
 export const hasMemoryBuffer = (target: any)=>{
     // shared array buffer are not transfer, it's sharing
     return ((target as any)?.buffer instanceof ArrayBuffer) || (typeof SharedArrayBuffer != "undefined" && (target as any)?.buffer instanceof SharedArrayBuffer);
 }
 
-/*@__PURE__*/ 
+
 export default class PreCoding {
-    /*@__PURE__*/ $encoder = new Map<string, (organic: boolean, target: unknown, transfer: unknown[])=>unknown>();
-    /*@__PURE__*/ $decoder = new Map<string, (organic: boolean, target: unknown, transfer: unknown[])=>unknown>();
-    /*@__PURE__*/ $mp = new UUIDMap();
-    /*@__PURE__*/ $hndr = new UniversalHandler();
-    /*@__PURE__*/ $typeDetector = new TypeDetector();
+    /*@__MANGLE_PROP__*/ $encoder = new Map<string, (organic: boolean, target: unknown, transfer: unknown[])=>unknown>();
+    /*@__MANGLE_PROP__*/ $decoder = new Map<string, (organic: boolean, target: unknown, transfer: unknown[])=>unknown>();
+    /*@__MANGLE_PROP__*/ $mp = new UUIDMap();
+    /*@__MANGLE_PROP__*/ $hndr = new UniversalHandler();
+    /*@__MANGLE_PROP__*/ $typeDetector = new TypeDetector();
 
     //
     constructor(memoryPool = new UUIDMap()) {
-        /*@__PURE__*/ this.$mp = memoryPool;
-        /*@__PURE__*/ this.$encoder = new Map<string, (organic: boolean, target: unknown, transfer: unknown[])=>unknown> ([
+        /*@__MANGLE_PROP__*/ 
+        this.$mp = memoryPool;
+
+        /*@__MANGLE_PROP__*/ 
+        this.$encoder = new Map<string, (organic: boolean, target: unknown, transfer: unknown[])=>unknown> ([
             ["a", (organic: boolean, target: unknown, transfer: unknown[] = [])=>{
                 if (!organic) {
                     const encoded = Array.from((target as []) ||[]).map((e)=>this.encode(e, transfer));
@@ -123,8 +126,8 @@ export default class PreCoding {
             }]
         ]);
 
-        //
-        /*@__PURE__*/ this.$decoder = new Map<string, (organic: boolean, target: unknown, transfer: unknown[])=>boolean>([
+        /*@__MANGLE_PROP__*/ 
+        this.$decoder = new Map<string, (organic: boolean, target: unknown, transfer: unknown[])=>boolean>([
             ["a", (organic: boolean, target: unknown, transfer: unknown[] = [])=>{
                 if (!organic) {
                     const decoded = Array.from(target as []).map((e)=>this.decode(e, transfer));
@@ -170,7 +173,7 @@ export default class PreCoding {
     }
 
     //
-    /*@__PURE__*/ $decode(target: unknown, transfer: unknown[] = []) {
+    /*@__MANGLE_PROP__*/ $decode(target: unknown, transfer: unknown[] = []) {
         const [o, t] = this.$typeDetector.detectType(target, transfer);
         if (this.$decoder.has(t)) {
             return this.$decoder.get(t)?.(o, target, transfer) ?? target;
@@ -179,7 +182,7 @@ export default class PreCoding {
     }
 
     //
-    /*@__PURE__*/ $encode(target: unknown, transfer: unknown[] = []) {
+    /*@__MANGLE_PROP__*/ $encode(target: unknown, transfer: unknown[] = []) {
         const [o, t] = this.$typeDetector.detectType(target, transfer);
         if (this.$encoder.has(t)) {
             return this.$encoder.get(t)?.(o, target, transfer) ?? target;

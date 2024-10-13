@@ -1,13 +1,13 @@
 // deno-lint-ignore-file no-explicit-any
-/*@__PURE__*/ import PreCoding from "../PreCoding/PreCoding.ts";
-/*@__PURE__*/ import { doOnlyAfterResolve } from "../Utils/Useful.ts";
+import PreCoding from "../PreCoding/PreCoding.ts";
+import { doOnlyAfterResolve } from "../Utils/Useful.ts";
 
 //
-/*@__PURE__*/ export const $cd = new PreCoding();
-/*@__PURE__*/ export const $mp = $cd.$mp;
-/*@__PURE__*/ export const $dh = $cd.$hndr;
+/*@__MANGLE_PROP__*/ export const $cd = new PreCoding();
+/*@__MANGLE_PROP__*/ export const $mp = $cd.$mp;
+/*@__MANGLE_PROP__*/ export const $dh = $cd.$hndr;
 
-/*@__PURE__*/ 
+//
 export const $handler = (command: any) => {
     const {args: [cmd, target, ...args]} = command;
 
@@ -22,6 +22,4 @@ export const $handler = (command: any) => {
         return [ready, transfer] // also, needs to recode back
     });
 }
-
-/*@__PURE__*/ 
 export const $resolver = (command: any) => (command.result);

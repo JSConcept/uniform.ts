@@ -1,4 +1,5 @@
 // deno-lint-ignore-file no-explicit-any
+/*@__MANGLE_PROP__*/ /*@__PURE__*/ 
 const loadWorker = (WX: any): Worker|null =>{
     /*@__PURE__*/ if (WX instanceof Worker) { return WX; } else
     /*@__PURE__*/ if (typeof WX == "function") { return new WX(); } else
@@ -10,8 +11,8 @@ const loadWorker = (WX: any): Worker|null =>{
     /*@__PURE__*/ return (typeof self != "undefined" ? self : null) as unknown as Worker;
 }
 
-//
-/*@__PURE__*/ export const $moduleLoader = async <T extends unknown>(moduleSource: string, workerCode: string = ""): Promise<T> => {
+/*@__MANGLE_PROP__*/ 
+export const $moduleLoader = async <T extends unknown>(moduleSource: string, workerCode: string = ""): Promise<T> => {
     if (!moduleSource || typeof moduleSource != "string") throw new Error("Invalid module source");
 
     // if url too long, un-compress code

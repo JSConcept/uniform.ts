@@ -1,13 +1,13 @@
 // deno-lint-ignore-file no-explicit-any
-/*@__PURE__*/ import { isSymbol, FORBIDDEN_KEYS, META_KEYS } from "../Utils/Useful.ts";
-/*@__PURE__*/ import { extract } from "../Utils/InstructionType.ts";
-/*@__PURE__*/ import ORG from "../Utils/OrganicType.ts";
+import { isSymbol, FORBIDDEN_KEYS, META_KEYS } from "../Utils/Useful.ts";
+import { extract } from "../Utils/InstructionType.ts";
+import ORG from "../Utils/OrganicType.ts";
 
 //
-/*@__PURE__*/ import DataHandler from "./DataHandler.ts";
+import DataHandler from "./DataHandler.ts";
 
 //
-/*@__PURE__*/ export default class RemoteReferenceHandler extends DataHandler {
+export default class RemoteReferenceHandler extends DataHandler {
     #exChanger: any|null;
 
     //
@@ -17,12 +17,12 @@
     }
 
     //
-    /*@__PURE__*/ get /*@__PURE__*/ $exc() { return this.#exChanger; }
+    get /*@__MANGLE_PROP__*/ $exc() { return this.#exChanger; }
 
     //
-    /*@__PURE__*/ $data(t: unknown) { return extract(t) ?? t; }
-    /*@__PURE__*/ $hnd(cmd: string, meta: unknown, ...args: unknown[]) {
-        const data: any = /*@__PURE__*/ this.$data(meta);
+    /*@__MANGLE_PROP__*/ $data(t: unknown) { return extract(t) ?? t; }
+    /*@__MANGLE_PROP__*/ $hnd(cmd: string, meta: unknown, ...args: unknown[]) {
+        const data: any = this.$data(meta);
 
         // return meta as is
         if (cmd == "get") {
@@ -35,10 +35,10 @@
             ) { return null; };
         }
 
-        //
+        /*@__MANGLE_PROP__*/
         return this.#exChanger?.$request(cmd, meta, args);
     }
 
     //
-    /*@__PURE__*/ $get(_: unknown|string|null): any { return null; };
+    /*@__MANGLE_PROP__*/ $get(_: unknown|string|null): any { return null; };
 }

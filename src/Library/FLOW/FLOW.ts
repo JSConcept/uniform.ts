@@ -1,10 +1,10 @@
 // deno-lint-ignore-file no-explicit-any
-/*@__PURE__*/ import { Transferable, doOnlyAfterResolve } from "../Utils/Useful.ts";
-/*@__PURE__*/ import PromiseStack from '../Utils/PromiseStack.ts';
-/*@__PURE__*/ const PM = "postMessage";
+import { Transferable, doOnlyAfterResolve } from "../Utils/Useful.ts";
+import PromiseStack from '../Utils/PromiseStack.ts';
+const PM = "postMessage";
 
 // FLOW - is web worker library core (low-level)...
-/*@__PURE__*/ export default class FLOW {
+export default class FLOW {
     #worker: any | null = null;
     #promiseStack: PromiseStack<unknown> = new PromiseStack<unknown>();
     #imports: any = {};
@@ -23,18 +23,18 @@
                     worker?.[PM]?.({ cmd, uuid, dir: "res", status: "ok", result: "ok", shared: null });
                 } else
                 if (cmd == "import") {
-                    /*@__PURE__*/ import(/* @vite-ignore */ /*@__PURE__*/ ("" + ev.data.source))?.then?.((m)=>{
-                        /*@__PURE__*/ Object.assign(this.#imports, (m.default ?? m));
+                    import(/* @vite-ignore */ ("" + ev.data.source))?.then?.((m)=>{
+                        Object.assign(this.#imports, (m.default ?? m));
                         worker?.[PM]?.({ cmd, uuid, dir: "res", status: "ok", result: "ok", shared: null });
                     })?.catch?.((e)=>{
-                        /*@__PURE__*/ console.error(e);
-                        /*@__PURE__*/ console.trace(e);
+                        console.error(e);
+                        console.trace(e);
                         worker?.[PM]?.({ cmd, uuid, dir: "res", status: "error", result: "unsupported", shared: null });
                     });
                 } else
                 if (cmd == "call") {
                     // hoot shared channels for direct answer
-                    /*@__PURE__*/ (shared ? this.#promiseStack?.hook?.(uuid, shared) : null);
+                    (shared ? this.#promiseStack?.hook?.(uuid, shared) : null);
 
                     // call with FLOW "this" context
                     try {
@@ -53,13 +53,13 @@
                                     }, [...new Set(Array.from(transfer||[]))].filter((e)=>Transferable.some((I)=>e instanceof I)) as StructuredSerializeOptions);
 
                                     // resolve when sync supported
-                                    /*@__PURE__*/ this.#promiseStack?.resolveBy?.(uuid, result);
+                                    this.#promiseStack?.resolveBy?.(uuid, result);
                                 });
                             });
                         });
                     } catch(e: any) {
-                        /*@__PURE__*/ console.error(e);
-                        /*@__PURE__*/ console.trace(e);
+                        console.error(e);
+                        console.trace(e);
 
                         //
                         const reason = e.message;
@@ -74,10 +74,10 @@
                         }, []);
 
                         // resolve when sync supported
-                        /*@__PURE__*/ this.#promiseStack?.rejectBy?.(uuid, reason);
+                        this.#promiseStack?.rejectBy?.(uuid, reason);
                     }
                 } else {
-                    /*@__PURE__*/ console.error("Internal command: " + cmd + " not supported.");
+                    console.error("Internal command: " + cmd + " not supported.");
                     worker?.[PM]?.({ cmd, uuid, dir: "res", status: "error", result: "unk" });
                 }
             } else
@@ -86,8 +86,8 @@
                     const resolved = this.#imports?.[ev.data.handler]?.apply?.(self, [ev.data]) ?? (ev.data.result) ?? null;
                     this.#promiseStack?.[status != "error" ? "resolveBy" : "rejectBy"]?.(uuid, resolved ?? null);
                 } catch(e: any) {
-                    /*@__PURE__*/ console.error(e);
-                    /*@__PURE__*/ console.trace(e);
+                    console.error(e);
+                    console.trace(e);
                     this.#promiseStack?.rejectBy?.(uuid, e?.message);
                 }
             }
@@ -95,19 +95,18 @@
     }
 
     //
-    /*@__PURE__*/ get /*@__PURE__*/ $imports() {
+    get /*@__MANGLE_PROP__*/ $imports() {
         return this.#imports;
     }
 
-    //
+    /*@__PURE__*/ /*@__MANGLE_PROP__*/ 
     importToSelf(module: any) {
         Object.assign(this.#imports, (module)?.default ?? module);
         return this;
     }
 
-    /*@__PURE__*/
-    importToUnit(source: string, /*@__PURE__*/ sync = false) {
-        /*@__PURE__*/ 
+    /*@__PURE__*/ /*@__MANGLE_PROP__*/ 
+    importToUnit(source: string, sync = false) {
         const pair = this.#promiseStack?.[sync ? "createSync" : "create"]?.();
         this.#worker?.[PM]?.({
             status: "pending",
@@ -121,9 +120,8 @@
         return pair?.[1];
     }
 
-    /*@__PURE__*/
-    sync(/*@__PURE__*/ sync = false) {
-        /*@__PURE__*/ 
+    /*@__PURE__*/ /*@__MANGLE_PROP__*/ 
+    sync(sync = false) {
         const pair = this.#promiseStack?.[sync ? "createSync" : "create"]?.();
         this.#worker?.[PM]?.({
             status: "pending",
@@ -136,8 +134,8 @@
         return pair?.[1];
     }
 
-    callTask($args: any[] = [], transfer: unknown[] = [], /*@__PURE__*/ sync = false) {
-        /*@__PURE__*/ 
+    /*@__PURE__*/ /*@__MANGLE_PROP__*/ 
+    callTask($args: any[] = [], transfer: unknown[] = [], sync = false) {
         const pair = this.#promiseStack?.[sync ? "createSync" : "create"]?.();
         doOnlyAfterResolve($args, (args)=>{
             this.#worker?.[PM]?.({

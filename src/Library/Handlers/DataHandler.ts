@@ -1,19 +1,19 @@
 // deno-lint-ignore-file no-explicit-any 
-/*@__PURE__*/ import { FORBIDDEN_KEYS, META_KEYS, isSymbol } from "../Utils/Useful.ts";
-/*@__PURE__*/ import { extract } from "../Utils/InstructionType.ts";
-/*@__PURE__*/ import { type IMeta, ORG } from "../Utils/OrganicType.ts";
+import { FORBIDDEN_KEYS, META_KEYS, isSymbol } from "../Utils/Useful.ts";
+import { extract } from "../Utils/InstructionType.ts";
+import { type IMeta, ORG } from "../Utils/OrganicType.ts";
 
-/*@__PURE__*/ 
+
 export default class DataHandler {
     constructor() {
     }
 
     //
-    /*@__PURE__*/ get /*@__PURE__*/ $exc(): any { return null;};
+    get /*@__MANGLE_PROP__*/ $exc(): any { return null;};
 
     //
-    /*@__PURE__*/ $data(target: unknown|string|null) { return target; };
-    /*@__PURE__*/ $hnd(cmd: string, meta: unknown, ...args: unknown[]) {
+    /*@__MANGLE_PROP__*/ $data(target: unknown|string|null) { return target; };
+    /*@__MANGLE_PROP__*/ $hnd(cmd: string, meta: unknown, ...args: unknown[]) {
         const ref: any = this.$data(meta);
 
         // return meta as is
@@ -62,5 +62,5 @@ export default class DataHandler {
     }
 
     //
-    /*@__PURE__*/ $get(_uuid: unknown|string|null): any { return null; };
+    /*@__MANGLE_PROP__*/ $get(_uuid: unknown|string|null): any { return null; };
 }

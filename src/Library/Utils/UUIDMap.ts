@@ -1,10 +1,10 @@
 // deno-lint-ignore-file no-explicit-any
-/*@__PURE__*/ import { UUIDv4, type dT, type rT } from "./Useful.ts";
-/*@__PURE__*/ const timers = new WeakMap(), tmpSet = new Set();
-/*@__PURE__*/ export const hold = (tmp: any | unknown | WeakRef<any>, timeout = 1000)=>{
+import { UUIDv4, type dT, type rT } from "./Useful.ts";
+
+/*@__MANGLE_PROP__*/ const timers = /*@__MANGLE_PROP__*/ new WeakMap(), tmpSet = new Set();
+export const hold = (tmp: any | unknown | WeakRef<any>, timeout = 1000)=>{
 
     // holding from GC
-    /*@__PURE__*/ 
     if (typeof tmp == "object" || typeof tmp == "function") {
         const obj = tmp?.deref?.() ?? tmp;
         if (!tmpSet.has(obj)) {
@@ -22,16 +22,16 @@
 }
 
 // TODO: planned promised...
-/*@__PURE__*/ export default class UUIDMap<T=dT> {
-    #weakMap = new WeakMap<dT, string>();
-    #registry = new FinalizationRegistry<string>((_: string) => {});
-    #refMap = new Map<string, rT>();
+export default class UUIDMap<T=dT> {
+     #weakMap  =  /*@__MANGLE_PROP__*/ new WeakMap<dT, string>();
+     #registry =  /*@__MANGLE_PROP__*/ new FinalizationRegistry<string>((_: string) => {});
+     #refMap   =  /*@__MANGLE_PROP__*/ new Map<string, rT>();
 
     //
     constructor() {
-        this.#weakMap = new WeakMap<dT, string>();
-        this.#refMap = new Map<string, rT>();
-        this.#registry = new FinalizationRegistry<string>((key: string) => {
+         this.#weakMap  =  /*@__MANGLE_PROP__*/ new WeakMap<dT, string>();
+         this.#refMap   =  /*@__MANGLE_PROP__*/ new Map<string, rT>();
+         this.#registry =  /*@__MANGLE_PROP__*/ new FinalizationRegistry<string>((key: string) => {
             this.#refMap.delete(key);
         });
     }
@@ -58,7 +58,7 @@
 
         //
         this.#weakMap.set(obj, (id ||= UUIDv4()));
-        this.#refMap.set(id, new WeakRef<dT>(  hold(obj, 1000)  ));
+        this.#refMap.set(id, /*@__MANGLE_PROP__*/ new WeakRef<dT>(  hold(obj, 1000)  ));
         this.#registry.register(obj, id);
 
         //

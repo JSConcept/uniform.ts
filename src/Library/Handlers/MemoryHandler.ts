@@ -1,12 +1,12 @@
 // deno-lint-ignore-file no-explicit-any
-/*@__PURE__*/ import UUIDMap from "../Utils/UUIDMap.ts";
-/*@__PURE__*/ import { ORG }  from "../Utils/OrganicType.ts";
-/*@__PURE__*/ import { extract } from "../Utils/InstructionType.ts";
+import UUIDMap from "../Utils/UUIDMap.ts";
+import { ORG }  from "../Utils/OrganicType.ts";
+import { extract } from "../Utils/InstructionType.ts";
 
 //
-/*@__PURE__*/ import DataHandler from "./DataHandler.ts";
+import DataHandler from "./DataHandler.ts";
 
-/*@__PURE__*/ 
+
 export default class ObjectPoolMemberHandler extends DataHandler {
     #memoryPool: UUIDMap | null;
 
@@ -17,8 +17,8 @@ export default class ObjectPoolMemberHandler extends DataHandler {
     }
 
     // there is may not be meta object
-    /*@__PURE__*/ $data(t: unknown|string|null): any {
-        return /*@__PURE__*/ super.$data((()=>{
+    /*@__MANGLE_PROP__*/ $data(t: unknown|string|null): any {
+        return super.$data((()=>{
             const wrap = (extract(t) ?? t) as any;
             const uuid = (wrap as any)?.[ORG.uuid] ?? wrap ?? t;
             if (typeof uuid == "string") {
@@ -29,7 +29,7 @@ export default class ObjectPoolMemberHandler extends DataHandler {
     }
 
     //
-    /*@__PURE__*/ $get(t: unknown|string|null): any {
+    /*@__MANGLE_PROP__*/ $get(t: unknown|string|null): any {
         const wrap = (extract(t) ?? t) as any;
         const uuid = ((wrap as any)?.[ORG.uuid] ?? wrap) as string ?? t;
         if (typeof uuid == "string") {

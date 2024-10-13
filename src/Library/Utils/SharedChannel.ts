@@ -1,6 +1,6 @@
 // deno-lint-ignore-file ban-ts-comment no-explicit-any
-/*@__PURE__*/ import PMS from "./Alias.ts";
-/*@__PURE__*/ import { type MPromise, isPromise } from "./Useful.ts";
+import PMS from "./Alias.ts";
+import { type MPromise, isPromise } from "./Useful.ts";
 
 // @ts-ignore "extra `KB` for library..."
 /*@__PURE__*/
@@ -13,14 +13,17 @@
  * 8...N byte: data payload
  */
 
-/*@__PURE__*/
+/*@__MANGLE_PROP__*/ /*@__PURE__*/
+const AT: Atomics|any = typeof Atomics != "undefined" ? Atomics : {};
+
+/*@__MANGLE_PROP__*/ /*@__PURE__*/
 export default class SharedChannel<T extends unknown> {
     //[x: string]: (timeout?: number) => unknown; // @ts-ignore
-    /*@__PURE__*/ #sharedBuffer: SharedArrayBuffer | null = null;
+    #sharedBuffer: SharedArrayBuffer | null = null;
     #byteOffset: number = 0;
     $binCoder: any = null;
 
-    /*@__PURE__*/ 
+    
     constructor(sharedBuffer: SharedArrayBuffer | null, byteOffset = 0, binCoder: any = null) {
         this.#sharedBuffer = sharedBuffer;
         this.#byteOffset = byteOffset;
@@ -29,7 +32,7 @@ export default class SharedChannel<T extends unknown> {
 
     //
     /*@__PURE__*/
-    /*@__PURE__*/ resolve(object: T|Uint8Array|unknown = {}) {
+    resolve(object: T|Uint8Array|unknown = {}) {
         // @ts-ignore "no valid type"
         /*@__PURE__*/
         return this.$resolveWith(this.$binCoder?.encode?.(object ?? {}) ?? new Uint8Array([]));
@@ -37,15 +40,17 @@ export default class SharedChannel<T extends unknown> {
 
     //
     /*@__PURE__*/
-    /*@__PURE__*/ reject(e: Error | unknown): unknown { throw e; }
+    reject(e: Error | unknown): unknown { throw e; }
 
     // @ts-ignore "DOM isn't recognized"
-    /*@__PURE__*/ waitAuto(timeout = 1000): unknown { return /*@__PURE__*/ (self?.document ? /*@__PURE__*/ this.waitAsync(timeout) : /*@__PURE__*/ this.waitSync(timeout)); }
-    /*@__PURE__*/ waitSync(timeout = 1000): unknown { const result = /*@__PURE__*/ this.$waitSync(timeout); return result ? this.$binCoder.decode(result ?? new Uint8Array([])) : null; }
+    waitAuto(timeout = 1000): unknown { return (self?.document ? this.waitAsync(timeout) : this.waitSync(timeout)); }
+    waitSync(timeout = 1000): unknown { const result = this.$waitSync(timeout); return result ? this.$binCoder.decode(result ?? new Uint8Array([])) : null; }
 
     // not implemented directly
-    /*@__PURE__*/ waitAsync(_timeout = 1000): unknown { return null; };
-    /*@__PURE__*/ $resolveWith(binaryData: Uint8Array | Uint8ClampedArray | Int8Array): any {
+    waitAsync(_timeout = 1000): unknown { return null; };
+
+    //
+    /*@__MANGLE_PROP__*/ $resolveWith(binaryData: Uint8Array | Uint8ClampedArray | Int8Array): any {
         if (this.#sharedBuffer) {
             // grow when is possible...
             if ((this.#sharedBuffer.byteLength-this.#byteOffset) < (binaryData.byteLength+8)) {
@@ -55,37 +60,38 @@ export default class SharedChannel<T extends unknown> {
 
             //
             const int32 = new Int32Array(this.#sharedBuffer, this.#byteOffset, 2);
-            if (Atomics.load(int32, 0) != 0) {
+            if (AT.load(int32, 0) != 0) {
                 new Uint8Array(this.#sharedBuffer, this.#byteOffset + 8, binaryData.byteLength).set(binaryData);
 
                 // resolve answer
-                Atomics.store(int32, 1, binaryData.byteLength);
+                AT.store(int32, 1, binaryData.byteLength);
 
                 // notify about results...
-                Atomics.store(int32, 0, 1);
-                Atomics.notify(int32, 0);
-                Atomics.store(int32, 0, 0);
+                AT.store(int32, 0, 1);
+                AT.notify(int32, 0);
+                AT.store(int32, 0, 0);
             }
         }
     }
 
-    /*@__PURE__*/ $initials() {
+    /*@__MANGLE_PROP__*/ $initials() {
         if (!this.#sharedBuffer) return;
         const int32 = new Int32Array(this.#sharedBuffer, this.#byteOffset, 2);
-        Atomics.store(int32, 1, 0);
-        Atomics.store(int32, 0, 1);
+        AT.store(int32, 1, 0);
+        AT.store(int32, 0, 1);
     }
 
-    /*@__PURE__*/ $promised(timeout = 1000) {
+    /*@__MANGLE_PROP__*/ $promised(timeout = 1000) {
         if (!this.#sharedBuffer) return; //
-        const int32 = new Int32Array(this.#sharedBuffer, this.#byteOffset, 2);
-        const promise = /*@__PURE__*/ Atomics.waitAsync(int32, 0, 1, timeout)?.value;
+        const int32   = new Int32Array(this.#sharedBuffer, this.#byteOffset, 2);
+        const promise = AT.waitAsync(int32, 0, 1, timeout)?.value;
 
         // @ts-ignore
         if (promise.async) {
             // @ts-ignore
             return promise?.then?.(()=>{
                 if (this.#sharedBuffer) {
+                    
                     return new Uint8Array(this.#sharedBuffer, this.#byteOffset + 8, int32[1]);
                 }
                 return null;
@@ -96,37 +102,39 @@ export default class SharedChannel<T extends unknown> {
         return new PMS((_, rj)=>rj(promise));
     }
 
-    /*@__PURE__*/ $waitSync(timeout = 1000) {
+    /*@__MANGLE_PROP__*/ $waitSync(timeout = 1000) {
         if (!this.#sharedBuffer) return; //
-        const int32 = new Int32Array(this.#sharedBuffer, this.#byteOffset, 2);
-        const result = /*@__PURE__*/ Atomics.wait(int32, 0, 1, timeout);
+        const int32  = new Int32Array(this.#sharedBuffer, this.#byteOffset, 2);
+        const result = AT.wait(int32, 0, 1, timeout);
         if (result == "ok") {
+            
             return new Uint8Array(this.#sharedBuffer, this.#byteOffset + 8, int32[1]);
         }
         return null;
     }
 }
 
-/*@__PURE__*/
+/*@__MANGLE_PROP__*/ /*@__PURE__*/
 export const doOnlyAfterResolve = <T extends unknown|any>(meta: MPromise<T>, cb: (u: T)=>MPromise<T>|null|void): MPromise<any>|null|void => {
-    if (/*@__PURE__*/ isPromise(meta)) {
+    if (isPromise(meta)) {
         const chain = (meta as any)?.then?.(cb)?.catch?.(console.trace.bind(console)) ?? cb(meta as T);
         //console.trace(chain);
         return chain;
     }
-    /*@__PURE__*/ 
+
+    
     if (typeof SharedChannel != "undefined" && meta instanceof SharedChannel) {
-        /*@__PURE__*/ 
-        return /*@__PURE__*/ doOnlyAfterResolve((meta as SharedChannel<T>)?.waitAuto?.() as T, cb);
+        return doOnlyAfterResolve((meta as SharedChannel<T>)?.waitAuto?.() as T, cb);
     }
+
+    //
     return cb(meta as T);
 }
 
-/*@__PURE__*/
+/*@__MANGLE_PROP__*/ /*@__PURE_*/ 
 SharedChannel.prototype.waitAsync = function (timeout = 1000): unknown {
-    /*@__PURE__*/ const result = /*@__PURE__*/ this.$promised(timeout);
-    /*@__PURE__*/ 
-    return /*@__PURE__*/ doOnlyAfterResolve(result, (bin: unknown|Uint8Array)=>{
+    const result = /*@__MANGLE_PROP__*/ this.$promised(timeout);
+    return doOnlyAfterResolve(result, (bin: unknown|Uint8Array)=>{
         return bin ? this.$binCoder?.decode?.(bin as Uint8Array) : null;
     });
 }

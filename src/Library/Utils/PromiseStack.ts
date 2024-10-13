@@ -1,21 +1,18 @@
 // deno-lint-ignore-file no-explicit-any
 
-/*@__PURE__*/ import PMS from "./Alias.ts";
-/*@__PURE__*/ import SharedChannel from "./SharedChannel.ts";
-/*@__PURE__*/ import { UUIDv4 } from "./Useful.ts";
+import PMS from "./Alias.ts";
+import SharedChannel from "./SharedChannel.ts";
+import { UUIDv4 } from "./Useful.ts";
 
 //
-/*@__PURE__*/ export const HANG_TIMEOUT = 2000;
+export const HANG_TIMEOUT = 2000;
 export default class PromiseStack<T extends unknown> {
-    /*@__PURE__*/ 
     #map = new Map<string, PromiseWithResolvers<T> | SharedChannel<T>>();
-
-    /*@__PURE__*/ 
     constructor() { this.#map = new Map<string, PromiseWithResolvers<T> | SharedChannel<T>>(); }
 
     //
-    /*@__PURE__*/ get sync() { return this.#syncExcept(); }
-    /*@__PURE__*/ #syncExcept(ne = "") { return PMS.allSettled(Array.from(this.#map?.entries?.())?.filter?.(([n])=>(ne!=n))?.map?.((([,v])=>v))); }
+    get sync() { return this.#syncExcept(); }
+    #syncExcept(ne = "") { return PMS.allSettled(Array.from(this.#map?.entries?.())?.filter?.(([n])=>(ne!=n))?.map?.((([,v])=>v))); }
 
     //
     get(name = "") { return this.#map.get(name); }
@@ -36,14 +33,13 @@ export default class PromiseStack<T extends unknown> {
         return this;
     }
 
-    /*@__PURE__*/
+    /*@__MANGLE_PROP__*/ /*@__PURE__*/
     hook<T extends unknown>(key: string | null = null, buffer: SharedArrayBuffer | null = null): [string, SharedChannel<T>, SharedArrayBuffer|ArrayBuffer|unknown] {
-        /*@__PURE__*/ 
-        const pm = /*@__PURE__*/ new SharedChannel(buffer);
+        const pm = /*@__MANGLE_PROP__*/ new SharedChannel(buffer);
         this.#map.set(key ||= UUIDv4(), pm);
 
         // timeout of requests
-        /*@__PURE__*/ setTimeout(()=>{ 
+        /*@__MANGLE_PROP__*/ setTimeout(()=>{ 
             if (this.#map.has(key)) { this.rejectBy(key, "hang-timeout"); };
         }, HANG_TIMEOUT);
 
@@ -57,13 +53,12 @@ export default class PromiseStack<T extends unknown> {
     // ]
     /*@__PURE__*/
     createSync<T extends unknown>(key: string | null = null): [string, SharedChannel<T>, SharedArrayBuffer|ArrayBuffer|unknown] {
-        /*@__PURE__*/
-        const bf = /*@__PURE__*/ new SharedArrayBuffer(16);
-        const pm = /*@__PURE__*/ new SharedChannel(bf);
+        const bf = /*@__MANGLE_PROP__*/ new SharedArrayBuffer(16);
+        const pm = /*@__MANGLE_PROP__*/ new SharedChannel(bf);
         this.#map.set(key ||= UUIDv4(), pm);
 
         // timeout of requests
-        /*@__PURE__*/ setTimeout(()=>{ 
+        /*@__MANGLE_PROP__*/ setTimeout(()=>{ 
             if (this.#map.has(key)) { this.rejectBy(key, "hang-timeout"); };
         }, HANG_TIMEOUT);
 
@@ -80,7 +75,7 @@ export default class PromiseStack<T extends unknown> {
         this.#map.set(key ||= UUIDv4(), pm);
 
         // timeout of requests
-        setTimeout(()=>{ 
+        /*@__MANGLE_PROP__*/ setTimeout(()=>{ 
             if (this.#map.has(key)) { this.rejectBy(key, "hang-timeout"); };
         }, HANG_TIMEOUT);
 

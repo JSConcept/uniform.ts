@@ -1,17 +1,17 @@
 // deno-lint-ignore-file no-explicit-any
-/*@__PURE__*/ import ObjectProxy from "../ObjectProxy.ts";
+import ObjectProxy from "../ObjectProxy.ts";
 
 //
-/*@__PURE__*/ import { MPromise, FORBIDDEN_KEYS, META_KEYS, isSymbol, doOnlyAfterResolve, isPromise, type IWrap } from "../Utils/Useful.ts";
-/*@__PURE__*/ import RemoteReferenceHandler from "./RemoteHandler.ts";
-/*@__PURE__*/ import { extract, MakeReference, wrapWeakMap } from "../Utils/InstructionType.ts";
-/*@__PURE__*/ import { ORG, IMeta } from "../Utils/OrganicType.ts";
+import { MPromise, FORBIDDEN_KEYS, META_KEYS, isSymbol, doOnlyAfterResolve, isPromise, type IWrap } from "../Utils/Useful.ts";
+import RemoteReferenceHandler from "./RemoteHandler.ts";
+import { extract, MakeReference, wrapWeakMap } from "../Utils/InstructionType.ts";
+import { ORG, IMeta } from "../Utils/OrganicType.ts";
 
 //
-/*@__PURE__*/ import DataHandler from "./DataHandler.ts";
+import DataHandler from "./DataHandler.ts";
 
 //
-/*@__PURE__*/ export default class UniversalHandler extends DataHandler {
+export default class UniversalHandler extends DataHandler {
     #dataHandler: Map<string, DataHandler>;
 
     //
@@ -21,20 +21,20 @@
     }
 
     //
-    /*@__PURE__*/ get /*@__PURE__*/ $exc() { return this.#dataHandler?.get?.("rmt")?.$exc; }
+    get /*@__MANGLE_PROP__*/ $exc() { return this.#dataHandler?.get?.("rmt")?.$exc; }
 
     //
-    /*@__PURE__*/ $data(t: unknown | string | null): unknown {
+    /*@__MANGLE_PROP__*/ $data(t: unknown | string | null): unknown {
         return (t as any)?.[ORG.data] ?? t;
     }
 
     //
-    /*@__PURE__*/ $addHandler(name: string, handler: DataHandler) { this.#dataHandler.set(name, handler); }
-    /*@__PURE__*/ $getHandler(name: string) { return this.#dataHandler.get(name); }
+    /*@__MANGLE_PROP__*/ $addHandler(name: string, handler: DataHandler) { this.#dataHandler.set(name, handler); }
+    /*@__MANGLE_PROP__*/ $getHandler(name: string) { return this.#dataHandler.get(name); }
 
     //
-    /*@__PURE__*/ $hnd(cmd = "access", t: any, ...args: unknown[]) {
-        const data: any = /*@__PURE__*/ this.$data(t);
+    /*@__MANGLE_PROP__*/ $hnd(cmd = "access", t: any, ...args: unknown[]) {
+        const data: any = this.$data(t);
 
         // isn't promise itself
         if (cmd == "get") {
@@ -65,11 +65,11 @@
     }
 
     //
-    /*@__PURE__*/ $get(uuid: unknown|string|null) { return this.#dataHandler.get("loc")?.$get?.(uuid); };
+    /*@__MANGLE_PROP__*/ $get(uuid: unknown|string|null) { return this.#dataHandler.get("loc")?.$get?.(uuid); };
 }
 
 //
-/*@__PURE__*/ export const wrapMeta = <T extends IMeta|unknown>(meta: MPromise<T>|IWrap<T>|null, handler: UniversalHandler | DataHandler | RemoteReferenceHandler | null = null)=>{
+export const wrapMeta = <T extends IMeta|unknown>(meta: MPromise<T>|IWrap<T>|null, handler: UniversalHandler | DataHandler | RemoteReferenceHandler | null = null)=>{
     if (!(typeof meta == "object" || typeof meta == "function")) return meta;
 
     //

@@ -62,12 +62,12 @@ export default class ExChanger {
     }
 
     //
-    /*@__PURE__*/ get /*@__PURE__*/ $imports() { return this.#flow?.$imports || {}; }
-    /*@__PURE__*/ get /*@__PURE__*/ $sync() { return this.#flow?.sync?.(); }
-    /*@__PURE__*/ async /*@__PURE__*/ sync() { await this.$sync; return this; }
+    get   /*@__MANGLE_PROP__*/ $imports() { return this.#flow?.$imports || {}; }
+    get   /*@__MANGLE_PROP__*/ /*@__PURE__*/ $sync() { return this.#flow?.sync?.(); }
+    async /*@__MANGLE_PROP__*/ /*@__PURE__*/ sync() { await this.$sync; return this; }
 
     //doOnlyAfterResolve
-    /*@__PURE__*/ $makePromise<T extends unknown>(target: T|Promise<T>): IWrap<T>|null {
+    /*@__MANGLE_PROP__*/ $makePromise<T extends unknown>(target: T|Promise<T>): IWrap<T>|null {
         //
         try {
             const ext = (target as any)?.[ORG.data] ?? target;
@@ -81,7 +81,7 @@ export default class ExChanger {
     }
 
     //
-    /*@__PURE__*/ $act<T extends unknown>(result: T|Promise<T>, cb: (result: T) => void): IWrap<T>|null {
+    /*@__MANGLE_PROP__*/ $act<T extends unknown>(result: T|Promise<T>, cb: (result: T) => void): IWrap<T>|null {
         try {
             return this.$makePromise(doOnlyAfterResolve(result, cb));
         } catch (e) {
@@ -91,7 +91,7 @@ export default class ExChanger {
     }
 
     //
-    /*@__PURE__*/ $request<T extends unknown>(cmd: string, meta: unknown, args : unknown[]): IWrap<T>|null {
+    /*@__MANGLE_PROP__*/ $request<T extends unknown>(cmd: string, meta: unknown, args : unknown[]): IWrap<T>|null {
         const transfer: unknown[] = [];
         const encoded = this.#coder?.encode([cmd, meta, ...args], transfer) as any[];
         const result = this.#flow?.callTask?.(encoded, transfer);
@@ -110,8 +110,8 @@ export default class ExChanger {
     //local(name) { return wrapMeta({ORG.uuid: name, ORG.type: "reference"}, this.#handler); }
 
     //
-    /*@__PURE__*/ $importToUnit(source: string)  { return /*@__PURE__*/ this.#flow?.importToUnit(source); }
-    /*@__PURE__*/ $importToSelf(module: unknown) { return /*@__PURE__*/ this.#flow?.importToSelf(module); }
+    /*@__MANGLE_PROP__*/ $importToUnit(source: string)  { return this.#flow?.importToUnit(source); }
+    /*@__MANGLE_PROP__*/ $importToSelf(module: unknown) { return this.#flow?.importToSelf(module); }
 
     //
     register<T extends object|Function>(object: T, name = ""): string | null {

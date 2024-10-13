@@ -4,8 +4,8 @@ import { $wrapPromise  } from "./Library/Handlers/PromiseHandler.ts";
 
 //
 export const moduleLoader = <T extends unknown>(source: string = "")=>{
-    return $wrapPromise(import("./code.ts")?.then?.(async (worker: any)=>{
-        return $moduleLoader<T>(source, await (worker?.default || ""))?.catch?.(console.trace.bind(console));
+    return /*@__MANGLE_PROP__*/ $wrapPromise(import("./code.ts")?.then?.(async (worker: any)=>{
+        return /*@__MANGLE_PROP__*/ $moduleLoader<T>(source, await (worker?.default || ""))?.catch?.(console.trace.bind(console));
     }));
 }
 

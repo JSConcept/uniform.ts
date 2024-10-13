@@ -1,5 +1,3 @@
-
-
 //
 const __dirname = import.meta.dirname;
 export const terserOptions = {
@@ -9,10 +7,17 @@ export const terserOptions = {
     module: true,
     toplevel: true,
     mangle: {
+        eval: true,
         keep_classnames: false,
         keep_fnames: false,
         module: true,
         toplevel: true,
+        properties: {
+            builtins: true,
+            keep_quoted: "strict",
+            undeclared: true,
+            only_annotated: true
+        }
     },
     compress: {
         ecma: 2020,
@@ -39,10 +44,14 @@ export const terserOptions = {
         unsafe_symbols: true,
         unsafe_undefined: true,
         unsafe_methods: true,
+        unsafe_regexp: true,
+        unsafe_proto: true,
         warnings: true,
         unused: true,
         booleans_as_integers: true,
-
+        hoist_funs: true,
+        hoist_vars: true,
+        properties: true,
         // don't use in debug mode
         drop_console: true
     },
@@ -50,8 +59,12 @@ export const terserOptions = {
         braces: false,
         comments: false,
         ecma: 2020,
-        indent_level: 0,
+        //indent_level: 0,
         semicolons: true,
-        shebang: true
+        shebang: true,
+        inline_script: true,
+        quote_style: 0,
+        wrap_iife: true,
+        ascii_only: true,
     }
 };
