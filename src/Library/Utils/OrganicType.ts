@@ -18,7 +18,7 @@ const $sync$ = Symbol("@sync");
 export const ORG = {
     sync: $sync$,
     data: $data$,
-    exchanger: $ORG.exchanger,//$exchanger$,
+    exchanger: $exchanger$,
     type: $ORG.type,
     uuid: $ORG.uuid,
     node: $ORG.node,

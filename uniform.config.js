@@ -116,7 +116,6 @@ export default defineConfig({
         ],
         entries: [
             resolve(__dirname, './src/Workers/ModuleWorker.ts'),
-            resolve(__dirname, './src/utils.ts'), 
             resolve(__dirname, './src/index.ts')
         ],
         force: true

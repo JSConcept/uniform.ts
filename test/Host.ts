@@ -1,5 +1,5 @@
 // deno-lint-ignore-file no-explicit-any
-import moduleLoader, {doTransfer, getContext, ORG} from "../dist/uniform.js"; // 
+import moduleLoader, {doTransfer, getContext, sync} from "../dist/uniform.js"; // 
 //import moduleLoader, {doTransfer, getContext, ORG} from "../src/index.ts";
 
 // typescript modules doesn't supported directly...
@@ -27,7 +27,7 @@ ctx["transferCheck"] = transferCheck;
 ctx["hostAction"] = hostAction;
 
 // synchronize
-await ctx[ORG.sync];
+await ctx[sync];
 
 //
 const workerAction = (await module?.workerAction);

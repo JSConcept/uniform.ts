@@ -1,8 +1,5 @@
-import {getContext, transfer} from "../dist/uniform.js"
-//import {getContext, transfer} from "../src/utils.ts"
-
-// host-based context
-const ctx = getContext(self);
+//
+let ctx = {}, utils = {}; export const importContext = ($ctx, $utils)=>(ctx = $ctx, utils = $utils);
 
 // after sync you can register
 export class TestClass {
@@ -27,7 +24,7 @@ export const workerAction = async ()=>{
 
     // (sending as argument, unusual here)
     const bravery = new ArrayBuffer(64);
-    await (transferCheck?.(transfer(ctx, bravery)));
+    await (transferCheck?.(utils.transfer(ctx, bravery)));
 
     // should to be detached
     console.warn(bravery);

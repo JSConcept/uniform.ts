@@ -52,7 +52,7 @@ export const FORBIDDEN_KEYS = new Set(["bind", "toString", "then", "catch", "fin
 export const META_KEYS = new Set(Array.from(Object.values(ORG)));
 
 //
-const wrapExChanger = (exChanger: ExChanger|null): any => {
+export const wrapExChanger = (exChanger: ExChanger|null): any => {
     if (!exChanger) return null;
 
     //
@@ -91,14 +91,14 @@ export const doOnlyAfterResolve = <T extends unknown|any>(meta: MPromise<T>, cb:
 //
 export const getContext = (wModule: any)=>{
     return doOnlyAfterResolve(wModule, (mx)=>{
-        return wrapExChanger(mx?.[ORG.exchanger] ?? $bindings$?.get?.(mx));
+        return wrapExChanger(mx?.[ORG.exchanger] ?? $bindings$?.get?.(mx) ?? mx);
     });
 }
 
 //
 export const doTransfer = (wModule: any, name: any, node: any|null = null)=>{
     return doOnlyAfterResolve(wModule, (mx)=>{
-        const exChanger = mx?.[ORG.exchanger] ?? $bindings$?.get?.(mx);
+        const exChanger = mx?.[ORG.exchanger] ?? $bindings$?.get?.(mx) ?? mx;
         return exChanger?.doTransfer?.(name, node);
     });
 }
@@ -106,9 +106,10 @@ export const doTransfer = (wModule: any, name: any, node: any|null = null)=>{
 //
 export const transfer = (wModule: any, node: any|null = null, name: any = "")=>{
     return doOnlyAfterResolve(wModule, (mx)=>{
-        const exChanger = mx?.[ORG.exchanger] ?? $bindings$?.get?.(mx);
+        const exChanger = mx?.[ORG.exchanger] ?? $bindings$?.get?.(mx) ?? mx;
         return exChanger?.transfer?.(node, name);
     });
 }
 
+//
 export { ORG };
