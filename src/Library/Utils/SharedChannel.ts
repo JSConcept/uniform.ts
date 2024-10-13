@@ -1,5 +1,5 @@
 // deno-lint-ignore-file ban-ts-comment no-explicit-any
-import { type MPromise, isPromise } from "./Useful.ts";
+/*@__PURE__*/ import { type MPromise, isPromise } from "./Useful.ts";
 
 // @ts-ignore "extra `KB` for library..."
 /*@__PURE__*/
@@ -15,7 +15,7 @@ import { type MPromise, isPromise } from "./Useful.ts";
 /*@__PURE__*/
 export default class SharedChannel<T extends unknown> {
     //[x: string]: (timeout?: number) => unknown; // @ts-ignore
-    #sharedBuffer: SharedArrayBuffer | null = null;
+    /*@__PURE__*/ #sharedBuffer: SharedArrayBuffer | null = null;
     #byteOffset: number = 0;
     $binCoder: any = null;
 
