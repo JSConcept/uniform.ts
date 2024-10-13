@@ -1,5 +1,5 @@
 // deno-lint-ignore-file no-explicit-any ban-types
-import ObjectProxy from "../../Atomic/ObjectProxy.ts";
+import ObjectProxy from "../ObjectProxy.ts";
 
 //
 import { doOnlyAfterResolve, isPromise, UUIDv4, type IWrap } from "../Utils/Useful.ts";

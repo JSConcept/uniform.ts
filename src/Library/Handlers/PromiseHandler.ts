@@ -1,5 +1,5 @@
 // deno-lint-ignore-file no-explicit-any
-import ObjectProxy from "../../Atomic/ObjectProxy.ts";
+import ObjectProxy from "../ObjectProxy.ts";
 
 //
 import { isSymbol, FORBIDDEN_KEYS, META_KEYS, isPromise, doOnlyAfterResolve, type IWrap } from "../Utils/Useful.ts"
