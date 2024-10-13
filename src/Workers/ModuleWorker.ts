@@ -1,8 +1,6 @@
-// deno-lint-ignore-file no-explicit-any
+// deno-lint-ignore-file
 import exChanger from "./ExChangerUnit.ts";
-
-// make import loader support
-exChanger.register((src: string = ""): Promise<any> => import(/* @vite-ignore */ src), "!!import!!");
-
-//
-export default exChanger;
+import makeModuleLoader from "../Atomic/MakeLoader.ts";
+export const moduleLoader = makeModuleLoader(exChanger);
+export default moduleLoader;
+export {exChanger};
