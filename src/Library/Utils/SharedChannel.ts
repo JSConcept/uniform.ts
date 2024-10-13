@@ -19,7 +19,7 @@ export default class SharedChannel<T extends unknown> {
     #byteOffset: number = 0;
     $binCoder: any = null;
 
-    //
+    /*@__PURE__*/ 
     constructor(sharedBuffer: SharedArrayBuffer | null, byteOffset = 0, binCoder: any = null) {
         this.#sharedBuffer = sharedBuffer;
         this.#byteOffset = byteOffset;
@@ -39,15 +39,12 @@ export default class SharedChannel<T extends unknown> {
     /*@__PURE__*/ reject(e: Error | unknown): unknown { throw e; }
 
     // @ts-ignore "DOM isn't recognized"
-    /*@__PURE__*/ waitAuto(timeout = 1000): unknown { return (self?.document ? this.waitAsync(timeout) : this.waitSync(timeout)); }
-    /*@__PURE__*/ waitSync(timeout = 1000): unknown { const result = this.$waitSync(timeout); return result ? this.$binCoder.decode(result ?? new Uint8Array([])) : null; }
+    /*@__PURE__*/ waitAuto(timeout = 1000): unknown { return /*@__PURE__*/ (self?.document ? /*@__PURE__*/ this.waitAsync(timeout) : /*@__PURE__*/ this.waitSync(timeout)); }
+    /*@__PURE__*/ waitSync(timeout = 1000): unknown { const result = /*@__PURE__*/ this.$waitSync(timeout); return result ? this.$binCoder.decode(result ?? new Uint8Array([])) : null; }
 
     // not implemented directly
-    /*@__PURE__*/
-    waitAsync(_timeout = 1000): unknown { return null; };
-
-    /*@__PURE__*/
-    $resolveWith(binaryData: Uint8Array | Uint8ClampedArray | Int8Array): any {
+    /*@__PURE__*/ waitAsync(_timeout = 1000): unknown { return null; };
+    /*@__PURE__*/ $resolveWith(binaryData: Uint8Array | Uint8ClampedArray | Int8Array): any {
         if (this.#sharedBuffer) {
             // grow when is possible...
             if ((this.#sharedBuffer.byteLength-this.#byteOffset) < (binaryData.byteLength+8)) {
@@ -71,19 +68,17 @@ export default class SharedChannel<T extends unknown> {
         }
     }
 
-    /*@__PURE__*/
-    $initials() {
+    /*@__PURE__*/ $initials() {
         if (!this.#sharedBuffer) return;
         const int32 = new Int32Array(this.#sharedBuffer, this.#byteOffset, 2);
         Atomics.store(int32, 1, 0);
         Atomics.store(int32, 0, 1);
     }
 
-    /*@__PURE__*/
-    $promised(timeout = 1000) {
+    /*@__PURE__*/ $promised(timeout = 1000) {
         if (!this.#sharedBuffer) return; //
         const int32 = new Int32Array(this.#sharedBuffer, this.#byteOffset, 2);
-        const promise = Atomics.waitAsync(int32, 0, 1, timeout)?.value;
+        const promise = /*@__PURE__*/ Atomics.waitAsync(int32, 0, 1, timeout)?.value;
 
         // @ts-ignore
         if (promise.async) {
@@ -100,11 +95,10 @@ export default class SharedChannel<T extends unknown> {
         return new Promise((_, rj)=>rj(promise));
     }
 
-    /*@__PURE__*/
-    $waitSync(timeout = 1000) {
+    /*@__PURE__*/ $waitSync(timeout = 1000) {
         if (!this.#sharedBuffer) return; //
         const int32 = new Int32Array(this.#sharedBuffer, this.#byteOffset, 2);
-        const result = Atomics.wait(int32, 0, 1, timeout);
+        const result = /*@__PURE__*/ Atomics.wait(int32, 0, 1, timeout);
         if (result == "ok") {
             return new Uint8Array(this.#sharedBuffer, this.#byteOffset + 8, int32[1]);
         }
@@ -114,21 +108,24 @@ export default class SharedChannel<T extends unknown> {
 
 /*@__PURE__*/
 export const doOnlyAfterResolve = <T extends unknown|any>(meta: MPromise<T>, cb: (u: T)=>MPromise<T>|null|void): MPromise<any>|null|void => {
-    if (isPromise(meta)) {
+    if (/*@__PURE__*/ isPromise(meta)) {
         const chain = (meta as any)?.then?.(cb)?.catch?.(console.trace.bind(console)) ?? cb(meta as T);
         //console.trace(chain);
         return chain;
     }
+    /*@__PURE__*/ 
     if (typeof SharedChannel != "undefined" && meta instanceof SharedChannel) {
-        return doOnlyAfterResolve((meta as SharedChannel<T>)?.waitAuto?.() as T, cb);
+        /*@__PURE__*/ 
+        return /*@__PURE__*/ doOnlyAfterResolve((meta as SharedChannel<T>)?.waitAuto?.() as T, cb);
     }
     return cb(meta as T);
 }
 
 /*@__PURE__*/
 SharedChannel.prototype.waitAsync = function (timeout = 1000): unknown {
-    const result = this.$promised(timeout);
-    return doOnlyAfterResolve(result, (bin: unknown|Uint8Array)=>{
+    /*@__PURE__*/ const result = /*@__PURE__*/ this.$promised(timeout);
+    /*@__PURE__*/ 
+    return /*@__PURE__*/ doOnlyAfterResolve(result, (bin: unknown|Uint8Array)=>{
         return bin ? this.$binCoder?.decode?.(bin as Uint8Array) : null;
     });
 }

@@ -1,8 +1,7 @@
 // deno-lint-ignore-file no-explicit-any
 
-/*@__PURE__*/ 
-import SharedChannel from "./SharedChannel.ts";
-import { UUIDv4 } from "./Useful.ts";
+/*@__PURE__*/ import SharedChannel from "./SharedChannel.ts";
+/*@__PURE__*/ import { UUIDv4 } from "./Useful.ts";
 
 //
 /*@__PURE__*/ export const HANG_TIMEOUT = 2000;
@@ -38,11 +37,12 @@ export default class PromiseStack<T extends unknown> {
 
     /*@__PURE__*/
     hook<T extends unknown>(key: string | null = null, buffer: SharedArrayBuffer | null = null): [string, SharedChannel<T>, SharedArrayBuffer|ArrayBuffer|unknown] {
-        const pm = new SharedChannel(buffer);
+        /*@__PURE__*/ 
+        const pm = /*@__PURE__*/ new SharedChannel(buffer);
         this.#map.set(key ||= UUIDv4(), pm);
 
         // timeout of requests
-        setTimeout(()=>{ 
+        /*@__PURE__*/ setTimeout(()=>{ 
             if (this.#map.has(key)) { this.rejectBy(key, "hang-timeout"); };
         }, HANG_TIMEOUT);
 
@@ -56,12 +56,13 @@ export default class PromiseStack<T extends unknown> {
     // ]
     /*@__PURE__*/
     createSync<T extends unknown>(key: string | null = null): [string, SharedChannel<T>, SharedArrayBuffer|ArrayBuffer|unknown] {
-        const bf = new SharedArrayBuffer(16);
-        const pm = new SharedChannel(bf);
+        /*@__PURE__*/
+        const bf = /*@__PURE__*/ new SharedArrayBuffer(16);
+        const pm = /*@__PURE__*/ new SharedChannel(bf);
         this.#map.set(key ||= UUIDv4(), pm);
 
         // timeout of requests
-        setTimeout(()=>{ 
+        /*@__PURE__*/ setTimeout(()=>{ 
             if (this.#map.has(key)) { this.rejectBy(key, "hang-timeout"); };
         }, HANG_TIMEOUT);
 
