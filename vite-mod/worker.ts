@@ -2,7 +2,8 @@ import path from 'node:path'
 import MagicString from 'magic-string'
 
 // sometimes needs dedicated library for compress
-import { gzipSync } from 'fflate';
+import { gzip, strToU8 } from 'fflate'
+//import compress from 'brotli/compress';
 
 //
 import type { OutputChunk } from 'rollup'
@@ -311,20 +312,19 @@ export function webWorkerPlugin(config: ResolvedConfig): Plugin {
       if (isBuild) {
         if (isWorker && config.bundleChain.at(-1) === cleanUrl(id)) {
           urlCode = 'self.location.href'
-        } else
-        if (compressRE.test(id)) {
+        } else if (compressRE.test(id)) {
           const chunk = await bundleWorkerEntry(config, id)
-          const code = Buffer.from(chunk.code, 'utf8');
-          const gzip = Buffer.from(gzipSync(new Uint8Array(code), { level: 9 }));
-          const b64c = gzip.toString('base64');
-          const compressedJs = `const compressedJs = "${b64c}";`
+          const b64c = Buffer.from(
+            await new Promise<Uint8Array>((r) =>
+              gzip(strToU8(chunk.code), { level: 9 }, (_, d) => r(d)),
+            ),
+          ).toString('base64')
           return {
-            code: `${compressedJs};export default compressedJs;`,
+            code: `const b64c = "${b64c}"; export default b64c;`,
             // Empty sourcemap to suppress Rollup warning
             map: { mappings: '' },
           }
-        } else
-        if (inlineRE.test(id)) {
+        } else if (inlineRE.test(id)) {
           const chunk = await bundleWorkerEntry(config, id)
           const encodedJs = `const encodedJs = "${Buffer.from(
             chunk.code,
@@ -383,8 +383,7 @@ export function webWorkerPlugin(config: ResolvedConfig): Plugin {
         } else {
           urlCode = JSON.stringify(await workerFileToUrl(config, id))
         }
-      }
-      else {
+      } else {
         let url = await fileToUrl(this, cleanUrl(id))
         url = injectQuery(url, `${WORKER_FILE_ID}&type=${workerType}`)
         urlCode = JSON.stringify(url)
