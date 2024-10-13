@@ -36,9 +36,6 @@ export default class PromiseHandler extends DataHandler {
         // isn't promise itself
         const data = this.$data(meta);
 
-        // primitive value or non-object/function
-        if (data == null || (typeof data != "object" && typeof data != "function")) { return data; };
-
         //
         if (cmd == "get") {
             if (args[0] == ORG.data) { return data; };
@@ -57,6 +54,9 @@ export default class PromiseHandler extends DataHandler {
                 META_KEYS.has?.(args?.[0] as any)
             ) { return null; };
         }
+
+        // primitive value or non-object/function
+        if (data == null || (typeof data != "object" && typeof data != "function")) { return data; };
 
         // unwrap first-level promise
         return this.$wrapPromise(this.$deferOp(data, (raw)=> {

@@ -16,9 +16,6 @@ export default class DataHandler {
     $handle(cmd: string, meta: unknown, ...args: unknown[]) {
         const ref: any = this.$data(meta);
 
-        // any illegal is illegal (after 'then' or defer operation)...
-        if (ref == null || (typeof ref != "object" && typeof ref != "function")) { return ref; }
-
         // return meta as is
         if (cmd == "get") {
             if (args[0] == ORG.data) { return ref; };
@@ -29,6 +26,9 @@ export default class DataHandler {
                 META_KEYS.has?.(args?.[0] as any)
             ) { return null; };
         }
+
+        // any illegal is illegal (after 'then' or defer operation)...
+        if (ref == null || (typeof ref != "object" && typeof ref != "function")) { return ref; }
 
         // needs to return itself
         if (cmd == "access") { return ref; }

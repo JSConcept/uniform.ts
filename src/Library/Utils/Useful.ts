@@ -91,23 +91,23 @@ export const doOnlyAfterResolve = <T extends unknown|any>(meta: MPromise<T>, cb:
 //
 export const getContext = (wModule: any)=>{
     return doOnlyAfterResolve(wModule, (mx)=>{
-        return wrapExChanger(mx?.[ORG.exchanger] ?? $bindings$?.get?.(mx) ?? mx);
+        return wrapExChanger(mx?.[ORG.exchanger] ?? $bindings$?.get?.(mx));
     });
 }
 
 //
 export const doTransfer = (wModule: any, name: any, node: any|null = null)=>{
     return doOnlyAfterResolve(wModule, (mx)=>{
-        const exChanger = mx?.[ORG.exchanger] ?? $bindings$?.get?.(mx) ?? mx;
-        return exChanger?.doTransfer(name, node);
+        const exChanger = mx?.[ORG.exchanger] ?? $bindings$?.get?.(mx);
+        return exChanger?.doTransfer?.(name, node);
     });
 }
 
 //
 export const transfer = (wModule: any, node: any|null = null, name: any = "")=>{
     return doOnlyAfterResolve(wModule, (mx)=>{
-        const exChanger = mx?.[ORG.exchanger] ?? $bindings$?.get?.(mx) ?? mx;
-        return exChanger?.transfer(node, name);
+        const exChanger = mx?.[ORG.exchanger] ?? $bindings$?.get?.(mx);
+        return exChanger?.transfer?.(node, name);
     });
 }
 

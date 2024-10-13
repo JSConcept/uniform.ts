@@ -30,9 +30,9 @@ export default class ExChanger {
 
     //
     constructor(context: any) {
-        if (typeof context != "undefined" && context != null) { 
-            this.#flow = new FLOW(context);
+        if (typeof context != "undefined" && context != null) {
             bindWithContext(context, this);
+            this.#flow = new FLOW(context);
         } else {
             console.warn("Context not bounded!");
         }

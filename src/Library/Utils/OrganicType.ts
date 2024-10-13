@@ -6,14 +6,19 @@ export enum $ORG {
     node = "!#node#!",
     payload = "!#payload#!",
     index = "!#index#!",
-    //exchanger = "!#exchanger#!"
+    exchanger = "!#exchanger#!"
 }
+
+//
+const $exchanger$ = Symbol("@exchanger");
+const $data$ = Symbol("@data");
+const $sync$ = Symbol("@sync");
 
 // 
 export const ORG = {
-    sync: Symbol("@sync"),
-    data: Symbol("@data"),
-    exchanger: Symbol("@exchanger"),
+    sync: $sync$,
+    data: $data$,
+    exchanger: $ORG.exchanger,//$exchanger$,
     type: $ORG.type,
     uuid: $ORG.uuid,
     node: $ORG.node,
@@ -36,7 +41,7 @@ export default ORG;
 //
 export const $bindings$ = new WeakMap<any, any>();
 export const bindWithContext = (context: any, obj: any) => {
-    $bindings$.set(context, obj);
     try { context[ORG.exchanger] = obj; } catch(e: any) { console.warn(e); };
+    $bindings$.set(context, obj);
     return obj;
 }
