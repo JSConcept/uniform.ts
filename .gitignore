@@ -133,3 +133,8 @@ dist
 .rollup.cache
 .rollup.cache/
 .rollup.cache/*
+
+#
+pnpm-lock.yml
+pnpm-lock.yaml
+
