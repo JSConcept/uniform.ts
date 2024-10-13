@@ -10,26 +10,55 @@ const TerserPlugin = require("terser-webpack-plugin");
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 //
-const terserOptions = {
-    keep_classnames: false,
-    keep_fnames: false,
-    module: true,
-    ecma: 2020,
+export const terserOptions = {
+    mangle: {
+        defaults: true,
+        keep_classnames: false,
+        keep_fnames: false,
+        keep_infinity: false,
+        module: true,
+        toplevel: true,
+    },
     compress: {
+        defaults: true,
+        keep_classnames: false,
+        keep_fnames: false,
+        keep_infinity: false,
+        reduce_vars: true,
+        reduce_funcs: true,
+        pure_funcs: [],
         arguments: true,
         expression: true,
         inline: 3,
         module: true,
-        passes: 2,
+        passes: 3,
         side_effects: true,
+        pure_getters: true,
+        typeofs: true,
+        toplevel: true,
         unsafe: true,
+        unsafe_Function: true,
         unsafe_comps: true,
         unsafe_arrows: true,
         unsafe_math: true,
         unsafe_symbols: true,
-        warnings: true
+        unsafe_undefined: true,
+        unsafe_methods: true,
+        warnings: true,
+        unused: true,
+        mangle: true
+    },
+    format: {
+        braces: false,
+        comments: false,
+        ecma: 2020,
+        indent_level: 0,
+        semicolons: true,
+        shebang: true,
+        trailing_comma: "es5"
     }
-}
+};
+
 
 //
 export default {
