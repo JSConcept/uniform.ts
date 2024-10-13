@@ -2,7 +2,7 @@
 import ObjectProxy from "../../Atomic/ObjectProxy.ts";
 
 //
-import { ORG, doOnlyAfterResolve, isPromise, type IWrap, type IMeta, UUIDv4 } from "../Utils/Useful.ts";
+import { doOnlyAfterResolve, isPromise, type IWrap, UUIDv4 } from "../Utils/Useful.ts";
 import { extract, MakeReference } from "../Utils/InstructionType.ts";
 
 //
@@ -19,6 +19,7 @@ import FLOW from "./FLOW.ts";
 
 //
 import * as $M from "./MessageChannel.ts";
+import ORG, { IMeta } from "../Utils/OrganicType.ts";
 
 //
 export default class ExChanger {
@@ -29,7 +30,12 @@ export default class ExChanger {
 
     //
     constructor(context: any) {
-        this.#flow = new FLOW(context);
+        if (typeof context != "undefined" && context != null) { 
+            this.#flow = new FLOW(context);
+            context[ORG.exchanger] = this;
+        } else {
+            console.warn("Context not bounded!");
+        }
     }
 
     //

@@ -1,32 +1,10 @@
 // deno-lint-ignore-file no-explicit-any ban-types
-//import SharedChannel from "./SharedChannel.ts";
+import ORG from "./OrganicType.ts";
 
 //
 export const UUIDv4 = () => {
     return (crypto?.randomUUID ? crypto?.randomUUID() : ("10000000-1000-4000-8000-100000000000".replace(/[018]/g, c => (+c ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (+c / 4)))).toString(16))));
 };
-
-//
-export enum $ORG {
-    type = "!#type#!",
-    uuid = "!#uuid#!",
-    node = "!#node#!",
-    payload = "!#payload#!",
-    index = "!#index#!",
-    exchanger = "!#exchanger#!"
-}
-
-// 
-export const ORG = {
-    sync: Symbol("@sync"),
-    data: Symbol("@data"),
-    exchanger: $ORG.exchanger,//Symbol("@exchanger"),
-    type: $ORG.type,
-    uuid: $ORG.uuid,
-    node: $ORG.node,
-    payload: $ORG.payload,
-    index: $ORG.index
-}
 
 //
 export type dT = object | Function;
@@ -39,16 +17,7 @@ export type IWrap<T extends unknown> = {
 };
 
 //
-export interface IMeta {
-    [$ORG.uuid]?: string;
-    [$ORG.type]?: string;
-    [$ORG.node]?: unknown;
-    [$ORG.payload]?: unknown;
-    [$ORG.index]?: number;
-};
-
-//
-type ExChanger = any;
+export type ExChanger = any;
 
 /*
  * Internal types of meta
@@ -59,9 +28,6 @@ type ExChanger = any;
  *   !index: number // located in transferable list
  * }
  */
-
-//
-export default ORG;
 
 // If someone not in list, will just copy or sharing
 // @ts-ignore "Transferable list for web workers (automatic)"
@@ -144,3 +110,5 @@ export const transfer = (wModule: any, node: any|null = null, name: any = "")=>{
         return exChanger?.transfer(node, name);
     });
 }
+
+export { ORG };

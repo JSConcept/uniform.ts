@@ -1,5 +1,6 @@
 // deno-lint-ignore-file ban-types no-explicit-any no-explicit-any ban-types no-explicit-any no-explicit-any
-import { ORG, doOnlyAfterResolve, IMeta, IWrap, MPromise } from "./Useful.ts";
+import { ORG, type IMeta } from "./OrganicType.ts";
+import { doOnlyAfterResolve, IWrap, MPromise } from "./Useful.ts";
 
 //
 export const MakeReference = (data: any = null): Function|object => {

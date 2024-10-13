@@ -1,5 +1,4 @@
 // deno-lint-ignore-file ban-ts-comment no-explicit-any
-
 import { type MPromise, isPromise } from "./Useful.ts";
 
 // @ts-ignore "extra `KB` for library..."

@@ -3,9 +3,10 @@
 import UUIDMap from "../Utils/UUIDMap.ts";
 import TypeDetector from "./TypeDetector.ts";
 import UniversalHandler from "../Handlers/UniversalHandler.ts";
-import { ORG, isPromise, doOnlyAfterResolve } from "../Utils/Useful.ts";
+import { isPromise, doOnlyAfterResolve } from "../Utils/Useful.ts";
 import { extract } from "../Utils/InstructionType.ts";
 import { wrapMeta } from "../Handlers/UniversalHandler.ts";
+import ORG from "../Utils/OrganicType.ts";
 
 // mediator
 export const hasMemoryBuffer = (target: any)=>{

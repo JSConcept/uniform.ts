@@ -2,15 +2,13 @@
 import ObjectProxy from "../../Atomic/ObjectProxy.ts";
 
 //
-import DataHandler from "./DataHandler.ts";
-import { 
-    ORG, MPromise, FORBIDDEN_KEYS, META_KEYS, isSymbol, doOnlyAfterResolve, isPromise, 
-    type IMeta, type IWrap
-} from "../Utils/Useful.ts";
+import { MPromise, FORBIDDEN_KEYS, META_KEYS, isSymbol, doOnlyAfterResolve, isPromise, type IWrap } from "../Utils/Useful.ts";
 import RemoteReferenceHandler from "../Handlers/RemotePool.ts";
 import { extract, MakeReference, wrapWeakMap } from "../Utils/InstructionType.ts";
+import { ORG, IMeta } from "../Utils/OrganicType.ts";
 
-//wrapWeakMap, extract, MakeReference
+//
+import DataHandler from "./DataHandler.ts";
 
 //
 export default class UniversalHandler extends DataHandler {
