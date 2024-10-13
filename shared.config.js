@@ -41,7 +41,10 @@ export const terserOptions = {
         unsafe_methods: true,
         warnings: true,
         unused: true,
-        booleans_as_integers: true
+        booleans_as_integers: true,
+
+        // don't use in debug mode
+        drop_console: true
     },
     format: {
         braces: false,

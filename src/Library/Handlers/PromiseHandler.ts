@@ -25,10 +25,7 @@ export default class PromiseHandler extends DataHandler {
 
     //
     $wrapPromise<T extends unknown>(result: T|Promise<T>, handler: DataHandler|null = null): IWrap<T>|null {
-        if (isPromise(result)) {
-            return new Proxy(MakeReference(result), new ObjectProxy(handler ?? this)) as IWrap<T>|null;
-        }
-        return result as IWrap<T>;
+        return $wrapPromise(result, handler ?? this);
     }
 
     //
@@ -66,4 +63,12 @@ export default class PromiseHandler extends DataHandler {
 
     //
     $get(_uuid: unknown|string|null): any { return null; };
+}
+
+//
+export const $wrapPromise = <T extends unknown>(result: T|Promise<T>, handler: DataHandler = new PromiseHandler()): IWrap<T>|null => {
+    if (isPromise(result)) {
+        return new Proxy(MakeReference(result), new ObjectProxy(handler)) as IWrap<T>|null;
+    }
+    return result as IWrap<T>;
 }
