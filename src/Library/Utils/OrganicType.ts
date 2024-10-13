@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 //
 export enum $ORG {
     type = "!#type#!",
@@ -5,14 +6,14 @@ export enum $ORG {
     node = "!#node#!",
     payload = "!#payload#!",
     index = "!#index#!",
-    exchanger = "!#exchanger#!"
+    //exchanger = "!#exchanger#!"
 }
 
 // 
 export const ORG = {
     sync: Symbol("@sync"),
     data: Symbol("@data"),
-    exchanger: $ORG.exchanger,//Symbol("@exchanger"),
+    exchanger: Symbol("@exchanger"),
     type: $ORG.type,
     uuid: $ORG.uuid,
     node: $ORG.node,
@@ -31,3 +32,11 @@ export interface IMeta {
 
 //
 export default ORG;
+
+//
+export const $bindings$ = new WeakMap<any, any>();
+export const bindWithContext = (context: any, obj: any) => {
+    $bindings$.set(context, obj);
+    try { context[ORG.exchanger] = obj; } catch(e: any) { console.warn(e); };
+    return obj;
+}

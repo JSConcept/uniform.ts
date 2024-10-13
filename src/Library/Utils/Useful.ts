@@ -1,5 +1,5 @@
 // deno-lint-ignore-file no-explicit-any ban-types
-import ORG from "./OrganicType.ts";
+import ORG, { $bindings$ } from "./OrganicType.ts";
 
 //
 export const UUIDv4 = () => {
@@ -65,10 +65,10 @@ const wrapExChanger = (exChanger: ExChanger|null): any => {
                 FORBIDDEN_KEYS.has(prop as string) || 
                 META_KEYS?.has?.(prop as any)
             ) { return null; };
-            return target.access(prop);
+            return target?.access?.(prop);
         },
         set(target: ExChanger, prop: string, value: any): any {
-            return target.register(value, prop);
+            return target?.register?.(value, prop);
         }
     });
 }
@@ -91,14 +91,14 @@ export const doOnlyAfterResolve = <T extends unknown|any>(meta: MPromise<T>, cb:
 //
 export const getContext = (wModule: any)=>{
     return doOnlyAfterResolve(wModule, (mx)=>{
-        return wrapExChanger(mx?.[ORG.exchanger] ?? mx);
+        return wrapExChanger(mx?.[ORG.exchanger] ?? $bindings$?.get?.(mx) ?? mx);
     });
 }
 
 //
 export const doTransfer = (wModule: any, name: any, node: any|null = null)=>{
     return doOnlyAfterResolve(wModule, (mx)=>{
-        const exChanger = mx?.[ORG.exchanger] ?? mx;
+        const exChanger = mx?.[ORG.exchanger] ?? $bindings$?.get?.(mx) ?? mx;
         return exChanger?.doTransfer(name, node);
     });
 }
@@ -106,7 +106,7 @@ export const doTransfer = (wModule: any, name: any, node: any|null = null)=>{
 //
 export const transfer = (wModule: any, node: any|null = null, name: any = "")=>{
     return doOnlyAfterResolve(wModule, (mx)=>{
-        const exChanger = mx?.[ORG.exchanger] ?? mx;
+        const exChanger = mx?.[ORG.exchanger] ?? $bindings$?.get?.(mx) ?? mx;
         return exChanger?.transfer(node, name);
     });
 }

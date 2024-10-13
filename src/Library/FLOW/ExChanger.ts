@@ -2,12 +2,12 @@
 import ObjectProxy from "../../Atomic/ObjectProxy.ts";
 
 //
-import { doOnlyAfterResolve, isPromise, type IWrap, UUIDv4 } from "../Utils/Useful.ts";
+import { doOnlyAfterResolve, isPromise, type IWrap, type MPromise, UUIDv4 } from "../Utils/Useful.ts";
 import { extract, MakeReference } from "../Utils/InstructionType.ts";
 
 //
-import RemoteReferenceHandler from "../Handlers/RemotePool.ts";
-import ObjectPoolMemberHandler from "../Handlers/ObjectPool.ts";
+import RemoteReferenceHandler from "../Handlers/RemoteHandler.ts";
+import MemoryHandler from "../Handlers/MemoryHandler.ts";
 import DataHandler from "../Handlers/DataHandler.ts";
 import PromiseHandler from "../Handlers/PromiseHandler.ts";
 import type UniversalHandler from "../Handlers/UniversalHandler.ts";
@@ -19,7 +19,7 @@ import FLOW from "./FLOW.ts";
 
 //
 import * as $M from "./MessageChannel.ts";
-import ORG, { IMeta } from "../Utils/OrganicType.ts";
+import { ORG, IMeta, bindWithContext } from "../Utils/OrganicType.ts";
 
 //
 export default class ExChanger {
@@ -32,7 +32,7 @@ export default class ExChanger {
     constructor(context: any) {
         if (typeof context != "undefined" && context != null) { 
             this.#flow = new FLOW(context);
-            context[ORG.exchanger] = this;
+            bindWithContext(context, this);
         } else {
             console.warn("Context not bounded!");
         }
@@ -52,7 +52,7 @@ export default class ExChanger {
 
         //
         if (this.#handler) {
-            this.#handler?.$addHandler("local", new ObjectPoolMemberHandler(this.#memoryPool));
+            this.#handler?.$addHandler("local", new MemoryHandler(this.#memoryPool));
             this.#handler?.$addHandler("remote", new RemoteReferenceHandler(this));
             this.#handler?.$addHandler("promise", new PromiseHandler());
             this.#handler?.$addHandler("direct", new DataHandler());
@@ -190,3 +190,4 @@ export default class ExChanger {
         });
     }
 }
+

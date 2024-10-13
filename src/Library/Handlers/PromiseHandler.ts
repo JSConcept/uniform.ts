@@ -42,7 +42,7 @@ export default class PromiseHandler extends DataHandler {
         //
         if (cmd == "get") {
             if (args[0] == ORG.data) { return data; };
-            if (args[0] == ORG.exchanger) { return this.$exChanger ?? null; };
+            if (args[0] == ORG.exchanger) { return this.$exChanger ?? data?.[ORG.exchanger] ?? data?.then?.((e: any)=>e?.[ORG.exchanger]) ?? null; };
 
             //
             if (["then", "catch", "finally"].indexOf((args as any[])?.[0]) >= 0) {

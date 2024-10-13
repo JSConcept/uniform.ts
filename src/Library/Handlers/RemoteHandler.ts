@@ -22,12 +22,12 @@ export default class RemoteReferenceHandler extends DataHandler {
     //
     $data(t: unknown) { return extract(t) ?? t; }
     $handle(cmd: string, meta: unknown, ...args: unknown[]) {
-        const data = this.$data(meta);
+        const data: any = this.$data(meta);
 
         // return meta as is
         if (cmd == "get") {
             if (args[0] == ORG.data) { return data; };
-            if (args[0] == ORG.exchanger) { return this.#exChanger; };
+            if (args[0] == ORG.exchanger) { return this.$exChanger ?? data?.[ORG.exchanger] ?? data?.then?.((e: any)=>e?.[ORG.exchanger]) ?? null; };
             if ( // forbidden actions
                 isSymbol(args?.[0]) ||
                 FORBIDDEN_KEYS.has(args?.[0] as string) || 

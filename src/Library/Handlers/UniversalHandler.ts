@@ -3,7 +3,7 @@ import ObjectProxy from "../../Atomic/ObjectProxy.ts";
 
 //
 import { MPromise, FORBIDDEN_KEYS, META_KEYS, isSymbol, doOnlyAfterResolve, isPromise, type IWrap } from "../Utils/Useful.ts";
-import RemoteReferenceHandler from "../Handlers/RemotePool.ts";
+import RemoteReferenceHandler from "./RemoteHandler.ts";
 import { extract, MakeReference, wrapWeakMap } from "../Utils/InstructionType.ts";
 import { ORG, IMeta } from "../Utils/OrganicType.ts";
 
@@ -34,12 +34,12 @@ export default class UniversalHandler extends DataHandler {
 
     //
     $handle(cmd = "access", t: any, ...args: unknown[]) {
-        const data = this.$data(t);
+        const data: any = this.$data(t);
 
         // isn't promise itself
         if (cmd == "get") {
             if (args[0] == ORG.data) { return data; };
-            if (args[0] == ORG.exchanger) { return this.$exChanger; };
+            if (args[0] == ORG.exchanger) { return this.$exChanger ?? data?.[ORG.exchanger] ?? data?.then?.((e: any)=>e?.[ORG.exchanger]) ?? null; };
             if ( // forbidden actions
                 isSymbol(args?.[0]) ||
                 FORBIDDEN_KEYS.has(args?.[0] as string) || 

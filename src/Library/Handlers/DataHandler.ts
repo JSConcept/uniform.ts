@@ -14,7 +14,7 @@ export default class DataHandler {
     //
     $data(target: unknown|string|null) { return target; };
     $handle(cmd: string, meta: unknown, ...args: unknown[]) {
-        const ref = this.$data(meta);
+        const ref: any = this.$data(meta);
 
         // any illegal is illegal (after 'then' or defer operation)...
         if (ref == null || (typeof ref != "object" && typeof ref != "function")) { return ref; }
@@ -22,7 +22,7 @@ export default class DataHandler {
         // return meta as is
         if (cmd == "get") {
             if (args[0] == ORG.data) { return ref; };
-            if (args[0] == ORG.exchanger) { return this.$exChanger; };
+            if (args[0] == ORG.exchanger) { return this.$exChanger ?? ref?.[ORG.exchanger] ?? ref?.then?.((e: any)=>e?.[ORG.exchanger]) ?? null; };
             if ( // forbidden actions
                 isSymbol(args?.[0]) ||
                 FORBIDDEN_KEYS.has(args?.[0] as string) || 
