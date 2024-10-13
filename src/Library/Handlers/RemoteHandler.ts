@@ -17,12 +17,12 @@
     }
 
     //
-    get $exc() { return this.#exChanger; }
+    /*@__PURE__*/ get /*@__PURE__*/ $exc() { return this.#exChanger; }
 
     //
-    $data(t: unknown) { return extract(t) ?? t; }
-    $hnd(cmd: string, meta: unknown, ...args: unknown[]) {
-        const data: any = this.$data(meta);
+    /*@__PURE__*/ $data(t: unknown) { return extract(t) ?? t; }
+    /*@__PURE__*/ $hnd(cmd: string, meta: unknown, ...args: unknown[]) {
+        const data: any = /*@__PURE__*/ this.$data(meta);
 
         // return meta as is
         if (cmd == "get") {
@@ -40,5 +40,5 @@
     }
 
     //
-    $get(_: unknown|string|null): any { return null; };
+    /*@__PURE__*/ $get(_: unknown|string|null): any { return null; };
 }

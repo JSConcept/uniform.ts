@@ -95,7 +95,7 @@
     }
 
     //
-    get $imports() {
+    /*@__PURE__*/ get /*@__PURE__*/ $imports() {
         return this.#imports;
     }
 

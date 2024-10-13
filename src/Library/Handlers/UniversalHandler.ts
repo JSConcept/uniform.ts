@@ -21,20 +21,20 @@
     }
 
     //
-    get $exc() { return this.#dataHandler?.get?.("rmt")?.$exc; }
+    /*@__PURE__*/ get /*@__PURE__*/ $exc() { return this.#dataHandler?.get?.("rmt")?.$exc; }
 
     //
-    $data(t: unknown | string | null): unknown {
+    /*@__PURE__*/ $data(t: unknown | string | null): unknown {
         return (t as any)?.[ORG.data] ?? t;
     }
 
     //
-    $addHandler(name: string, handler: DataHandler) { this.#dataHandler.set(name, handler); }
-    $getHandler(name: string) { return this.#dataHandler.get(name); }
+    /*@__PURE__*/ $addHandler(name: string, handler: DataHandler) { this.#dataHandler.set(name, handler); }
+    /*@__PURE__*/ $getHandler(name: string) { return this.#dataHandler.get(name); }
 
     //
-    $hnd(cmd = "access", t: any, ...args: unknown[]) {
-        const data: any = this.$data(t);
+    /*@__PURE__*/ $hnd(cmd = "access", t: any, ...args: unknown[]) {
+        const data: any = /*@__PURE__*/ this.$data(t);
 
         // isn't promise itself
         if (cmd == "get") {
@@ -65,7 +65,7 @@
     }
 
     //
-    $get(uuid: unknown|string|null) { return this.#dataHandler.get("loc")?.$get?.(uuid); };
+    /*@__PURE__*/ $get(uuid: unknown|string|null) { return this.#dataHandler.get("loc")?.$get?.(uuid); };
 }
 
 //

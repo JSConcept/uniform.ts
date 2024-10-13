@@ -17,16 +17,16 @@ export const hasMemoryBuffer = (target: any)=>{
 
 /*@__PURE__*/ 
 export default class PreCoding {
-    $encoder = new Map<string, (organic: boolean, target: unknown, transfer: unknown[])=>unknown>();
-    $decoder = new Map<string, (organic: boolean, target: unknown, transfer: unknown[])=>unknown>();
-    $mp = new UUIDMap();
-    $hndr = new UniversalHandler();
-    $typeDetector = new TypeDetector();
+    /*@__PURE__*/ $encoder = new Map<string, (organic: boolean, target: unknown, transfer: unknown[])=>unknown>();
+    /*@__PURE__*/ $decoder = new Map<string, (organic: boolean, target: unknown, transfer: unknown[])=>unknown>();
+    /*@__PURE__*/ $mp = new UUIDMap();
+    /*@__PURE__*/ $hndr = new UniversalHandler();
+    /*@__PURE__*/ $typeDetector = new TypeDetector();
 
     //
     constructor(memoryPool = new UUIDMap()) {
-        this.$mp = memoryPool;
-        this.$encoder = new Map<string, (organic: boolean, target: unknown, transfer: unknown[])=>unknown> ([
+        /*@__PURE__*/ this.$mp = memoryPool;
+        /*@__PURE__*/ this.$encoder = new Map<string, (organic: boolean, target: unknown, transfer: unknown[])=>unknown> ([
             ["a", (organic: boolean, target: unknown, transfer: unknown[] = [])=>{
                 if (!organic) {
                     const encoded = Array.from((target as []) ||[]).map((e)=>this.encode(e, transfer));
@@ -124,7 +124,7 @@ export default class PreCoding {
         ]);
 
         //
-        this.$decoder = new Map<string, (organic: boolean, target: unknown, transfer: unknown[])=>boolean>([
+        /*@__PURE__*/ this.$decoder = new Map<string, (organic: boolean, target: unknown, transfer: unknown[])=>boolean>([
             ["a", (organic: boolean, target: unknown, transfer: unknown[] = [])=>{
                 if (!organic) {
                     const decoded = Array.from(target as []).map((e)=>this.decode(e, transfer));
@@ -170,7 +170,7 @@ export default class PreCoding {
     }
 
     //
-    $decode(target: unknown, transfer: unknown[] = []) {
+    /*@__PURE__*/ $decode(target: unknown, transfer: unknown[] = []) {
         const [o, t] = this.$typeDetector.detectType(target, transfer);
         if (this.$decoder.has(t)) {
             return this.$decoder.get(t)?.(o, target, transfer) ?? target;
@@ -179,7 +179,7 @@ export default class PreCoding {
     }
 
     //
-    $encode(target: unknown, transfer: unknown[] = []) {
+    /*@__PURE__*/ $encode(target: unknown, transfer: unknown[] = []) {
         const [o, t] = this.$typeDetector.detectType(target, transfer);
         if (this.$encoder.has(t)) {
             return this.$encoder.get(t)?.(o, target, transfer) ?? target;

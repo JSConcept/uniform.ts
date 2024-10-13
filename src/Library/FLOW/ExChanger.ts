@@ -62,12 +62,12 @@ export default class ExChanger {
     }
 
     //
-    get $imports() { return this.#flow?.$imports || {}; }
-    get $sync() { return this.#flow?.sync?.(); }
-    async sync() { await this.$sync; return this; }
+    /*@__PURE__*/ get /*@__PURE__*/ $imports() { return this.#flow?.$imports || {}; }
+    /*@__PURE__*/ get /*@__PURE__*/ $sync() { return this.#flow?.sync?.(); }
+    /*@__PURE__*/ async /*@__PURE__*/ sync() { await this.$sync; return this; }
 
     //doOnlyAfterResolve
-    $makePromise<T extends unknown>(target: T|Promise<T>): IWrap<T>|null {
+    /*@__PURE__*/ $makePromise<T extends unknown>(target: T|Promise<T>): IWrap<T>|null {
         //
         try {
             const ext = (target as any)?.[ORG.data] ?? target;
@@ -81,7 +81,7 @@ export default class ExChanger {
     }
 
     //
-    $act<T extends unknown>(result: T|Promise<T>, cb: (result: T) => void): IWrap<T>|null {
+    /*@__PURE__*/ $act<T extends unknown>(result: T|Promise<T>, cb: (result: T) => void): IWrap<T>|null {
         try {
             return this.$makePromise(doOnlyAfterResolve(result, cb));
         } catch (e) {
@@ -91,7 +91,7 @@ export default class ExChanger {
     }
 
     //
-    $request<T extends unknown>(cmd: string, meta: unknown, args : unknown[]): IWrap<T>|null {
+    /*@__PURE__*/ $request<T extends unknown>(cmd: string, meta: unknown, args : unknown[]): IWrap<T>|null {
         const transfer: unknown[] = [];
         const encoded = this.#coder?.encode([cmd, meta, ...args], transfer) as any[];
         const result = this.#flow?.callTask?.(encoded, transfer);
