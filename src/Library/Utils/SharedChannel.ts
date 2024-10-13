@@ -1,4 +1,5 @@
 // deno-lint-ignore-file ban-ts-comment no-explicit-any
+/*@__PURE__*/ import PMS from "./Alias.ts";
 /*@__PURE__*/ import { type MPromise, isPromise } from "./Useful.ts";
 
 // @ts-ignore "extra `KB` for library..."
@@ -92,7 +93,7 @@ export default class SharedChannel<T extends unknown> {
         }
 
         //
-        return new Promise((_, rj)=>rj(promise));
+        return new PMS((_, rj)=>rj(promise));
     }
 
     /*@__PURE__*/ $waitSync(timeout = 1000) {

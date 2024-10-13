@@ -29,14 +29,14 @@ export default class PromiseHandler extends DataHandler {
     }
 
     //
-    $handle(cmd: string, meta: unknown, ...args: unknown[]) {
+    $hnd(cmd: string, meta: unknown, ...args: unknown[]) {
         // isn't promise itself
         const data = this.$data(meta);
 
         //
         if (cmd == "get") {
             if (args[0] == ORG.data) { return data; };
-            if (args[0] == ORG.exchanger) { return this.$exChanger ?? data?.[ORG.exchanger] ?? data?.then?.((e: any)=>e?.[ORG.exchanger]) ?? null; };
+            if (args[0] == ORG.exc) { return this.$exc ?? data?.[ORG.exc] ?? data?.then?.((e: any)=>e?.[ORG.exc]) ?? null; };
 
             //
             if (["then", "catch", "finally"].indexOf((args as any[])?.[0]) >= 0) {
@@ -57,7 +57,7 @@ export default class PromiseHandler extends DataHandler {
 
         // unwrap first-level promise
         return this.$wrapPromise(this.$deferOp(data, (raw)=> {
-            return super.$handle(cmd, raw, ...args);
+            return super.$hnd(cmd, raw, ...args);
         }));
     }
 

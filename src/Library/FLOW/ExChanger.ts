@@ -41,18 +41,18 @@ export default class ExChanger {
     //
     initialize() {
         if (this.#flow?.importToSelf?.($M) != null) {
-            this.#coder      = this.#flow?.$imports?.$coders      ?? this.#coder;
-            this.#memoryPool = this.#flow?.$imports?.$memoryPool  ?? this.#memoryPool;
+            this.#coder      = this.#flow?.$imports?.$cd      ?? this.#coder;
+            this.#memoryPool = this.#flow?.$imports?.$mp  ?? this.#memoryPool;
         } else {
             throw Error("Worker Engine Not Defined!");
         }
 
         //
-        if ((this.#handler = (this.#flow?.$imports?.$dataHandler ?? this.#handler)) != null) {
-            this.#handler?.$addHandler("local", new MemoryHandler(this.#memoryPool));
-            this.#handler?.$addHandler("remote", new RemoteReferenceHandler(this));
-            this.#handler?.$addHandler("promise", new PromiseHandler());
-            this.#handler?.$addHandler("direct", new DataHandler());
+        if ((this.#handler = (this.#flow?.$imports?.$dh ?? this.#handler)) != null) {
+            this.#handler?.$addHandler("loc", new MemoryHandler(this.#memoryPool));
+            this.#handler?.$addHandler("rmt", new RemoteReferenceHandler(this));
+            this.#handler?.$addHandler("pms", new PromiseHandler());
+            this.#handler?.$addHandler("dir", new DataHandler());
         } else {
             throw Error("Invalid Native Module!");
         }
@@ -71,7 +71,7 @@ export default class ExChanger {
         //
         try {
             const ext = (target as any)?.[ORG.data] ?? target;
-            if (isPromise(target)) { return ((new Proxy(MakeReference(ext), new ObjectProxy(this.#handler?.$getHandler?.("promise")))) as IWrap<T>); }
+            if (isPromise(target)) { return ((new Proxy(MakeReference(ext), new ObjectProxy(this.#handler?.$getHandler?.("pms")))) as IWrap<T>); }
             return target as IWrap<T>;
         } catch (e) {
             console.error(e);
@@ -121,7 +121,7 @@ export default class ExChanger {
     //
     access<T extends unknown>(name = ""): IWrap<T>|null {
         const com = this.$request("access", {
-            [ORG.type]: "reference",
+            [ORG.type]: "ref",
             [ORG.uuid]: name
         }, []) as IWrap<T>|null;
         return com;
@@ -137,7 +137,7 @@ export default class ExChanger {
             //
             if (this.#handler) {
                 return new Proxy(MakeReference({
-                    [ORG.type]: "transfer", 
+                    [ORG.type]: "tf", 
                     [ORG.uuid]: uuid, 
                     [ORG.node]: real
                 }), new ObjectProxy(this.#handler));
@@ -173,11 +173,11 @@ export default class ExChanger {
 
                 // active transfer as argument to remote
                 result = (real != null ? this.$request("access", {
-                    [ORG.type]: "transfer", 
+                    [ORG.type]: "tf", 
                     [ORG.uuid]: uuid, 
                     [ORG.node]: real
                 }, []) : this.$request("transfer", (esm ?? {
-                    [ORG.type]: "reference",
+                    [ORG.type]: "ref",
                     [ORG.uuid]: uuid
                 }), []));
 

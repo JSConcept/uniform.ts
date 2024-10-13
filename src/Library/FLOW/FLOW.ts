@@ -1,9 +1,10 @@
 // deno-lint-ignore-file no-explicit-any
-import { Transferable, doOnlyAfterResolve } from "../Utils/Useful.ts";
-import PromiseStack from '../Utils/PromiseStack.ts';
+/*@__PURE__*/ import { Transferable, doOnlyAfterResolve } from "../Utils/Useful.ts";
+/*@__PURE__*/ import PromiseStack from '../Utils/PromiseStack.ts';
+/*@__PURE__*/ const PM = "postMessage";
 
 // FLOW - is web worker library core (low-level)...
-export default class FLOW {
+/*@__PURE__*/ export default class FLOW {
     #worker: any | null = null;
     #promiseStack: PromiseStack<unknown> = new PromiseStack<unknown>();
     #imports: any = {};
@@ -19,16 +20,16 @@ export default class FLOW {
             const {cmd, uuid, dir, status, shared} = ev.data;
             if (dir == "req") {
                 if (cmd == "ping") {
-                    worker?.postMessage({ cmd, uuid, dir: "res", status: "ok", result: "ok", shared: null });
+                    worker?.[PM]?.({ cmd, uuid, dir: "res", status: "ok", result: "ok", shared: null });
                 } else
                 if (cmd == "import") {
                     /*@__PURE__*/ import(/* @vite-ignore */ /*@__PURE__*/ ("" + ev.data.source))?.then?.((m)=>{
                         /*@__PURE__*/ Object.assign(this.#imports, (m.default ?? m));
-                        worker?.postMessage({ cmd, uuid, dir: "res", status: "ok", result: "ok", shared: null });
+                        worker?.[PM]?.({ cmd, uuid, dir: "res", status: "ok", result: "ok", shared: null });
                     })?.catch?.((e)=>{
                         /*@__PURE__*/ console.error(e);
                         /*@__PURE__*/ console.trace(e);
-                        worker?.postMessage({ cmd, uuid, dir: "res", status: "error", result: "unsupported", shared: null });
+                        worker?.[PM]?.({ cmd, uuid, dir: "res", status: "error", result: "unsupported", shared: null });
                     });
                 } else
                 if (cmd == "call") {
@@ -41,7 +42,7 @@ export default class FLOW {
                             doOnlyAfterResolve(syncOrAsync, (pass)=>{
                                 const [$r, transfer] = pass;
                                 doOnlyAfterResolve($r, (result)=>{
-                                    worker?.postMessage({
+                                    worker?.[PM]?.({
                                         handler: "$resolver",
                                         status: "ok",
                                         cmd,
@@ -62,7 +63,7 @@ export default class FLOW {
 
                         //
                         const reason = e.message;
-                        worker?.postMessage({
+                        worker?.[PM]?.({
                             handler: "$resolver",
                             status: "error",
                             cmd,
@@ -77,7 +78,7 @@ export default class FLOW {
                     }
                 } else {
                     /*@__PURE__*/ console.error("Internal command: " + cmd + " not supported.");
-                    worker?.postMessage({ cmd, uuid, dir: "res", status: "error", result: "unknown" });
+                    worker?.[PM]?.({ cmd, uuid, dir: "res", status: "error", result: "unk" });
                 }
             } else
             if (dir == "res") {
@@ -108,7 +109,7 @@ export default class FLOW {
     importToUnit(source: string, /*@__PURE__*/ sync = false) {
         /*@__PURE__*/ 
         const pair = this.#promiseStack?.[sync ? "createSync" : "create"]?.();
-        this.#worker?.postMessage?.({
+        this.#worker?.[PM]?.({
             status: "pending",
             handler: "$import",
             cmd: "import",
@@ -124,7 +125,7 @@ export default class FLOW {
     sync(/*@__PURE__*/ sync = false) {
         /*@__PURE__*/ 
         const pair = this.#promiseStack?.[sync ? "createSync" : "create"]?.();
-        this.#worker?.postMessage?.({
+        this.#worker?.[PM]?.({
             status: "pending",
             shared: pair?.[2],
             handler: null,
@@ -139,7 +140,7 @@ export default class FLOW {
         /*@__PURE__*/ 
         const pair = this.#promiseStack?.[sync ? "createSync" : "create"]?.();
         doOnlyAfterResolve($args, (args)=>{
-            this.#worker?.postMessage?.({
+            this.#worker?.[PM]?.({
                 status: "pending",
                 handler: "$handler",
                 cmd: "call",

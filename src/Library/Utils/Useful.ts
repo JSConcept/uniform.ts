@@ -1,4 +1,5 @@
 // deno-lint-ignore-file no-explicit-any ban-types
+import PMS from "./Alias.ts";
 import ORG, { $bindings$ } from "./OrganicType.ts";
 
 /*@__PURE__*/ 
@@ -54,7 +55,7 @@ export const Transferable = [
     return /*@__PURE__*/ new Proxy(exChanger, {
         get(target: ExChanger, prop: any): any {
             if (prop == ORG.sync) { return target.sync; };
-            if (prop == ORG.exchanger) { return target; };
+            if (prop == ORG.exc) { return target; };
             if ( // forbidden actions
                 isSymbol(prop) ||
                 FORBIDDEN_KEYS.has(prop as string) || 
@@ -70,7 +71,7 @@ export const Transferable = [
 
 /*@__PURE__*/ export const isPromise = <T extends object|Function|unknown>(target: T|Promise<T>): boolean =>{
     /*@__PURE__*/ 
-    return target instanceof Promise || (target as any)?.then != null && typeof (target as any)?.then == "function";
+    return target instanceof PMS || (target as any)?.then != null && typeof (target as any)?.then == "function";
 }
 
 /*@__PURE__*/ export const doOnlyAfterResolve = <T extends unknown|any>(meta: MPromise<T>, cb: (u: T)=>MPromise<T>|null|void): MPromise<any>|null|void => {
@@ -84,20 +85,20 @@ export const Transferable = [
 
 /*@__PURE__*/ export const getContext = (wModule: any)=>{
     return /*@__PURE__*/ doOnlyAfterResolve(wModule, (mx)=>{
-        return wrapExChanger(mx?.[ORG.exchanger] ?? $bindings$?.get?.(mx) ?? mx);
+        return wrapExChanger(mx?.[ORG.exc] ?? $bindings$?.get?.(mx) ?? mx);
     });
 }
 
 /*@__PURE__*/ export const doTransfer = (wModule: any, name: any, node: any|null = null)=>{
     return /*@__PURE__*/ doOnlyAfterResolve(wModule, (mx)=>{
-        const exChanger = mx?.[ORG.exchanger] ?? $bindings$?.get?.(mx) ?? mx;
+        const exChanger = mx?.[ORG.exc] ?? $bindings$?.get?.(mx) ?? mx;
         return exChanger?.doTransfer?.(name, node);
     });
 }
 
 /*@__PURE__*/ export const transfer = (wModule: any, node: any|null = null, name: any = "")=>{
     return /*@__PURE__*/ doOnlyAfterResolve(wModule, (mx)=>{
-        const exChanger = mx?.[ORG.exchanger] ?? $bindings$?.get?.(mx) ?? mx;
+        const exChanger = mx?.[ORG.exc] ?? $bindings$?.get?.(mx) ?? mx;
         return exChanger?.transfer?.(node, name);
     });
 }

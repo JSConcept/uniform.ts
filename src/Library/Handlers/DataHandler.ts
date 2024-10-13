@@ -9,17 +9,17 @@ export default class DataHandler {
     }
 
     //
-    get $exChanger(): any { return null;};
+    get $exc(): any { return null;};
 
     //
     $data(target: unknown|string|null) { return target; };
-    $handle(cmd: string, meta: unknown, ...args: unknown[]) {
+    $hnd(cmd: string, meta: unknown, ...args: unknown[]) {
         const ref: any = this.$data(meta);
 
         // return meta as is
         if (cmd == "get") {
             if (args[0] == ORG.data) { return ref; };
-            if (args[0] == ORG.exchanger) { return this.$exChanger ?? ref?.[ORG.exchanger] ?? ref?.then?.((e: any)=>e?.[ORG.exchanger]) ?? null; };
+            if (args[0] == ORG.exc) { return this.$exc ?? ref?.[ORG.exc] ?? ref?.then?.((e: any)=>e?.[ORG.exc]) ?? null; };
             if ( // forbidden actions
                 isSymbol(args?.[0]) ||
                 FORBIDDEN_KEYS.has(args?.[0] as string) || 
@@ -36,7 +36,7 @@ export default class DataHandler {
             // sometimes, `@uuid` may already is known from memory pool
             const wrap = extract(meta) as IMeta;
             return {
-                [ORG.type]: "transfer", 
+                [ORG.type]: "tf", 
                 [ORG.node]: ref, 
                 [ORG.uuid]: (wrap as any)?.[ORG.uuid] ?? ""
             };

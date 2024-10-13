@@ -10,33 +10,33 @@ export default class TypeDetector {
     constructor() {
         //
         this.detection = new Map<string, (d: unknown)=>boolean>([
-            ["primitive", (a: unknown): boolean=>{
+            ["p", (a: unknown): boolean=>{
                 return (typeof a != "object" && typeof a != "function" || typeof a == "undefined" || a == null);
             }],
 
             //
-            //["transfer", (a:any):boolean=>{
+            //["tf", (a:any):boolean=>{
                 //return (a instanceof ArrayBuffer || a instanceof MessagePort || a instanceof ImageBitmap || a instanceof OffscreenCanvas || a instanceof ReadableStream || a instanceof WritableStream);
             //}],
 
             //
-            ["array", (a: unknown): boolean=>{
+            ["a", (a: unknown): boolean=>{
                 return Array.isArray(a);
             }],
 
             //
-            ["arraybuffer", (a: unknown): boolean=>{
+            ["ab", (a: unknown): boolean=>{
                 return (a instanceof ArrayBuffer || (typeof SharedArrayBuffer != "undefined" && a instanceof SharedArrayBuffer));
             }],
 
             //
-            ["typedarray", (a: unknown): boolean=>{
+            ["ta", (a: unknown): boolean=>{
                 const $buffer: unknown = (a as any)?.buffer;
                 return ($buffer instanceof ArrayBuffer || (typeof SharedArrayBuffer != "undefined" && $buffer instanceof SharedArrayBuffer));
             }],
 
             //
-            ["promise", (a: unknown|Promise<unknown>): boolean=>{
+            ["pms", (a: unknown|Promise<unknown>): boolean=>{
                 const valid = isPromise(a);
                 if (valid) {
                     console.warn("Potentially invalid type");
@@ -46,12 +46,12 @@ export default class TypeDetector {
             }],
 
             //
-            ["symbol", (a: unknown): boolean=>{
+            ["sym", (a: unknown): boolean=>{
                 return typeof a === 'symbol' || typeof a === 'object' && Object.prototype.toString.call (a) === '[object Symbol]';
             }],
 
             // may needs to save into temp object pool for remote access
-            ["reference", (a: unknown): boolean=>{
+            ["ref", (a: unknown): boolean=>{
                 const fx = (typeof a == "object" || typeof a == "function");
                 return fx;
             }]
@@ -68,7 +68,7 @@ export default class TypeDetector {
 
         //
         if (transfer.indexOf(data) >= 0) {
-            return [false, "transfer"];
+            return [false, "tf"];
         }
 
         // other data are primitives
@@ -79,6 +79,6 @@ export default class TypeDetector {
         }
 
         //
-        return [false, "unknown"];
+        return [false, "unk"];
     }
 }

@@ -21,7 +21,7 @@
     }
 
     //
-    get $exChanger() { return this.#dataHandler?.get?.("remote")?.$exChanger; }
+    get $exc() { return this.#dataHandler?.get?.("rmt")?.$exc; }
 
     //
     $data(t: unknown | string | null): unknown {
@@ -33,13 +33,13 @@
     $getHandler(name: string) { return this.#dataHandler.get(name); }
 
     //
-    $handle(cmd = "access", t: any, ...args: unknown[]) {
+    $hnd(cmd = "access", t: any, ...args: unknown[]) {
         const data: any = this.$data(t);
 
         // isn't promise itself
         if (cmd == "get") {
             if (args[0] == ORG.data) { return data; };
-            if (args[0] == ORG.exchanger) { return this.$exChanger ?? data?.[ORG.exchanger] ?? data?.then?.((e: any)=>e?.[ORG.exchanger]) ?? null; };
+            if (args[0] == ORG.exc) { return this.$exc ?? data?.[ORG.exc] ?? data?.then?.((e: any)=>e?.[ORG.exc]) ?? null; };
             if ( // forbidden actions
                 isSymbol(args?.[0]) ||
                 FORBIDDEN_KEYS.has(args?.[0] as string) || 
@@ -48,24 +48,24 @@
         }
 
         //
-        let htp = "direct";
+        let htp = "dir";
         if (isPromise(data)) 
-            { htp = "promise"; } else
+            { htp = "pms"; } else
             {
                 const meta = (extract(t) as IMeta), local = this.$get(meta);
                 const overlap = (extract(local) as any)?.[ORG.uuid] == (meta as any)?.[ORG.uuid];
 
                 //
-                if (typeof (meta as any)?.[ORG.type] == "string") { htp = "local"; }
-                if (typeof (meta as any)?.[ORG.uuid] == "string" && (!local || overlap)) { htp = "remote"; }
+                if (typeof (meta as any)?.[ORG.type] == "string") { htp = "loc"; }
+                if (typeof (meta as any)?.[ORG.uuid] == "string" && (!local || overlap)) { htp = "rmt"; }
             }
 
         //
-        return this.#dataHandler?.get(htp)?.$handle?.(cmd, t, ...args);
+        return this.#dataHandler?.get(htp)?.$hnd?.(cmd, t, ...args);
     }
 
     //
-    $get(uuid: unknown|string|null) { return this.#dataHandler.get("local")?.$get?.(uuid); };
+    $get(uuid: unknown|string|null) { return this.#dataHandler.get("loc")?.$get?.(uuid); };
 }
 
 //

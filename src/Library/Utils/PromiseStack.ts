@@ -1,5 +1,6 @@
 // deno-lint-ignore-file no-explicit-any
 
+/*@__PURE__*/ import PMS from "./Alias.ts";
 /*@__PURE__*/ import SharedChannel from "./SharedChannel.ts";
 /*@__PURE__*/ import { UUIDv4 } from "./Useful.ts";
 
@@ -14,7 +15,7 @@ export default class PromiseStack<T extends unknown> {
 
     //
     /*@__PURE__*/ get sync() { return this.#syncExcept(); }
-    /*@__PURE__*/ #syncExcept(ne = "") { return Promise.allSettled(Array.from(this.#map?.entries?.())?.filter?.(([n])=>(ne!=n))?.map?.((([,v])=>v))); }
+    /*@__PURE__*/ #syncExcept(ne = "") { return PMS.allSettled(Array.from(this.#map?.entries?.())?.filter?.(([n])=>(ne!=n))?.map?.((([,v])=>v))); }
 
     //
     get(name = "") { return this.#map.get(name); }
@@ -75,7 +76,7 @@ export default class PromiseStack<T extends unknown> {
     //  :1 - for waiting or async ops
     // ]
     create(key: string | null = null) {
-        const pm = Promise.withResolvers<T>();
+        const pm = PMS.withResolvers<T>();
         this.#map.set(key ||= UUIDv4(), pm);
 
         // timeout of requests

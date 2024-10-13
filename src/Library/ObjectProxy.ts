@@ -10,42 +10,42 @@ export default class ObjectProxy<T extends object|Function> implements ProxyHand
 
     //
     access(target: T, ...args: unknown[]) {
-        return this.#handlerUtils.$handle("access", target, ...args);
+        return this.#handlerUtils.$hnd("access", target, ...args);
     }
 
     //
     get(target: T, ...args: unknown[]) {
-        return this.#handlerUtils.$handle("get", target, ...args);
+        return this.#handlerUtils.$hnd("get", target, ...args);
     }
 
     //
     set(target: T, ...args: unknown[]) {
-        return this.#handlerUtils.$handle("set", target, ...args);
+        return this.#handlerUtils.$hnd("set", target, ...args);
     }
 
     //
     has(target: T, ...args: unknown[]) {
-        return this.#handlerUtils.$handle("has", target, ...args);
+        return this.#handlerUtils.$hnd("has", target, ...args);
     }
 
     //
     call(target: T, ...args: unknown[]) {
-        return this.#handlerUtils.$handle("call", target, ...args);
+        return this.#handlerUtils.$hnd("call", target, ...args);
     }
 
     //
     apply(target: T, ...args: unknown[]) {
-        return this.#handlerUtils.$handle("apply", target, ...args);
+        return this.#handlerUtils.$hnd("apply", target, ...args);
     }
 
     //
     construct(target: T, ...args: unknown[]) {
-        return this.#handlerUtils.$handle("construct", target, ...args);
+        return this.#handlerUtils.$hnd("construct", target, ...args);
     }
 
     //
     deleteProperty(target: T, ...args: unknown[]) {
-        return this.#handlerUtils.$handle("deleteProperty", target, ...args);
+        return this.#handlerUtils.$hnd("deleteProperty", target, ...args);
     }
 }
 

@@ -7,6 +7,7 @@
 /*@__PURE__*/ import { extract } from "../Utils/InstructionType.ts";
 /*@__PURE__*/ import { wrapMeta } from "../Handlers/UniversalHandler.ts";
 /*@__PURE__*/ import ORG from "../Utils/OrganicType.ts";
+/*@__PURE__*/ import PMS from "../Utils/Alias.ts";
 
 /*@__PURE__*/ 
 export const hasMemoryBuffer = (target: any)=>{
@@ -18,29 +19,29 @@ export const hasMemoryBuffer = (target: any)=>{
 export default class PreCoding {
     $encoder = new Map<string, (organic: boolean, target: unknown, transfer: unknown[])=>unknown>();
     $decoder = new Map<string, (organic: boolean, target: unknown, transfer: unknown[])=>unknown>();
-    $memoryPool = new UUIDMap();
-    $handler = new UniversalHandler();
+    $mp = new UUIDMap();
+    $hndr = new UniversalHandler();
     $typeDetector = new TypeDetector();
 
     //
     constructor(memoryPool = new UUIDMap()) {
-        this.$memoryPool = memoryPool;
+        this.$mp = memoryPool;
         this.$encoder = new Map<string, (organic: boolean, target: unknown, transfer: unknown[])=>unknown> ([
-            ["array", (organic: boolean, target: unknown, transfer: unknown[] = [])=>{
+            ["a", (organic: boolean, target: unknown, transfer: unknown[] = [])=>{
                 if (!organic) {
                     const encoded = Array.from((target as []) ||[]).map((e)=>this.encode(e, transfer));
-                    return encoded.some(isPromise) ? Promise.all(encoded) : encoded;
+                    return encoded.some(isPromise) ? PMS.all(encoded) : encoded;
                 }
                 return target;
             }],
 
             //
-            ["transfer", (organic: boolean, target: unknown, transfer: unknown[] = [])=>{
+            ["tf", (organic: boolean, target: unknown, transfer: unknown[] = [])=>{
                 if (!organic) {
                     // non-organic just to transfer
                     if (transfer?.indexOf?.(target) < 0 && target != null) {
-                        const uuid: string = (this.$memoryPool.get(target) || "") as string;
-                        this.$memoryPool.delete(target);
+                        const uuid: string = (this.$mp.get(target) || "") as string;
+                        this.$mp.delete(target);
 
                         // if is typed arrays, they also can be transferred by their buffers
                         // do not transfer shared buffers, but we not detecting as transfer initially
@@ -51,11 +52,11 @@ export default class PreCoding {
                         if (uuid) {
                             //const meta = {[ORG.type]: "reference", [ORG.uuid]: uuid} as IMeta;
                             // @ts-ignore ""
-                            //meta[ORG.uuid] = this.$memoryPool.add(wrapMeta(meta, this.$handler) as object, meta[ORG.uuid] = uuid, true);
+                            //meta[ORG.uuid] = this.$mp.add(wrapMeta(meta, this.$hndr) as object, meta[ORG.uuid] = uuid, true);
 
                             // export as organic transfer
                             return {
-                                [ORG.type]: "transfer",
+                                [ORG.type]: "tf",
                                 [ORG.uuid]: uuid,
                                 [ORG.node]: toTransfer
                             }
@@ -64,15 +65,15 @@ export default class PreCoding {
                 } else {
                     // transfers only when is exists
                     const org  = (extract(target) || {}) as any;
-                    const node = (org as any)?.[ORG.node] ?? this?.$memoryPool?.get((org as any)?.[ORG.uuid] as string);
+                    const node = (org as any)?.[ORG.node] ?? this?.$mp?.get((org as any)?.[ORG.uuid] as string);
 
                     // if exists
                     if (node != null) {
 
                         // sometimes, `@uuid` may already known in database
-                        const uuid: string = ((org as any)?.[ORG.uuid]||this?.$memoryPool?.get?.(node)||"") as string;
+                        const uuid: string = ((org as any)?.[ORG.uuid]||this?.$mp?.get?.(node)||"") as string;
                         const meta = { // request to transfer node
-                            [ORG.type]: "transfer",
+                            [ORG.type]: "tf",
                             [ORG.uuid]: uuid,
                             [ORG.node]: node
                         }
@@ -80,19 +81,19 @@ export default class PreCoding {
                         // add to transfer list (do not transfer shared buffers)
                         // but if transferred to another external worker, should be here an reference
                         if (node != null && transfer?.indexOf?.(node) < 0) {
-                            this.$memoryPool.delete(node);
+                            this.$mp.delete(node);
                             transfer?.push?.(hasMemoryBuffer(node) ? ((node as any)?.buffer ?? node) : node);
                         }
 
                         // doesn't holding it anymore
                         if (org != null && uuid) {
                             // @ts-ignore ""
-                            org[ORG.type] = "reference";
+                            org[ORG.type] = "ref";
                             // @ts-ignore ""
                             org[ORG.node] = null;
 
                             // @ts-ignore "for who will asking where was transferred"
-                            //org[ORG.uuid] = this.$memoryPool.add(wrapMeta(org, this.$handler), org[ORG.uuid] = uuid, true) as string;
+                            //org[ORG.uuid] = this.$mp.add(wrapMeta(org, this.$hndr), org[ORG.uuid] = uuid, true) as string;
                         };
 
                         //
@@ -108,13 +109,13 @@ export default class PreCoding {
             }],
 
             //
-            ["reference", (organic: boolean, target: unknown, _transfer: unknown[] = [])=>{
+            ["ref", (organic: boolean, target: unknown, _transfer: unknown[] = [])=>{
                 if (!organic || (target as any)?.[ORG.data]) {
                     const ext = (extract(target) as any)?.[ORG.uuid] as string;
-                    const exists = this?.$memoryPool?.get(ext) ?? target;
+                    const exists = this?.$mp?.get(ext) ?? target;
                     const meta = {
-                        [ORG.type]: "reference",
-                        [ORG.uuid]: this.$memoryPool.add(exists as any, ext, !organic)
+                        [ORG.type]: "ref",
+                        [ORG.uuid]: this.$mp.add(exists as any, ext, !organic)
                     };
                     return meta;
                 }
@@ -124,43 +125,43 @@ export default class PreCoding {
 
         //
         this.$decoder = new Map<string, (organic: boolean, target: unknown, transfer: unknown[])=>boolean>([
-            ["array", (organic: boolean, target: unknown, transfer: unknown[] = [])=>{
+            ["a", (organic: boolean, target: unknown, transfer: unknown[] = [])=>{
                 if (!organic) {
                     const decoded = Array.from(target as []).map((e)=>this.decode(e, transfer));
-                    return decoded.some(isPromise) ? Promise.all(decoded) : decoded;
+                    return decoded.some(isPromise) ? PMS.all(decoded) : decoded;
                 }
                 // unusual
                 return target;
             }],
 
             //
-            ["transfer", (organic: boolean, target: unknown, _transfer: unknown[] = [])=>{
+            ["tf", (organic: boolean, target: unknown, _transfer: unknown[] = [])=>{
                 if (organic) {
                     // reformat transfer type, add to registry
                     const org  = extract(target) as any;
-                    const node = ((org as any)?.[ORG.node]) ?? this?.$memoryPool?.get((org as any)?.[ORG.uuid] as string);
+                    const node = ((org as any)?.[ORG.node]) ?? this?.$mp?.get((org as any)?.[ORG.uuid] as string);
 
                     // unable to override exists
                     if (node != null) {
                         // @ts-ignore "assign"
-                        org[ORG.uuid] = this.$memoryPool.add(node, org?.[ORG.uuid] as string, organic) as string;
+                        org[ORG.uuid] = this.$mp.add(node, org?.[ORG.uuid] as string, organic) as string;
 
                         // @ts-ignore "assign"
-                        org[ORG.type] = "reference";
+                        org[ORG.type] = "ref";
                     };
 
                     // but if transferred to another external worker, should be here an reference
-                    return node ?? wrapMeta(org, this.$handler);
+                    return node ?? wrapMeta(org, this.$hndr);
                 }
                 return target;
             }],
 
             //
-            ["reference", (organic: boolean, target: unknown, _transfer: unknown[] = [])=>{
+            ["ref", (organic: boolean, target: unknown, _transfer: unknown[] = [])=>{
                 if (organic) {
                     const org    = extract(target) as any;
-                    const exists = this?.$memoryPool?.get((org as any)?.[ORG.uuid] as string);
-                    return exists ?? wrapMeta(org, this.$handler);
+                    const exists = this?.$mp?.get((org as any)?.[ORG.uuid] as string);
+                    return exists ?? wrapMeta(org, this.$hndr);
                 }
                 // unusual
                 return target;
