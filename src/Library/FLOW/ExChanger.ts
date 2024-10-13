@@ -2,7 +2,7 @@
 import ObjectProxy from "../../Atomic/ObjectProxy.ts";
 
 //
-import { doOnlyAfterResolve, isPromise, type IWrap, type MPromise, UUIDv4 } from "../Utils/Useful.ts";
+import { doOnlyAfterResolve, isPromise, UUIDv4, type IWrap } from "../Utils/Useful.ts";
 import { extract, MakeReference } from "../Utils/InstructionType.ts";
 
 //
