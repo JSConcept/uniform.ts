@@ -1,7 +1,8 @@
 // deno-lint-ignore-file no-explicit-any
 // just compressed base64 encoded string, we currently doesn't supports native wrappers from custom vite
 // `inline` will also ignored in custom vite bundle, prior of `compress`
-import $raw$ from "../Workers/ModuleWorker.ts?worker&compress&inline"; const IW = $raw$; // put into start of code
+//import $raw$ from "../Workers/ModuleWorker.ts?worker&compress&inline"; const IW = $raw$; // put into start of code
+import $raw$ from "../Workers/ModuleWorker.ts?worker&compress"; const IW = $raw$; 
 
 //
 const loadCompressed = async (b64c: string): Promise<string|null> => {
@@ -11,7 +12,9 @@ const loadCompressed = async (b64c: string): Promise<string|null> => {
     const response = await (new Response(decompressedStream, {headers: new Headers({"Content-Type": "application/javascript" })})).blob();
     return URL.createObjectURL(response);
 }
-const PRELOAD = (IW as unknown as string)?.length >= 1024 ? loadCompressed(IW as unknown as string) : IW;
+
+//
+const PRELOAD = !URL.canParse(IW) ? loadCompressed(IW as unknown as string) : IW;
 
 //
 const $moduleLoader = async <T extends unknown>(moduleSource: string): Promise<T> => {
@@ -19,7 +22,7 @@ const $moduleLoader = async <T extends unknown>(moduleSource: string): Promise<T
 
     // if url too long, un-compress code
     const {loadWorker} = await import("../Atomic/WorkerLib.ts");
-    const uWorker  = loadWorker(await PRELOAD);
+    const uWorker   = loadWorker(await PRELOAD);
     const EXChanger = (await import("../Library/FLOW/ExChanger.ts")).default;
     const exChanger = new EXChanger(uWorker)?.initialize?.();
     const module    = await (await exChanger?.access?.("!!import!!") as any)?.(moduleSource);
