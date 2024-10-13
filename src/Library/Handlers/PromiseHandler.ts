@@ -1,15 +1,15 @@
 // deno-lint-ignore-file no-explicit-any
-import ObjectProxy from "../ObjectProxy.ts";
+/*@__PURE__*/ import ObjectProxy from "../ObjectProxy.ts";
 
 //
-import { isSymbol, FORBIDDEN_KEYS, META_KEYS, isPromise, doOnlyAfterResolve, type IWrap } from "../Utils/Useful.ts"
-import { bindCtx, MakeReference } from "../Utils/InstructionType.ts";
-import ORG from "../Utils/OrganicType.ts";
+/*@__PURE__*/ import { isSymbol, FORBIDDEN_KEYS, META_KEYS, isPromise, doOnlyAfterResolve, type IWrap } from "../Utils/Useful.ts"
+/*@__PURE__*/ import { bindCtx, MakeReference } from "../Utils/InstructionType.ts";
+/*@__PURE__*/ import ORG from "../Utils/OrganicType.ts";
 
 //
-import DataHandler from "./DataHandler.ts";
+/*@__PURE__*/ import DataHandler from "./DataHandler.ts";
 
-//
+/*@__PURE__*/ 
 export default class PromiseHandler extends DataHandler {
     constructor() { super(); }
 

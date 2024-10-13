@@ -1,13 +1,10 @@
 // deno-lint-ignore-file no-explicit-any
-import { UUIDv4, type dT, type rT } from "./Useful.ts";
-
-//
-const timers = new WeakMap(), tmpSet = new Set();
-
-//
-export const hold = (tmp: any | unknown | WeakRef<any>, timeout = 1000)=>{
+/*@__PURE__*/ import { UUIDv4, type dT, type rT } from "./Useful.ts";
+/*@__PURE__*/ const timers = new WeakMap(), tmpSet = new Set();
+/*@__PURE__*/ export const hold = (tmp: any | unknown | WeakRef<any>, timeout = 1000)=>{
 
     // holding from GC
+    /*@__PURE__*/ 
     if (typeof tmp == "object" || typeof tmp == "function") {
         const obj = tmp?.deref?.() ?? tmp;
         if (!tmpSet.has(obj)) {
@@ -24,8 +21,8 @@ export const hold = (tmp: any | unknown | WeakRef<any>, timeout = 1000)=>{
     return tmp?.deref?.() ?? tmp;
 }
 
-// TODO! planned promised...
-export default class UUIDMap<T=dT> {
+// TODO: planned promised...
+/*@__PURE__*/ export default class UUIDMap<T=dT> {
     #weakMap = new WeakMap<dT, string>();
     #registry = new FinalizationRegistry<string>((_: string) => {});
     #refMap = new Map<string, rT>();

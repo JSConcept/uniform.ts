@@ -51,6 +51,7 @@ export const wRollupOptions = {
     external: [],
     input: "./src/Workers/ModuleWorker.ts",
     output: {
+        //preserveModules: true,
         minifyInternalExports: true,
         compact: true,
         globals: {},
@@ -60,7 +61,7 @@ export const wRollupOptions = {
         sourcemap: 'hidden',
         exports: "auto",
         esModuleInterop: true,
-        experimentalMinChunkSize: 0,
+        experimentalMinChunkSize: 500_500,
         inlineDynamicImports: true,
 	}
 };

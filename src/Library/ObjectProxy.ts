@@ -1,4 +1,5 @@
 // deno-lint-ignore-file no-explicit-any ban-types no-explicit-any
+/*@__PURE__*/ 
 export default class ObjectProxy<T extends object|Function> implements ProxyHandler<T> {
     #handlerUtils: any = {};
 

@@ -52,6 +52,7 @@ const uRollupOptions = {
     external: [],
     input: "./src/index.ts",
     output: {
+        //preserveModules: true,
         minifyInternalExports: true,
         compact: true,
         globals: {},
@@ -64,7 +65,7 @@ const uRollupOptions = {
         sourcemap: 'hidden',
         exports: "auto",
         esModuleInterop: true,
-        experimentalMinChunkSize: 0,
+        experimentalMinChunkSize: 500_500,
         inlineDynamicImports: true,
 	}
 };

@@ -1,9 +1,9 @@
 // deno-lint-ignore-file no-explicit-any 
-import { FORBIDDEN_KEYS, META_KEYS, isSymbol } from "../Utils/Useful.ts";
-import { extract } from "../Utils/InstructionType.ts";
-import { type IMeta, ORG } from "../Utils/OrganicType.ts";
+/*@__PURE__*/ import { FORBIDDEN_KEYS, META_KEYS, isSymbol } from "../Utils/Useful.ts";
+/*@__PURE__*/ import { extract } from "../Utils/InstructionType.ts";
+/*@__PURE__*/ import { type IMeta, ORG } from "../Utils/OrganicType.ts";
 
-//
+/*@__PURE__*/ 
 export default class DataHandler {
     constructor() {
     }

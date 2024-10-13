@@ -1,17 +1,17 @@
 // deno-lint-ignore-file no-explicit-any
-import ObjectProxy from "../ObjectProxy.ts";
+/*@__PURE__*/ import ObjectProxy from "../ObjectProxy.ts";
 
 //
-import { MPromise, FORBIDDEN_KEYS, META_KEYS, isSymbol, doOnlyAfterResolve, isPromise, type IWrap } from "../Utils/Useful.ts";
-import RemoteReferenceHandler from "./RemoteHandler.ts";
-import { extract, MakeReference, wrapWeakMap } from "../Utils/InstructionType.ts";
-import { ORG, IMeta } from "../Utils/OrganicType.ts";
+/*@__PURE__*/ import { MPromise, FORBIDDEN_KEYS, META_KEYS, isSymbol, doOnlyAfterResolve, isPromise, type IWrap } from "../Utils/Useful.ts";
+/*@__PURE__*/ import RemoteReferenceHandler from "./RemoteHandler.ts";
+/*@__PURE__*/ import { extract, MakeReference, wrapWeakMap } from "../Utils/InstructionType.ts";
+/*@__PURE__*/ import { ORG, IMeta } from "../Utils/OrganicType.ts";
 
 //
-import DataHandler from "./DataHandler.ts";
+/*@__PURE__*/ import DataHandler from "./DataHandler.ts";
 
 //
-export default class UniversalHandler extends DataHandler {
+/*@__PURE__*/ export default class UniversalHandler extends DataHandler {
     #dataHandler: Map<string, DataHandler>;
 
     //
@@ -69,7 +69,7 @@ export default class UniversalHandler extends DataHandler {
 }
 
 //
-export const wrapMeta = <T extends IMeta|unknown>(meta: MPromise<T>|IWrap<T>|null, handler: UniversalHandler | DataHandler | RemoteReferenceHandler | null = null)=>{
+/*@__PURE__*/ export const wrapMeta = <T extends IMeta|unknown>(meta: MPromise<T>|IWrap<T>|null, handler: UniversalHandler | DataHandler | RemoteReferenceHandler | null = null)=>{
     if (!(typeof meta == "object" || typeof meta == "function")) return meta;
 
     //

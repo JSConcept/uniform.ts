@@ -1,8 +1,8 @@
 // deno-lint-ignore-file no-explicit-any
-import { extract } from "../Utils/InstructionType.ts";
-import { ORG, isPromise } from "../Utils/Useful.ts";
+/*@__PURE__*/ import { extract } from "../Utils/InstructionType.ts";
+/*@__PURE__*/ import { ORG, isPromise } from "../Utils/Useful.ts";
 
-//
+/*@__PURE__*/ 
 export default class TypeDetector {
     detection: Map<string, (d: unknown)=>boolean> = new Map<string, (d: unknown)=>boolean>();
 

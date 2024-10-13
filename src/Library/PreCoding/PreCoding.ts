@@ -1,20 +1,20 @@
 // deno-lint-ignore-file no-explicit-any
 // Will be used when result are predictable in the pools or return results
-import UUIDMap from "../Utils/UUIDMap.ts";
-import TypeDetector from "./TypeDetector.ts";
-import UniversalHandler from "../Handlers/UniversalHandler.ts";
-import { isPromise, doOnlyAfterResolve } from "../Utils/Useful.ts";
-import { extract } from "../Utils/InstructionType.ts";
-import { wrapMeta } from "../Handlers/UniversalHandler.ts";
-import ORG from "../Utils/OrganicType.ts";
+/*@__PURE__*/ import UUIDMap from "../Utils/UUIDMap.ts";
+/*@__PURE__*/ import TypeDetector from "./TypeDetector.ts";
+/*@__PURE__*/ import UniversalHandler from "../Handlers/UniversalHandler.ts";
+/*@__PURE__*/ import { isPromise, doOnlyAfterResolve } from "../Utils/Useful.ts";
+/*@__PURE__*/ import { extract } from "../Utils/InstructionType.ts";
+/*@__PURE__*/ import { wrapMeta } from "../Handlers/UniversalHandler.ts";
+/*@__PURE__*/ import ORG from "../Utils/OrganicType.ts";
 
-// mediator
+/*@__PURE__*/ 
 export const hasMemoryBuffer = (target: any)=>{
     // shared array buffer are not transfer, it's sharing
     return ((target as any)?.buffer instanceof ArrayBuffer) || (typeof SharedArrayBuffer != "undefined" && (target as any)?.buffer instanceof SharedArrayBuffer);
 }
 
-//
+/*@__PURE__*/ 
 export default class PreCoding {
     $encoder = new Map<string, (organic: boolean, target: unknown, transfer: unknown[])=>unknown>();
     $decoder = new Map<string, (organic: boolean, target: unknown, transfer: unknown[])=>unknown>();

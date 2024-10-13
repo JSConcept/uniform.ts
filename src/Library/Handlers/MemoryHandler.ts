@@ -1,12 +1,12 @@
 // deno-lint-ignore-file no-explicit-any
-import UUIDMap from "../Utils/UUIDMap.ts";
-import { ORG }  from "../Utils/OrganicType.ts";
-import { extract } from "../Utils/InstructionType.ts";
+/*@__PURE__*/ import UUIDMap from "../Utils/UUIDMap.ts";
+/*@__PURE__*/ import { ORG }  from "../Utils/OrganicType.ts";
+/*@__PURE__*/ import { extract } from "../Utils/InstructionType.ts";
 
 //
-import DataHandler from "./DataHandler.ts";
+/*@__PURE__*/ import DataHandler from "./DataHandler.ts";
 
-//
+/*@__PURE__*/ 
 export default class ObjectPoolMemberHandler extends DataHandler {
     #memoryPool: UUIDMap | null;
 

@@ -1,18 +1,23 @@
 // deno-lint-ignore-file no-explicit-any
+
+/*@__PURE__*/ 
 import SharedChannel from "./SharedChannel.ts";
 import { UUIDv4 } from "./Useful.ts";
 
-// for your web worker project...
-export const HANG_TIMEOUT = 2000;
+//
+/*@__PURE__*/ export const HANG_TIMEOUT = 2000;
 export default class PromiseStack<T extends unknown> {
+    /*@__PURE__*/ 
     #map = new Map<string, PromiseWithResolvers<T> | SharedChannel<T>>();
 
-    //
+    /*@__PURE__*/ 
     constructor() { this.#map = new Map<string, PromiseWithResolvers<T> | SharedChannel<T>>(); }
 
     //
-    get sync() { return this.#syncExcept(); }
-    #syncExcept(ne = "") { return Promise.allSettled(Array.from(this.#map?.entries?.())?.filter?.(([n])=>(ne!=n))?.map?.((([,v])=>v))); }
+    /*@__PURE__*/ get sync() { return this.#syncExcept(); }
+    /*@__PURE__*/ #syncExcept(ne = "") { return Promise.allSettled(Array.from(this.#map?.entries?.())?.filter?.(([n])=>(ne!=n))?.map?.((([,v])=>v))); }
+
+    //
     get(name = "") { return this.#map.get(name); }
 
     // reject by UUID
@@ -31,7 +36,7 @@ export default class PromiseStack<T extends unknown> {
         return this;
     }
 
-    //
+    /*@__PURE__*/
     hook<T extends unknown>(key: string | null = null, buffer: SharedArrayBuffer | null = null): [string, SharedChannel<T>, SharedArrayBuffer|ArrayBuffer|unknown] {
         const pm = new SharedChannel(buffer);
         this.#map.set(key ||= UUIDv4(), pm);
@@ -49,6 +54,7 @@ export default class PromiseStack<T extends unknown> {
     //  :0 - for sending UUID or identify
     //  :1 - for waiting or async ops
     // ]
+    /*@__PURE__*/
     createSync<T extends unknown>(key: string | null = null): [string, SharedChannel<T>, SharedArrayBuffer|ArrayBuffer|unknown] {
         const bf = new SharedArrayBuffer(16);
         const pm = new SharedChannel(bf);

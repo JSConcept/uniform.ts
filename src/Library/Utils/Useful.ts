@@ -1,23 +1,20 @@
 // deno-lint-ignore-file no-explicit-any ban-types
 import ORG, { $bindings$ } from "./OrganicType.ts";
 
-//
+/*@__PURE__*/ 
 export const UUIDv4 = () => {
     return (crypto?.randomUUID ? crypto?.randomUUID() : ("10000000-1000-4000-8000-100000000000".replace(/[018]/g, c => (+c ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (+c / 4)))).toString(16))));
 };
 
-//
-export type dT = object | Function;
-export type rT = WeakRef<dT>;
-
-//
-export type MPromise<T extends unknown> = Promise<T>|T|null;
-export type IWrap<T extends unknown> = {
+/*@__PURE__*/ export type dT = object | Function;
+/*@__PURE__*/ export type rT = WeakRef<dT>;
+/*@__PURE__*/ export type MPromise<T extends unknown> = Promise<T>|T|null;
+/*@__PURE__*/ export type IWrap<T extends unknown> = {
     [pT in keyof T]: MPromise<pT>|IWrap<pT>;
 };
 
 //
-export type ExChanger = any;
+/*@__PURE__*/ export type ExChanger = any;
 
 /*
  * Internal types of meta
@@ -47,16 +44,14 @@ export const Transferable = [
 ].filter((E)=>(E!=null));
 
 //
-export const isSymbol = (sym: unknown)=>(typeof sym ==='symbol' || typeof sym == 'object' && Object.prototype.toString.call(sym) == '[object Symbol]');
-export const FORBIDDEN_KEYS = new Set(["bind", "toString", "then", "catch", "finally"]);
-export const META_KEYS = new Set(Array.from(Object.values(ORG)));
-
-//
-export const wrapExChanger = (exChanger: ExChanger|null): any => {
+/*@__PURE__*/ export const isSymbol = (sym: unknown)=>(typeof sym ==='symbol' || typeof sym == 'object' && Object.prototype.toString.call(sym) == '[object Symbol]');
+/*@__PURE__*/ export const FORBIDDEN_KEYS = new Set(["bind", "toString", "then", "catch", "finally"]);
+/*@__PURE__*/ export const META_KEYS = new Set(Array.from(Object.values(ORG)));
+/*@__PURE__*/ export const wrapExChanger = (exChanger: ExChanger|null): any => {
     if (!exChanger) return null;
 
     //
-    return new Proxy(exChanger, {
+    return /*@__PURE__*/ new Proxy(exChanger, {
         get(target: ExChanger, prop: any): any {
             if (prop == ORG.sync) { return target.sync; };
             if (prop == ORG.exchanger) { return target; };
@@ -73,14 +68,13 @@ export const wrapExChanger = (exChanger: ExChanger|null): any => {
     });
 }
 
-//
-export const isPromise = <T extends object|Function|unknown>(target: T|Promise<T>): boolean =>{
+/*@__PURE__*/ export const isPromise = <T extends object|Function|unknown>(target: T|Promise<T>): boolean =>{
+    /*@__PURE__*/ 
     return target instanceof Promise || (target as any)?.then != null && typeof (target as any)?.then == "function";
 }
 
-//
-export const doOnlyAfterResolve = <T extends unknown|any>(meta: MPromise<T>, cb: (u: T)=>MPromise<T>|null|void): MPromise<any>|null|void => {
-    if (isPromise(meta)) {
+/*@__PURE__*/ export const doOnlyAfterResolve = <T extends unknown|any>(meta: MPromise<T>, cb: (u: T)=>MPromise<T>|null|void): MPromise<any>|null|void => {
+    /*@__PURE__*/ if (/*@__PURE__*/ isPromise(meta)) {
         const chain = (meta as any)?.then?.(cb)?.catch?.(console.trace.bind(console)) ?? cb(meta as T);
         //console.trace(chain);
         return chain;
@@ -88,28 +82,25 @@ export const doOnlyAfterResolve = <T extends unknown|any>(meta: MPromise<T>, cb:
     return cb(meta as T);
 }
 
-//
-export const getContext = (wModule: any)=>{
-    return doOnlyAfterResolve(wModule, (mx)=>{
+/*@__PURE__*/ export const getContext = (wModule: any)=>{
+    return /*@__PURE__*/ doOnlyAfterResolve(wModule, (mx)=>{
         return wrapExChanger(mx?.[ORG.exchanger] ?? $bindings$?.get?.(mx) ?? mx);
     });
 }
 
-//
-export const doTransfer = (wModule: any, name: any, node: any|null = null)=>{
-    return doOnlyAfterResolve(wModule, (mx)=>{
+/*@__PURE__*/ export const doTransfer = (wModule: any, name: any, node: any|null = null)=>{
+    return /*@__PURE__*/ doOnlyAfterResolve(wModule, (mx)=>{
         const exChanger = mx?.[ORG.exchanger] ?? $bindings$?.get?.(mx) ?? mx;
         return exChanger?.doTransfer?.(name, node);
     });
 }
 
-//
-export const transfer = (wModule: any, node: any|null = null, name: any = "")=>{
-    return doOnlyAfterResolve(wModule, (mx)=>{
+/*@__PURE__*/ export const transfer = (wModule: any, node: any|null = null, name: any = "")=>{
+    return /*@__PURE__*/ doOnlyAfterResolve(wModule, (mx)=>{
         const exChanger = mx?.[ORG.exchanger] ?? $bindings$?.get?.(mx) ?? mx;
         return exChanger?.transfer?.(node, name);
     });
 }
 
-//
+/*@__PURE__*/ 
 export { ORG };

@@ -1,3 +1,3 @@
 // Web Worker Unit...
-import ExChanger from "../Library/FLOW/ExChanger.ts";
-export default (new ExChanger(self)).initialize();
+/*@__PURE__*/ import ExChanger from "../Library/FLOW/ExChanger.ts";
+/*@__PURE__*/ export default (new ExChanger(self)).initialize();

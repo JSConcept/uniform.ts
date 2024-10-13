@@ -40,18 +40,15 @@ export default class ExChanger {
 
     //
     initialize() {
-        //await this.#flow?.importToUnit($module$);
-        //await this.sync();
-        this.#flow?.importToSelf($M);
-        //await this.sync();
+        if (this.#flow?.importToSelf?.($M) != null) {
+            this.#coder      = this.#flow?.$imports?.$coders      ?? this.#coder;
+            this.#memoryPool = this.#flow?.$imports?.$memoryPool  ?? this.#memoryPool;
+        } else {
+            throw Error("Worker Engine Not Defined!");
+        }
 
         //
-        this.#coder      = this.#flow?.$imports?.$coders      ?? this.#coder;
-        this.#memoryPool = this.#flow?.$imports?.$memoryPool  ?? this.#memoryPool;
-        this.#handler    = this.#flow?.$imports?.$dataHandler ?? this.#handler;
-
-        //
-        if (this.#handler) {
+        if ((this.#handler = (this.#flow?.$imports?.$dataHandler ?? this.#handler)) != null) {
             this.#handler?.$addHandler("local", new MemoryHandler(this.#memoryPool));
             this.#handler?.$addHandler("remote", new RemoteReferenceHandler(this));
             this.#handler?.$addHandler("promise", new PromiseHandler());
@@ -113,8 +110,8 @@ export default class ExChanger {
     //local(name) { return wrapMeta({ORG.uuid: name, ORG.type: "reference"}, this.#handler); }
 
     //
-    $importToUnit(source: string) { return this.#flow?.importToUnit(source); }
-    $importToSelf(module: unknown) { return this.#flow?.importToSelf(module); }
+    /*@__PURE__*/ $importToUnit(source: string)  { return /*@__PURE__*/ this.#flow?.importToUnit(source); }
+    /*@__PURE__*/ $importToSelf(module: unknown) { return /*@__PURE__*/ this.#flow?.importToSelf(module); }
 
     //
     register<T extends object|Function>(object: T, name = ""): string | null {

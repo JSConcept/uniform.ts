@@ -1,13 +1,13 @@
 // deno-lint-ignore-file no-explicit-any
-import { isSymbol, FORBIDDEN_KEYS, META_KEYS } from "../Utils/Useful.ts";
-import { extract } from "../Utils/InstructionType.ts";
-import ORG from "../Utils/OrganicType.ts";
+/*@__PURE__*/ import { isSymbol, FORBIDDEN_KEYS, META_KEYS } from "../Utils/Useful.ts";
+/*@__PURE__*/ import { extract } from "../Utils/InstructionType.ts";
+/*@__PURE__*/ import ORG from "../Utils/OrganicType.ts";
 
 //
-import DataHandler from "./DataHandler.ts";
+/*@__PURE__*/ import DataHandler from "./DataHandler.ts";
 
 //
-export default class RemoteReferenceHandler extends DataHandler {
+/*@__PURE__*/ export default class RemoteReferenceHandler extends DataHandler {
     #exChanger: any|null;
 
     //
