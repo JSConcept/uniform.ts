@@ -1,6 +1,6 @@
 // deno-lint-ignore-file no-explicit-any
 
-import PMS from "./Alias.ts";
+import PMS, { shrt } from "./Alias.ts";
 import SharedChannel from "./SharedChannel.ts";
 import { UUIDv4 } from "./Useful.ts";
 
@@ -18,18 +18,22 @@ export default class PromiseStack<T extends unknown> {
     get(name = "") { return this.#map.get(name); }
 
     // reject by UUID
-    rejectBy(name: string, why: unknown) {
+    /*@__MANGLE_PROP__*/ 
+    [shrt.rjb](name: string, why: unknown) {
         const pm = this.#map.get(name);
         this.#map.delete(name);
-        pm?.reject?.(why ?? null);
+        // @ts-ignore ""
+        pm?.[shrt.rj]?.(why ?? null);
         return this;
     }
 
     // resolve by UUID
-    resolveBy(name: string, why: unknown) {
+    /*@__MANGLE_PROP__*/ 
+    [shrt.rvb](name: string, why: unknown) {
         const pm = this.#map.get(name);
         this.#map.delete(name);
-        pm?.resolve?.((why as any) ?? null);
+        // @ts-ignore ""
+        pm?.[shrt.rv]?.((why as any) ?? null);
         return this;
     }
 
@@ -40,7 +44,8 @@ export default class PromiseStack<T extends unknown> {
 
         // timeout of requests
         /*@__MANGLE_PROP__*/ setTimeout(()=>{ 
-            if (this.#map.has(key)) { this.rejectBy(key, "hang-timeout"); };
+            // @ts-ignore ""
+            if (this.#map.has(key)) { this[shrt.rjb](key, "hang-timeout"); };
         }, HANG_TIMEOUT);
 
         //
@@ -51,15 +56,15 @@ export default class PromiseStack<T extends unknown> {
     //  :0 - for sending UUID or identify
     //  :1 - for waiting or async ops
     // ]
-    /*@__PURE__*/
-    createSync<T extends unknown>(key: string | null = null): [string, SharedChannel<T>, SharedArrayBuffer|ArrayBuffer|unknown] {
+    [shrt.cs]<T extends unknown>(key: string | null = null): [string, SharedChannel<T>, SharedArrayBuffer|ArrayBuffer|unknown] {
         const bf = /*@__MANGLE_PROP__*/ new SharedArrayBuffer(16);
         const pm = /*@__MANGLE_PROP__*/ new SharedChannel(bf);
         this.#map.set(key ||= UUIDv4(), pm);
 
         // timeout of requests
         /*@__MANGLE_PROP__*/ setTimeout(()=>{ 
-            if (this.#map.has(key)) { this.rejectBy(key, "hang-timeout"); };
+            // @ts-ignore ""
+            if (this.#map.has(key)) { this[shrt.rjb](key, "hang-timeout"); };
         }, HANG_TIMEOUT);
 
         //
@@ -70,13 +75,14 @@ export default class PromiseStack<T extends unknown> {
     //  :0 - for sending UUID or identify
     //  :1 - for waiting or async ops
     // ]
-    create(key: string | null = null) {
+    [shrt.cr](key: string | null = null) {
         const pm = PMS.withResolvers<T>();
         this.#map.set(key ||= UUIDv4(), pm);
 
         // timeout of requests
-        /*@__MANGLE_PROP__*/ setTimeout(()=>{ 
-            if (this.#map.has(key)) { this.rejectBy(key, "hang-timeout"); };
+        /*@__MANGLE_PROP__*/ setTimeout(()=>{
+            // @ts-ignore ""
+            if (this.#map.has(key)) { this[shrt.rjb](key, "hang-timeout"); };
         }, HANG_TIMEOUT);
 
         //

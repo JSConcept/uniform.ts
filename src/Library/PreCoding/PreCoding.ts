@@ -193,12 +193,12 @@ export default class PreCoding {
 
 
     //
-    decode(target: unknown|Promise<unknown>, transfer: unknown[] = []) {
+    /*@__MANGLE_PROP__*/ decode(target: unknown|Promise<unknown>, transfer: unknown[] = []) {
         return doOnlyAfterResolve(target, (e)=>this.$decode(e, transfer));
     }
 
     //
-    encode(target: unknown|Promise<unknown>, transfer: unknown[] = []) {
+    /*@__MANGLE_PROP__*/ encode(target: unknown|Promise<unknown>, transfer: unknown[] = []) {
         return doOnlyAfterResolve(target, (e)=>this.$encode(e, transfer));
     }
 }

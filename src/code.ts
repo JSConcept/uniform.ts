@@ -10,5 +10,5 @@ const loadCompressed = async (b64c: string): Promise<string|null> => {
     return URL.createObjectURL(response);
 }
 
-/*@__MANGLE_PROP__*/ export const PRELOAD = !URL.canParse(IW) ? loadCompressed(IW as unknown as string) : IW;
+/*@__MANGLE_PROP__*/ export const PRELOAD = !URL.canParse(IW) ? /*@__PURE__*/ /*@__MANGLE_PROP__*/ loadCompressed(IW as unknown as string) : IW;
 /*@__MANGLE_PROP__*/ export default PRELOAD;

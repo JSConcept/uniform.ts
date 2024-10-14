@@ -1,5 +1,5 @@
 // deno-lint-ignore-file ban-ts-comment no-explicit-any
-import PMS from "./Alias.ts";
+import PMS, {shrt} from "./Alias.ts";
 import { type MPromise, isPromise } from "./Useful.ts";
 
 // @ts-ignore "extra `KB` for library..."
@@ -31,23 +31,23 @@ export default class SharedChannel<T extends unknown> {
     }
 
     //
-    /*@__PURE__*/
-    resolve(object: T|Uint8Array|unknown = {}) {
+    /*@__PURE__*/ // @ts-ignore ""
+    /*@__MANGLE_PROP__*/ [shrt.rv](object: T|Uint8Array|unknown = {}) {
         // @ts-ignore "no valid type"
         /*@__PURE__*/
         return this.$resolveWith(this.$binCoder?.encode?.(object ?? {}) ?? new Uint8Array([]));
     }
 
     //
-    /*@__PURE__*/
-    reject(e: Error | unknown): unknown { throw e; }
+    /*@__PURE__*/ // @ts-ignore ""
+    /*@__MANGLE_PROP__*/ [shrt.rj](e: Error | unknown): unknown { throw e; }
 
     // @ts-ignore "DOM isn't recognized"
-    waitAuto(timeout = 1000): unknown { return (self?.document ? this.waitAsync(timeout) : this.waitSync(timeout)); }
-    waitSync(timeout = 1000): unknown { const result = this.$waitSync(timeout); return result ? this.$binCoder.decode(result ?? new Uint8Array([])) : null; }
+    /*@__PURE__*/ waitAuto(timeout = 1000): unknown { return (self?.document ? this.waitAsync(timeout) : this.waitSync(timeout)); }
+    /*@__PURE__*/ waitSync(timeout = 1000): unknown { const result = this.$waitSync(timeout); return result ? this.$binCoder.decode(result ?? new Uint8Array([])) : null; }
 
     // not implemented directly
-    waitAsync(_timeout = 1000): unknown { return null; };
+    /*@__PURE__*/ waitAsync(_timeout = 1000): unknown { return null; };
 
     //
     /*@__MANGLE_PROP__*/ $resolveWith(binaryData: Uint8Array | Uint8ClampedArray | Int8Array): any {
@@ -122,9 +122,10 @@ export const doOnlyAfterResolve = <T extends unknown|any>(meta: MPromise<T>, cb:
         return chain;
     }
 
-    
+    /*@__MANGLE_PROP__*/ /*@__PURE__*/ 
     if (typeof SharedChannel != "undefined" && meta instanceof SharedChannel) {
-        return doOnlyAfterResolve((meta as SharedChannel<T>)?.waitAuto?.() as T, cb);
+        /*@__MANGLE_PROP__*/ /*@__PURE__*/ 
+        return /*@__MANGLE_PROP__*/ /*@__PURE__*/  doOnlyAfterResolve((meta as SharedChannel<T>)?.waitAuto?.() as T, cb);
     }
 
     //

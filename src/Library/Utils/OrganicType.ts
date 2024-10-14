@@ -1,7 +1,6 @@
 // deno-lint-ignore-file no-explicit-any
 
-
-export enum $ORG {
+/*@__PURE__*/ export enum $ORG {
     type = "!#type#!",
     uuid = "!#uuid#!",
     node = "!#node#!",
@@ -11,9 +10,9 @@ export enum $ORG {
 }
 
 //
-const $exc$ = Symbol("@exc");
-const $data$ = Symbol("@data");
-const $sync$ = Symbol("@sync");
+/*@__MANGLE_PROP__*/ const $exc$ = Symbol("@exc");
+/*@__MANGLE_PROP__*/ const $data$ = Symbol("@data");
+/*@__MANGLE_PROP__*/ const $sync$ = Symbol("@sync");
 
 //
 export const ORG = {
@@ -27,8 +26,7 @@ export const ORG = {
     index: $ORG.index
 }
 
-
-export interface IMeta {
+/*@__PURE__*/ export interface IMeta {
     [$ORG.uuid]?: string;
     [$ORG.type]?: string;
     [$ORG.node]?: unknown;
@@ -37,13 +35,9 @@ export interface IMeta {
 };
 
 //
-export default ORG;
-
-/*@__MANGLE_PROP__*/ 
-export const $bindings$ = /*@__MANGLE_PROP__*/ new WeakMap<any, any>();
-
-/*@__MANGLE_PROP__*/ 
-export const bindWithContext = (context: any, obj: any) => {
+/*@__MANGLE_PROP__*/ export default ORG;
+/*@__MANGLE_PROP__*/ export const $bindings$ = /*@__MANGLE_PROP__*/ new WeakMap<any, any>();
+/*@__MANGLE_PROP__*/ export const bindWithContext = (context: any, obj: any) => {
     try { context[ORG.exc] = obj; } catch(e: any) { console.warn(e); };
     $bindings$.set(context, obj);
     return obj;

@@ -1,10 +1,12 @@
 // deno-lint-ignore-file no-explicit-any
 import { UUIDv4, type dT, type rT } from "./Useful.ts";
+/*@__NOINLINE__*/ const rg = "register";
 
 /*@__MANGLE_PROP__*/ const timers = /*@__MANGLE_PROP__*/ new WeakMap(), tmpSet = new Set();
 export const hold = (tmp: any | unknown | WeakRef<any>, timeout = 1000)=>{
 
     // holding from GC
+    /*@__MANGLE_PROP__*/
     if (typeof tmp == "object" || typeof tmp == "function") {
         const obj = tmp?.deref?.() ?? tmp;
         if (!tmpSet.has(obj)) {
@@ -22,16 +24,17 @@ export const hold = (tmp: any | unknown | WeakRef<any>, timeout = 1000)=>{
 }
 
 // TODO: planned promised...
+/*@__MANGLE_PROP__*/ /*@__PURE___*/ 
 export default class UUIDMap<T=dT> {
-     #weakMap  =  /*@__MANGLE_PROP__*/ new WeakMap<dT, string>();
-     #registry =  /*@__MANGLE_PROP__*/ new FinalizationRegistry<string>((_: string) => {});
-     #refMap   =  /*@__MANGLE_PROP__*/ new Map<string, rT>();
+    /*@__MANGLE_PROP__*/ #weakMap  = /*@__MANGLE_PROP__*/ new WeakMap<dT, string>();
+    /*@__MANGLE_PROP__*/ #refMap   = /*@__MANGLE_PROP__*/ new Map<string, rT>();
+    /*@__MANGLE_PROP__*/ #registry = /*@__MANGLE_PROP__*/ new FinalizationRegistry<string>((_: string) => {});
 
     //
     constructor() {
-         this.#weakMap  =  /*@__MANGLE_PROP__*/ new WeakMap<dT, string>();
-         this.#refMap   =  /*@__MANGLE_PROP__*/ new Map<string, rT>();
-         this.#registry =  /*@__MANGLE_PROP__*/ new FinalizationRegistry<string>((key: string) => {
+        /*@__MANGLE_PROP__*/ this.#weakMap  = /*@__MANGLE_PROP__*/ new WeakMap<dT, string>();
+        /*@__MANGLE_PROP__*/ this.#refMap   = /*@__MANGLE_PROP__*/ new Map<string, rT>();
+        /*@__MANGLE_PROP__*/ this.#registry = /*@__MANGLE_PROP__*/ new FinalizationRegistry<string>((key: string) => {
             this.#refMap.delete(key);
         });
     }
@@ -58,8 +61,8 @@ export default class UUIDMap<T=dT> {
 
         //
         this.#weakMap.set(obj, (id ||= UUIDv4()));
-        this.#refMap.set(id, /*@__MANGLE_PROP__*/ new WeakRef<dT>(  hold(obj, 1000)  ));
-        this.#registry.register(obj, id);
+        this.#refMap.set(id, new WeakRef<dT>(  hold(obj, 1000)  ));
+        this.#registry?.[rg]?.(obj, id);
 
         //
         return id;

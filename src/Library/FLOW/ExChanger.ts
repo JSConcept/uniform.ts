@@ -64,7 +64,7 @@ export default class ExChanger {
     //
     get   /*@__MANGLE_PROP__*/ $imports() { return this.#flow?.$imports || {}; }
     get   /*@__MANGLE_PROP__*/ /*@__PURE__*/ $sync() { return this.#flow?.sync?.(); }
-    async /*@__MANGLE_PROP__*/ /*@__PURE__*/ sync() { await this.$sync; return this; }
+    async /*@__PURE__*/ sync() { await this.$sync; return this; }
 
     //doOnlyAfterResolve
     /*@__MANGLE_PROP__*/ $makePromise<T extends unknown>(target: T|Promise<T>): IWrap<T>|null {

@@ -2,15 +2,15 @@
 import { extract } from "../Utils/InstructionType.ts";
 import { ORG, isPromise } from "../Utils/Useful.ts";
 
-
+//
 export default class TypeDetector {
     
-    detection: Map<string, (d: unknown)=>boolean> = new Map<string, (d: unknown)=>boolean>();
+    /*@__MANGLE_PROP__*/ detection: Map<string, (d: unknown)=>boolean> = new Map<string, (d: unknown)=>boolean>();
 
     // we working only with unwrapped data, we doesn't accept any promise directly
     constructor() {
         //
-        this.detection = new Map<string, (d: unknown)=>boolean>([
+        /*@__MANGLE_PROP__*/ this.detection = new Map<string, (d: unknown)=>boolean>([
             ["p", (a: unknown): boolean=>{
                 return (typeof a != "object" && typeof a != "function" || typeof a == "undefined" || a == null);
             }],
@@ -63,8 +63,7 @@ export default class TypeDetector {
     }
 
     // [is organic, defined type]
-    
-    detectType(data: unknown, transfer: unknown[] = []): [boolean, string] {
+    /*@__MANGLE_PROP__*/ detectType(data: unknown, transfer: unknown[] = []): [boolean, string] {
         // are data meta type, skip definition
         const organic = extract(data) as any;
         if ((organic as any)?.[ORG.type]) {

@@ -16,7 +16,8 @@ export const terserOptions = {
             builtins: true,
             keep_quoted: "strict",
             undeclared: true,
-            only_annotated: true
+            only_annotated: true,
+            reserved: ["register", "resolve", "reject"]
         }
     },
     compress: {

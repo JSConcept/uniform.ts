@@ -1,6 +1,7 @@
 // deno-lint-ignore-file no-explicit-any
 import { Transferable, doOnlyAfterResolve } from "../Utils/Useful.ts";
 import PromiseStack from '../Utils/PromiseStack.ts';
+import { shrt } from "../Utils/Alias.ts";
 const PM = "postMessage";
 
 // FLOW - is web worker library core (low-level)...
@@ -23,18 +24,18 @@ export default class FLOW {
                     worker?.[PM]?.({ cmd, uuid, dir: "res", status: "ok", result: "ok", shared: null });
                 } else
                 if (cmd == "import") {
-                    import(/* @vite-ignore */ ("" + ev.data.source))?.then?.((m)=>{
+                    /*@__PURE__*/ import(/* @vite-ignore */ ("" + ev.data.source))?.then?.((m)=>{
                         Object.assign(this.#imports, (m.default ?? m));
                         worker?.[PM]?.({ cmd, uuid, dir: "res", status: "ok", result: "ok", shared: null });
                     })?.catch?.((e)=>{
-                        console.error(e);
-                        console.trace(e);
+                        /*@__PURE__*/ console.error(e);
+                        /*@__PURE__*/ console.trace(e);
                         worker?.[PM]?.({ cmd, uuid, dir: "res", status: "error", result: "unsupported", shared: null });
                     });
                 } else
                 if (cmd == "call") {
                     // hoot shared channels for direct answer
-                    (shared ? this.#promiseStack?.hook?.(uuid, shared) : null);
+                    /*@__PURE__*/ (shared ? this.#promiseStack?.hook?.(uuid, shared) : null);
 
                     // call with FLOW "this" context
                     try {
@@ -53,13 +54,14 @@ export default class FLOW {
                                     }, [...new Set(Array.from(transfer||[]))].filter((e)=>Transferable.some((I)=>e instanceof I)) as StructuredSerializeOptions);
 
                                     // resolve when sync supported
-                                    this.#promiseStack?.resolveBy?.(uuid, result);
+                                    // @ts-ignore ""
+                                    /*@__PURE__*/ this.#promiseStack?.[shrt.rvb]?.(uuid, result);
                                 });
                             });
                         });
                     } catch(e: any) {
-                        console.error(e);
-                        console.trace(e);
+                        /*@__PURE__*/ console.error(e);
+                        /*@__PURE__*/ console.trace(e);
 
                         //
                         const reason = e.message;
@@ -74,21 +76,24 @@ export default class FLOW {
                         }, []);
 
                         // resolve when sync supported
-                        this.#promiseStack?.rejectBy?.(uuid, reason);
+                        // @ts-ignore ""
+                        /*@__PURE__*/ this.#promiseStack?.[shrt.rjb]?.(uuid, reason);
                     }
                 } else {
-                    console.error("Internal command: " + cmd + " not supported.");
+                    /*@__PURE__*/ console.error("Internal command: " + cmd + " not supported.");
                     worker?.[PM]?.({ cmd, uuid, dir: "res", status: "error", result: "unk" });
                 }
             } else
             if (dir == "res") {
                 try {
                     const resolved = this.#imports?.[ev.data.handler]?.apply?.(self, [ev.data]) ?? (ev.data.result) ?? null;
-                    this.#promiseStack?.[status != "error" ? "resolveBy" : "rejectBy"]?.(uuid, resolved ?? null);
+                    // @ts-ignore ""
+                    this.#promiseStack?.[status != "error" ? shrt.rvb : shrt.rjb]?.(uuid, resolved ?? null);
                 } catch(e: any) {
-                    console.error(e);
-                    console.trace(e);
-                    this.#promiseStack?.rejectBy?.(uuid, e?.message);
+                    /*@__PURE__*/ console.error(e);
+                    /*@__PURE__*/ console.trace(e);
+                    // @ts-ignore ""
+                    this.#promiseStack?.[shrt.rjb]?.(uuid, e?.message);
                 }
             }
         });
@@ -99,7 +104,7 @@ export default class FLOW {
         return this.#imports;
     }
 
-    /*@__PURE__*/ /*@__MANGLE_PROP__*/ 
+    /*@__MANGLE_PROP__*/ 
     importToSelf(module: any) {
         Object.assign(this.#imports, (module)?.default ?? module);
         return this;
@@ -107,8 +112,9 @@ export default class FLOW {
 
     /*@__PURE__*/ /*@__MANGLE_PROP__*/ 
     importToUnit(source: string, sync = false) {
-        const pair = this.#promiseStack?.[sync ? "createSync" : "create"]?.();
-        this.#worker?.[PM]?.({
+        // @ts-ignore ""
+        /*@__PURE__*/ const pair = this.#promiseStack?.[sync ? shrt.cs : shrt.cr]?.();
+        /*@__PURE__*/ this.#worker?.[PM]?.({
             status: "pending",
             handler: "$import",
             cmd: "import",
@@ -122,7 +128,8 @@ export default class FLOW {
 
     /*@__PURE__*/ /*@__MANGLE_PROP__*/ 
     sync(sync = false) {
-        const pair = this.#promiseStack?.[sync ? "createSync" : "create"]?.();
+        // @ts-ignore ""
+        const pair = this.#promiseStack?.[sync ? shrt.cs : shrt.cr]?.();
         this.#worker?.[PM]?.({
             status: "pending",
             shared: pair?.[2],
@@ -136,7 +143,8 @@ export default class FLOW {
 
     /*@__PURE__*/ /*@__MANGLE_PROP__*/ 
     callTask($args: any[] = [], transfer: unknown[] = [], sync = false) {
-        const pair = this.#promiseStack?.[sync ? "createSync" : "create"]?.();
+        // @ts-ignore ""
+        const pair = this.#promiseStack?.[sync ? shrt.cs : shrt.cr]?.();
         doOnlyAfterResolve($args, (args)=>{
             this.#worker?.[PM]?.({
                 status: "pending",
