@@ -10,7 +10,7 @@
         "worker": "vite build --config worker.config.js --mode developer",
         "build": "vite build --config uniform.config.js --mode developer",
         "preview": "vite preview",
-        "test": "deno --allow-all ./test/Host.ts"
+        "test": "deno run --allow-all ./test/Host.ts"
     },
     "browserslist": [
         "last 1 chrome version",
