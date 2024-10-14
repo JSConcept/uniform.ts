@@ -1,4 +1,5 @@
 // deno-lint-ignore-file no-explicit-any
+import TS from "../Utils/Alias.ts";
 import { extract } from "../Utils/InstructionType.ts";
 import { ORG, isPromise } from "../Utils/Useful.ts";
 
@@ -12,7 +13,7 @@ export default class TypeDetector {
         //
         /*@__MANGLE_PROP__*/ this.detection = new Map<string, (d: unknown)=>boolean>([
             ["p", (a: unknown): boolean=>{
-                return (typeof a != "object" && typeof a != "function" || typeof a == "undefined" || a == null);
+                return (typeof a != "object" && typeof a != "function" || typeof a == TS.udf || a == null);
             }],
 
             //
@@ -29,14 +30,14 @@ export default class TypeDetector {
             //
             ["ab", (a: unknown): boolean=>{
                 /*@__MANGLE_PROP__*/ 
-                return (a instanceof ArrayBuffer || (typeof SharedArrayBuffer != "undefined" && a instanceof SharedArrayBuffer));
+                return (a instanceof ArrayBuffer || (typeof SharedArrayBuffer != TS.udf && a instanceof SharedArrayBuffer));
             }],
 
             //
             ["ta", (a: unknown): boolean=>{
                 const $buffer: unknown = (a as any)?.buffer;
                 /*@__MANGLE_PROP__*/ 
-                return ($buffer instanceof ArrayBuffer || (typeof SharedArrayBuffer != "undefined" && $buffer instanceof SharedArrayBuffer));
+                return ($buffer instanceof ArrayBuffer || (typeof SharedArrayBuffer != TS.udf && $buffer instanceof SharedArrayBuffer));
             }],
 
             //

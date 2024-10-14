@@ -20,6 +20,7 @@ import FLOW from "./FLOW.ts";
 //
 import * as $M from "./MessageChannel.ts";
 import { ORG, IMeta, bindWithContext } from "../Utils/OrganicType.ts";
+import { TS } from "../Utils/Alias.ts";
 
 //
 export default class ExChanger {
@@ -30,7 +31,7 @@ export default class ExChanger {
 
     //
     constructor(context: any) {
-        if (typeof context != "undefined" && context != null) {
+        if (typeof context != TS.udf && context != null) {
             bindWithContext(context, this);
             this.#flow = new FLOW(context);
         } else {

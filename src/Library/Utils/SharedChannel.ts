@@ -1,5 +1,5 @@
-// deno-lint-ignore-file ban-ts-comment no-explicit-any
-import PMS, {shrt} from "./Alias.ts";
+// deno-lint-ignore-file ban-ts-comment no-explicit-any valid-typeof
+import { TS, PMS } from "./Alias.ts";
 import { type MPromise, isPromise } from "./Useful.ts";
 
 // @ts-ignore "extra `KB` for library..."
@@ -14,7 +14,7 @@ import { type MPromise, isPromise } from "./Useful.ts";
  */
 
 /*@__MANGLE_PROP__*/ /*@__PURE__*/
-const AT: Atomics|any = typeof Atomics != "undefined" ? Atomics : {};
+const AT: Atomics|any = typeof Atomics != TS.udf ? Atomics : {};
 
 /*@__MANGLE_PROP__*/ /*@__PURE__*/
 export default class SharedChannel<T extends unknown> {
@@ -32,7 +32,7 @@ export default class SharedChannel<T extends unknown> {
 
     //
     /*@__PURE__*/ // @ts-ignore ""
-    /*@__MANGLE_PROP__*/ [shrt.rv](object: T|Uint8Array|unknown = {}) {
+    /*@__MANGLE_PROP__*/ [TS.rv](object: T|Uint8Array|unknown = {}) {
         // @ts-ignore "no valid type"
         /*@__PURE__*/
         return this.$resolveWith(this.$binCoder?.encode?.(object ?? {}) ?? new Uint8Array([]));
@@ -40,7 +40,7 @@ export default class SharedChannel<T extends unknown> {
 
     //
     /*@__PURE__*/ // @ts-ignore ""
-    /*@__MANGLE_PROP__*/ [shrt.rj](e: Error | unknown): unknown { throw e; }
+    /*@__MANGLE_PROP__*/ [TS.rj](e: Error | unknown): unknown { throw e; }
 
     // @ts-ignore "DOM isn't recognized"
     /*@__PURE__*/ waitAuto(timeout = 1000): unknown { return (self?.document ? this.waitAsync(timeout) : this.waitSync(timeout)); }
@@ -99,7 +99,7 @@ export default class SharedChannel<T extends unknown> {
         }
 
         //
-        return new PMS((_, rj)=>rj(promise));
+        return new PMS((_: any, rj: (arg0: any) => any)=>rj(promise));
     }
 
     /*@__MANGLE_PROP__*/ $waitSync(timeout = 1000) {
@@ -123,7 +123,7 @@ export const doOnlyAfterResolve = <T extends unknown|any>(meta: MPromise<T>, cb:
     }
 
     /*@__MANGLE_PROP__*/ /*@__PURE__*/ 
-    if (typeof SharedChannel != "undefined" && meta instanceof SharedChannel) {
+    if (typeof SharedChannel != TS.udf && meta instanceof SharedChannel) {
         /*@__MANGLE_PROP__*/ /*@__PURE__*/ 
         return /*@__MANGLE_PROP__*/ /*@__PURE__*/  doOnlyAfterResolve((meta as SharedChannel<T>)?.waitAuto?.() as T, cb);
     }

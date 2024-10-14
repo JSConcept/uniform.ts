@@ -1,5 +1,5 @@
 // deno-lint-ignore-file no-explicit-any ban-types
- import PMS from "./Alias.ts";
+ import { PMS, TS } from "./Alias.ts";
  import ORG, { $bindings$, type $ORG } from "./OrganicType.ts";
 
 
@@ -31,18 +31,18 @@
 // @ts-ignore "Transferable list for web workers (automatic)"
 /*@__MANGLE_PROP__*/ /*@__PURE__*/ 
 export const Transferable = [
-    /* @ts-ignore "" */ /*@__MANGLE_PROP__*/ /*@__PURE__*/ typeof ArrayBuffer               != "undefined" ? ArrayBuffer               : null,
-    /* @ts-ignore "" */ /*@__MANGLE_PROP__*/ /*@__PURE__*/ typeof MessagePort               != "undefined" ? MessagePort               : null,
-    /* @ts-ignore "" */ /*@__MANGLE_PROP__*/ /*@__PURE__*/ typeof ReadableStream            != "undefined" ? ReadableStream            : null,
-    /* @ts-ignore "" */ /*@__MANGLE_PROP__*/ /*@__PURE__*/ typeof WritableStream            != "undefined" ? WritableStream            : null,
-    /* @ts-ignore "" */ /*@__MANGLE_PROP__*/ /*@__PURE__*/ typeof TransformStream           != "undefined" ? TransformStream           : null,
-    /* @ts-ignore "" */ /*@__MANGLE_PROP__*/ /*@__PURE__*/ typeof WebTransportReceiveStream != "undefined" ? WebTransportReceiveStream : null,
-    /* @ts-ignore "" */ /*@__MANGLE_PROP__*/ /*@__PURE__*/ typeof WebTransportSendStream    != "undefined" ? WebTransportSendStream    : null,
-    /* @ts-ignore "" */ /*@__MANGLE_PROP__*/ /*@__PURE__*/ typeof AudioData                 != "undefined" ? AudioData                 : null,
-    /* @ts-ignore "" */ /*@__MANGLE_PROP__*/ /*@__PURE__*/ typeof ImageBitmap               != "undefined" ? ImageBitmap               : null,
-    /* @ts-ignore "" */ /*@__MANGLE_PROP__*/ /*@__PURE__*/ typeof VideoFrame                != "undefined" ? VideoFrame                : null,
-    /* @ts-ignore "" */ /*@__MANGLE_PROP__*/ /*@__PURE__*/ typeof OffscreenCanvas           != "undefined" ? OffscreenCanvas           : null,
-    /* @ts-ignore "" */ /*@__MANGLE_PROP__*/ /*@__PURE__*/ typeof RTCDataChannel            != "undefined" ? RTCDataChannel            : null
+    /* @ts-ignore "" */ /*@__MANGLE_PROP__*/ /*@__PURE__*/ typeof ArrayBuffer               != TS.udf ? ArrayBuffer               : null,
+    /* @ts-ignore "" */ /*@__MANGLE_PROP__*/ /*@__PURE__*/ typeof MessagePort               != TS.udf ? MessagePort               : null,
+    /* @ts-ignore "" */ /*@__MANGLE_PROP__*/ /*@__PURE__*/ typeof ReadableStream            != TS.udf ? ReadableStream            : null,
+    /* @ts-ignore "" */ /*@__MANGLE_PROP__*/ /*@__PURE__*/ typeof WritableStream            != TS.udf ? WritableStream            : null,
+    /* @ts-ignore "" */ /*@__MANGLE_PROP__*/ /*@__PURE__*/ typeof TransformStream           != TS.udf ? TransformStream           : null,
+    /* @ts-ignore "" */ /*@__MANGLE_PROP__*/ /*@__PURE__*/ typeof WebTransportReceiveStream != TS.udf ? WebTransportReceiveStream : null,
+    /* @ts-ignore "" */ /*@__MANGLE_PROP__*/ /*@__PURE__*/ typeof WebTransportSendStream    != TS.udf ? WebTransportSendStream    : null,
+    /* @ts-ignore "" */ /*@__MANGLE_PROP__*/ /*@__PURE__*/ typeof AudioData                 != TS.udf ? AudioData                 : null,
+    /* @ts-ignore "" */ /*@__MANGLE_PROP__*/ /*@__PURE__*/ typeof ImageBitmap               != TS.udf ? ImageBitmap               : null,
+    /* @ts-ignore "" */ /*@__MANGLE_PROP__*/ /*@__PURE__*/ typeof VideoFrame                != TS.udf ? VideoFrame                : null,
+    /* @ts-ignore "" */ /*@__MANGLE_PROP__*/ /*@__PURE__*/ typeof OffscreenCanvas           != TS.udf ? OffscreenCanvas           : null,
+    /* @ts-ignore "" */ /*@__MANGLE_PROP__*/ /*@__PURE__*/ typeof RTCDataChannel            != TS.udf ? RTCDataChannel            : null
 ].filter((E)=>(E!=null));
     /*@__MANGLE_PROP__*/ export const isSymbol = (sym: unknown)=>(typeof sym ==='symbol' || typeof sym == 'object' && Object.prototype.toString.call(sym) == '[object Symbol]');
     /*@__MANGLE_PROP__*/ export const FORBIDDEN_KEYS = new Set(["bind", "toString", "then", "catch", "finally"]);

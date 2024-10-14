@@ -1,8 +1,10 @@
 // deno-lint-ignore-file no-explicit-any
 import { Transferable, doOnlyAfterResolve } from "../Utils/Useful.ts";
 import PromiseStack from '../Utils/PromiseStack.ts';
-import { shrt } from "../Utils/Alias.ts";
-const PM = "postMessage";
+import { TS } from "../Utils/Alias.ts";
+
+//
+/*@__NOINLINE__*/ /*@__MANGLE_PROP__*/ /*@__PURE__*/ const PM = "postMessage";
 
 // FLOW - is web worker library core (low-level)...
 export default class FLOW {
@@ -55,7 +57,7 @@ export default class FLOW {
 
                                     // resolve when sync supported
                                     // @ts-ignore ""
-                                    /*@__PURE__*/ this.#promiseStack?.[shrt.rvb]?.(uuid, result);
+                                    /*@__PURE__*/ this.#promiseStack?.[TS.rvb]?.(uuid, result);
                                 });
                             });
                         });
@@ -77,7 +79,7 @@ export default class FLOW {
 
                         // resolve when sync supported
                         // @ts-ignore ""
-                        /*@__PURE__*/ this.#promiseStack?.[shrt.rjb]?.(uuid, reason);
+                        /*@__PURE__*/ this.#promiseStack?.[TS.rjb]?.(uuid, reason);
                     }
                 } else {
                     /*@__PURE__*/ console.error("Internal command: " + cmd + " not supported.");
@@ -88,12 +90,12 @@ export default class FLOW {
                 try {
                     const resolved = this.#imports?.[ev.data.handler]?.apply?.(self, [ev.data]) ?? (ev.data.result) ?? null;
                     // @ts-ignore ""
-                    this.#promiseStack?.[status != "error" ? shrt.rvb : shrt.rjb]?.(uuid, resolved ?? null);
+                    this.#promiseStack?.[status != "error" ? TS.rvb : TS.rjb]?.(uuid, resolved ?? null);
                 } catch(e: any) {
                     /*@__PURE__*/ console.error(e);
                     /*@__PURE__*/ console.trace(e);
                     // @ts-ignore ""
-                    this.#promiseStack?.[shrt.rjb]?.(uuid, e?.message);
+                    this.#promiseStack?.[TS.rjb]?.(uuid, e?.message);
                 }
             }
         });
@@ -113,7 +115,7 @@ export default class FLOW {
     /*@__PURE__*/ /*@__MANGLE_PROP__*/ 
     importToUnit(source: string, sync = false) {
         // @ts-ignore ""
-        /*@__PURE__*/ const pair = this.#promiseStack?.[sync ? shrt.cs : shrt.cr]?.();
+        /*@__PURE__*/ const pair = this.#promiseStack?.[sync ? TS.cs : TS.cr]?.();
         /*@__PURE__*/ this.#worker?.[PM]?.({
             status: "pending",
             handler: "$import",
@@ -129,7 +131,7 @@ export default class FLOW {
     /*@__PURE__*/ /*@__MANGLE_PROP__*/ 
     sync(sync = false) {
         // @ts-ignore ""
-        const pair = this.#promiseStack?.[sync ? shrt.cs : shrt.cr]?.();
+        const pair = this.#promiseStack?.[sync ? TS.cs : TS.cr]?.();
         this.#worker?.[PM]?.({
             status: "pending",
             shared: pair?.[2],
@@ -144,7 +146,7 @@ export default class FLOW {
     /*@__PURE__*/ /*@__MANGLE_PROP__*/ 
     callTask($args: any[] = [], transfer: unknown[] = [], sync = false) {
         // @ts-ignore ""
-        const pair = this.#promiseStack?.[sync ? shrt.cs : shrt.cr]?.();
+        const pair = this.#promiseStack?.[sync ? TS.cs : TS.cr]?.();
         doOnlyAfterResolve($args, (args)=>{
             this.#worker?.[PM]?.({
                 status: "pending",

@@ -7,15 +7,15 @@ import { isPromise, doOnlyAfterResolve } from "../Utils/Useful.ts";
 import { extract } from "../Utils/InstructionType.ts";
 import { wrapMeta } from "../Handlers/UniversalHandler.ts";
 import ORG from "../Utils/OrganicType.ts";
-import PMS from "../Utils/Alias.ts";
+import { PMS, TS } from "../Utils/Alias.ts";
 
-
+/*@__MANGLE_PROP__*/ /*@__PURE__*/ 
 export const hasMemoryBuffer = (target: any)=>{
     // shared array buffer are not transfer, it's sharing
-    return ((target as any)?.buffer instanceof ArrayBuffer) || (typeof SharedArrayBuffer != "undefined" && (target as any)?.buffer instanceof SharedArrayBuffer);
+    return ((target as any)?.buffer instanceof ArrayBuffer) || (typeof SharedArrayBuffer != TS.udf && (target as any)?.buffer instanceof SharedArrayBuffer);
 }
 
-
+/*@__MANGLE_PROP__*/ /*@__PURE__*/ 
 export default class PreCoding {
     /*@__MANGLE_PROP__*/ $encoder = new Map<string, (organic: boolean, target: unknown, transfer: unknown[])=>unknown>();
     /*@__MANGLE_PROP__*/ $decoder = new Map<string, (organic: boolean, target: unknown, transfer: unknown[])=>unknown>();

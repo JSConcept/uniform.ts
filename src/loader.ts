@@ -8,7 +8,7 @@ const loadWorker = (WX: any): Worker|null =>{
         return new Worker(URL.createObjectURL(new Blob([WX], {type: "application/javascript"})), {type: "module"});
     } else
     /*@__PURE__*/ if (WX instanceof Blob || WX instanceof File) { return new Worker(URL.createObjectURL(WX), {type: "module"}); }
-    /*@__PURE__*/ return (typeof self != "undefined" ? self : null) as unknown as Worker;
+    /*@__PURE__*/ return (typeof self != TS.udf ? self : null) as unknown as Worker;
 }
 
 /*@__MANGLE_PROP__*/ 
