@@ -1,8 +1,8 @@
 // deno-lint-ignore-file no-explicit-any
 
-import { PMS, TS } from "./Alias.ts";
-import SharedChannel from "./SharedChannel.ts";
-import { UUIDv4 } from "./Useful.ts";
+import { PMS, TS } from "./Alias";
+import SharedChannel from "./SharedChannel";
+import { UUIDv4 } from "./Useful";
 
 //
 export const HANG_TIMEOUT = 2000;

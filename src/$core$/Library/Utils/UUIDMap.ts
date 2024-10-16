@@ -1,5 +1,5 @@
 // deno-lint-ignore-file no-explicit-any
-import { UUIDv4, type dT, type rT } from "./Useful.ts";
+import { UUIDv4, type dT, type rT } from "./Useful";
 /*@__NOINLINE__*/ const rg = "register";
 
 /*@__MANGLE_PROP__*/ const timers = /*@__MANGLE_PROP__*/ new WeakMap(), tmpSet = new Set();

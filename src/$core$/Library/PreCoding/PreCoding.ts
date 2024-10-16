@@ -1,13 +1,13 @@
 // deno-lint-ignore-file no-explicit-any
 // Will be used when result are predictable in the pools or return results
-import UUIDMap from "../Utils/UUIDMap.ts";
-import TypeDetector from "./TypeDetector.ts";
-import UniversalHandler from "../Handlers/UniversalHandler.ts";
-import { isPromise, doOnlyAfterResolve } from "../Utils/Useful.ts";
-import { extract } from "../Utils/InstructionType.ts";
-import { wrapMeta } from "../Handlers/UniversalHandler.ts";
-import ORG from "../Utils/OrganicType.ts";
-import { PMS, TS } from "../Utils/Alias.ts";
+import UUIDMap from "../Utils/UUIDMap";
+import TypeDetector from "./TypeDetector";
+import UniversalHandler from "../Handlers/UniversalHandler";
+import { isPromise, doOnlyAfterResolve } from "../Utils/Useful";
+import { extract } from "../Utils/InstructionType";
+import { wrapMeta } from "../Handlers/UniversalHandler";
+import ORG from "../Utils/OrganicType";
+import { PMS, TS } from "../Utils/Alias";
 
 /*@__MANGLE_PROP__*/ /*@__PURE__*/ 
 export const hasMemoryBuffer = (target: any)=>{

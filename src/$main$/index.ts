@@ -1,6 +1,6 @@
 // deno-lint-ignore-file no-explicit-any
 import { $moduleLoader } from "./loader";
-import { $wrapPromise  } from "../Library/Handlers/PromiseHandler";
+import { $wrapPromise  } from "../$core$/Library/Handlers/PromiseHandler";
 
 // wrapper of module loader (with Proxy)
 export const moduleLoader = <T extends unknown>(source: string = "")=>{

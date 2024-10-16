@@ -1,7 +1,7 @@
 // deno-lint-ignore-file no-explicit-any
-import { Transferable, doOnlyAfterResolve } from "../Utils/Useful.ts";
-import PromiseStack from '../Utils/PromiseStack.ts';
-import { TS } from "../Utils/Alias.ts";
+import { Transferable, doOnlyAfterResolve } from "../Utils/Useful";
+import PromiseStack from '../Utils/PromiseStack';
+import { TS } from "../Utils/Alias";
 
 //
 /*@__NOINLINE__*/ /*@__MANGLE_PROP__*/ /*@__PURE__*/ const PM = "postMessage";

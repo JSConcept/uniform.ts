@@ -1,7 +1,7 @@
 // deno-lint-ignore-file no-explicit-any
-import TS from "../Utils/Alias.ts";
-import { extract } from "../Utils/InstructionType.ts";
-import { ORG, isPromise } from "../Utils/Useful.ts";
+import TS from "../Utils/Alias";
+import { extract } from "../Utils/InstructionType";
+import { ORG, isPromise } from "../Utils/Useful";
 
 //
 export default class TypeDetector {

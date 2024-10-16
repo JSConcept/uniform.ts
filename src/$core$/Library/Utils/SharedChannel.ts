@@ -1,6 +1,6 @@
 // deno-lint-ignore-file ban-ts-comment no-explicit-any valid-typeof
-import { TS, PMS } from "./Alias.ts";
-import { type MPromise, isPromise } from "./Useful.ts";
+import { TS, PMS } from "./Alias";
+import { type MPromise, isPromise } from "./Useful";
 
 // @ts-ignore "extra `KB` for library..."
 /*@__PURE__*/

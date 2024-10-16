@@ -1,26 +1,26 @@
 // deno-lint-ignore-file no-explicit-any ban-types
-import ObjectProxy from "../ObjectProxy.ts";
+import ObjectProxy from "../../Interface/ObjectProxy";
 
 //
-import { doOnlyAfterResolve, isPromise, UUIDv4, type IWrap } from "../Utils/Useful.ts";
-import { extract, MakeReference } from "../Utils/InstructionType.ts";
+import { doOnlyAfterResolve, isPromise, UUIDv4, type IWrap } from "../Utils/Useful";
+import { extract, MakeReference } from "../Utils/InstructionType";
 
 //
-import RemoteReferenceHandler from "../Handlers/RemoteHandler.ts";
-import MemoryHandler from "../Handlers/MemoryHandler.ts";
-import DataHandler from "../Handlers/DataHandler.ts";
-import PromiseHandler from "../Handlers/PromiseHandler.ts";
-import type UniversalHandler from "../Handlers/UniversalHandler.ts";
+import RemoteReferenceHandler from "../Handlers/RemoteHandler";
+import MemoryHandler from "../Handlers/MemoryHandler";
+import DataHandler from "../Handlers/DataHandler";
+import PromiseHandler from "../Handlers/PromiseHandler";
+import type UniversalHandler from "../Handlers/UniversalHandler";
 
 //
-import type PreCoding from "../PreCoding/PreCoding.ts";
-import type UUIDMap from "../Utils/UUIDMap.ts";
-import FLOW from "./FLOW.ts";
+import type PreCoding from "../PreCoding/PreCoding";
+import type UUIDMap from "../Utils/UUIDMap";
+import FLOW from "./FLOW";
 
 //
-import * as $M from "./MessageChannel.ts";
-import { ORG, IMeta, bindWithContext } from "../Utils/OrganicType.ts";
-import { TS } from "../Utils/Alias.ts";
+import * as $M from "./MessageChannel";
+import { ORG, IMeta, bindWithContext } from "../Utils/OrganicType";
+import { TS } from "../Utils/Alias";
 
 //
 export default class ExChanger {

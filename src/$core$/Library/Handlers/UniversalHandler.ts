@@ -1,14 +1,14 @@
 // deno-lint-ignore-file no-explicit-any
-import ObjectProxy from "../ObjectProxy.ts";
+import ObjectProxy from "../../Interface/ObjectProxy";
 
 //
-import { MPromise, FORBIDDEN_KEYS, META_KEYS, isSymbol, doOnlyAfterResolve, isPromise, type IWrap } from "../Utils/Useful.ts";
-import RemoteReferenceHandler from "./RemoteHandler.ts";
-import { extract, MakeReference, wrapWeakMap } from "../Utils/InstructionType.ts";
-import { ORG, IMeta } from "../Utils/OrganicType.ts";
+import { MPromise, FORBIDDEN_KEYS, META_KEYS, isSymbol, doOnlyAfterResolve, isPromise, type IWrap } from "../Utils/Useful";
+import RemoteReferenceHandler from "./RemoteHandler";
+import { extract, MakeReference, wrapWeakMap } from "../Utils/InstructionType";
+import { ORG, IMeta } from "../Utils/OrganicType";
 
 //
-import DataHandler from "./DataHandler.ts";
+import DataHandler from "./DataHandler";
 
 //
 export default class UniversalHandler extends DataHandler {

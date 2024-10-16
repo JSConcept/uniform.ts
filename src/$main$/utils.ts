@@ -1,4 +1,4 @@
 // export useful
-import ORG from "../Library/Utils/OrganicType";
+import ORG from "../$core$/Library/Utils/OrganicType";
 export const sync = ORG.sync;
-export { getContext, transfer, doTransfer } from "../Library/Utils/Useful";
+export { getContext, transfer, doTransfer } from "../$core$/Library/Utils/Useful";

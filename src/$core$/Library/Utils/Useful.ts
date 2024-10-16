@@ -1,6 +1,6 @@
 // deno-lint-ignore-file no-explicit-any ban-types
- import { PMS, TS } from "./Alias.ts";
- import ORG, { $bindings$, type $ORG } from "./OrganicType.ts";
+ import { PMS, TS } from "./Alias";
+ import ORG, { $bindings$, type $ORG } from "./OrganicType";
 
 
 /*@__MANGLE_PROP__*/ export const UUIDv4 = () => {

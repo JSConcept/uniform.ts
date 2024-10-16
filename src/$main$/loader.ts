@@ -1,5 +1,5 @@
 // deno-lint-ignore-file no-explicit-any
-import TS from "../Library/Utils/Alias";
+import TS from "../$core$/Library/Utils/Alias";
 
 /*@__MANGLE_PROP__*/ /*@__PURE__*/ 
 const loadWorker = (WX: any): Worker|null =>{
@@ -19,7 +19,7 @@ export const $moduleLoader = async <T extends unknown>(moduleSource: string, wor
 
     // if url too long, un-compress code
     const uWorker   = loadWorker(workerCode);
-    const EXChanger = (await import("../Library/FLOW/ExChanger")).default;
+    const EXChanger = (await import("../$core$/Library/FLOW/ExChanger")).default;
     const exChanger = new EXChanger(uWorker)?.initialize?.();
     const module    = await (await exChanger?.access?.("!!import!!") as any)?.(moduleSource);
     return module;
