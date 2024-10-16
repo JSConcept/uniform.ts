@@ -50,7 +50,7 @@ const uRollupOptions = {
     plugins,
     treeshake: 'smallest',
     external: [],
-    input: "./src/index.ts",
+    input: "./src/$main$/index.ts",
     output: {
         //preserveModules: true,
         minifyInternalExports: true,
@@ -93,7 +93,7 @@ export default defineConfig({
         name: NAME,
         lib: {
             formats: ["es"],
-            entry: resolve(__dirname, './src/index.ts'),
+            entry: resolve(__dirname, './src/main/index.ts'),
             name: NAME,
             fileName: NAME,
         },
@@ -116,8 +116,8 @@ export default defineConfig({
             "./test/*.ts"
         ],
         entries: [
-            resolve(__dirname, './src/Workers/ModuleWorker.ts'),
-            resolve(__dirname, './src/index.ts')
+            resolve(__dirname, './src/$worker$/index.ts'),
+            resolve(__dirname, './src/$main$/index.ts')
         ],
         force: true
     }
