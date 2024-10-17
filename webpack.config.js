@@ -1,6 +1,6 @@
 import { createRequire } from "node:module";
 import { resolve } from "node:path";
-import { terserOptions } from "./shared.config.js"
+import { terserOptions } from "./rollup/shared.config.js"
 
 //
 const require = createRequire(import.meta.url)
@@ -20,7 +20,7 @@ export default {
         extensions: [".ts", ".tsx", ".js"]
     },
     output: {
-        filename: './uniform.js',
+        filename: './[name].mjs',
         path: resolve(__dirname, 'dist-wp'),
         crossOriginLoading: 'anonymous',
         chunkFilename: "./deps/[name].mjs",
@@ -36,17 +36,22 @@ export default {
     ],
     module: {
         rules: [
-            {
-                resourceQuery: /ts/,
-                type: 'asset/source',
-                loader: "ts-loader"
-            },
             {   // library...
                 include: [
                     resolve(__dirname, "src/")
                 ],
                 test: /\.ts$/,
-                loader: "ts-loader"
+                loader: "ts-loader",
+                oneOf: [
+                    {
+                        resourceQuery: /compress/,
+                        type: 'asset/source'
+                    },
+                    {
+                        resourceQuery: /worker/,
+                        type: 'asset/source'
+                    },
+                ],
             },
         ]
     },

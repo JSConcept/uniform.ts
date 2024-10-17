@@ -1,6 +1,6 @@
 // deno-lint-ignore-file no-explicit-any
-import moduleLoader, {doTransfer, getContext, sync} from "../dist/uniform.js"; // 
-//import moduleLoader, {doTransfer, getContext, ORG} from "../src/index.ts";
+import moduleLoader, {doTransfer, getContext, sync} from "../dist/uniform.js";
+//import moduleLoader, {doTransfer, getContext, sync} from "../dist-wp/main.mjs";
 
 // typescript modules doesn't supported directly...
 const module = (await (moduleLoader( new URL("./Worker.mjs", import.meta.url).href )?.catch?.(console.trace.bind(console)))) as any;
