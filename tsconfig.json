@@ -1,4 +1,6 @@
 {
+    "include": ["./src/**/*"],
+    "exclude": ["./test/**/*"],
     "compilerOptions": {
         "target": "ESNext",
         "module": "ESNext",
@@ -13,13 +15,14 @@
         "allowUnreachableCode": true,
         "allowUnusedLabels": true,
         "noImplicitAny": false,
-        "declaration": true,
+        "declaration": false,
         "noImplicitThis": false,
         "inlineSources": true,
         "inlineSourceMap": true,
         "sourceMap": false,
-        "allowImportingTsExtensions": true,
-        "emitDeclarationOnly": true,
+        //"allowImportingTsExtensions": true,
+        //"emitDeclarationOnly": true,
+        //"noEmit": true,
         "typeRoots": ["plugins/global.d.ts"]
     }
 }

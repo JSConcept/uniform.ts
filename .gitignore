@@ -141,3 +141,13 @@ pnpm-lock.yaml
 #
 deno.lock
 *.lock
+
+#
+dist/
+dist/*
+dist-wp/
+dist-wp/*
+./dist/
+./dist/*
+./dist-wp/
+./dist-wp/*

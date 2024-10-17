@@ -7,8 +7,9 @@
     "index": "./dist/uniform.js",
     "scripts": {
         "dev": "vite",
-        "worker": "vite build --mode developer",
-        "build": "vite build --mode developer",
+        "worker": "vite build",
+        "build": "vite build --config vite.config.js",
+        "build-wp": "webpack build --mode=production",
         "preview": "vite preview",
         "test": "deno run --allow-all ./test/Host.ts"
     },
