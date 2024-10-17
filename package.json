@@ -7,8 +7,8 @@
     "index": "./dist/uniform.js",
     "scripts": {
         "dev": "vite",
-        "worker": "vite build --config worker.config.js --mode developer",
-        "build": "vite build --config uniform.config.js --mode developer",
+        "worker": "vite build --mode developer",
+        "build": "vite build --mode developer",
         "preview": "vite preview",
         "test": "deno run --allow-all ./test/Host.ts"
     },

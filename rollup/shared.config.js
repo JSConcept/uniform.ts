@@ -1,5 +1,7 @@
+import {resolve} from "node:path";
+
 //
-const __dirname = import.meta.dirname;
+export const __dirname = resolve(import.meta.dirname, "../");
 export const terserOptions = {
     ecma: 2020,
     keep_classnames: false,
@@ -69,3 +71,5 @@ export const terserOptions = {
         ascii_only: true,
     }
 };
+
+export default terserOptions;
