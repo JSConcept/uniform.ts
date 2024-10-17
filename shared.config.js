@@ -17,7 +17,7 @@ export const terserOptions = {
             keep_quoted: "strict",
             undeclared: true,
             only_annotated: true,
-            reserved: ["register", "resolve", "reject", "undefined"]
+            reserved: ["register", "resolve", "reject", "undefined", "doTransfer", "getContext", "sync", "moduleLoader"]
         }
     },
     compress: {
@@ -54,7 +54,7 @@ export const terserOptions = {
         hoist_vars: true,
         properties: true,
         // don't use in debug mode
-        drop_console: true
+        //drop_console: true
     },
     format: {
         braces: false,

@@ -1,5 +1,5 @@
 // deno-lint-ignore-file no-explicit-any
-import moduleLoader, {doTransfer, getContext, sync} from "../dist/uniform.js"; // 
+import {moduleLoader, doTransfer, getContext, sync} from "../dist-wp/uniform.js"; // 
 //import moduleLoader, {doTransfer, getContext, ORG} from "../src/index.ts";
 
 // typescript modules doesn't supported directly...
