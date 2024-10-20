@@ -4,8 +4,9 @@ export const makeModuleLoader = (exChanger: any, altName: string = "!!import!!")
     exChanger?.register?.((src: string = ""): Promise<any> => {
         return import(src)?.then(async ($m)=>{
             const { wrapExChanger, transfer, doTransfer } = await import("../Library/Utils/Useful");
-            if (typeof $m?.importContext == "function") { $m?.importContext?.(wrapExChanger(exChanger), {
-                transfer, doTransfer
+            if (typeof $m?.$importContext$ == "function") { $m?.$importContext$?.({
+                ctx: wrapExChanger(exChanger),
+                utils: {transfer, doTransfer}
             }); }
             return $m;
         });

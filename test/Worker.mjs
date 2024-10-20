@@ -1,5 +1,6 @@
 //
-let ctx = {}, utils = {}; export const importContext = ($ctx, $utils)=>(ctx = $ctx, utils = $utils);
+let ctx = {}, utils = {};
+export const $importContext$ = (U)=>({ctx, utils} = U);
 
 // after sync you can register
 export class TestClass {
