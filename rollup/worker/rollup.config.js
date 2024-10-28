@@ -29,8 +29,8 @@ export const TSConfig = {
         "sourceMap": false,
         "outDir": "./dist/",
         "declarationDir": "./dist/worker.d.ts/",
-        "allowImportingTsExtensions": true,
-        "emitDeclarationOnly": true,
+        //"allowImportingTsExtensions": true,
+        //"emitDeclarationOnly": true,
         "typeRoots": ["plugins/global.d.ts"]
     }
 };
