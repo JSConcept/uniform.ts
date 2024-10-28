@@ -1,5 +1,5 @@
 {
-    "name": "uniform-ts",
+    "name": "@unite-2/uniform-ts",
     "description": "Universal Worker helper library",
     "version": "1.0.0alpha",
     "private": false,
