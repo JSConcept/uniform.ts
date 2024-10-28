@@ -9,5 +9,5 @@ const loadCompressed = async (b64c: string): Promise<string|null> => {
     const response = await (new Response(decompressedStream, {headers: new Headers({"Content-Type": "application/javascript" })})).blob();
     return URL.createObjectURL(response);
 }
-/*@__MANGLE_PROP__*/ export const PRELOAD = !URL.canParse(IW) ? /*@__PURE__*/ /*@__MANGLE_PROP__*/ loadCompressed(IW as unknown as string) : IW;
+/*@__MANGLE_PROP__*/ export const PRELOAD = (!URL.canParse(IW) && typeof IW == "string") ? /*@__PURE__*/ /*@__MANGLE_PROP__*/ loadCompressed(IW as unknown as string) : IW;
 /*@__MANGLE_PROP__*/ export default PRELOAD;
