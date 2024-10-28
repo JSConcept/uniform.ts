@@ -151,3 +151,8 @@ dist-wp/*
 ./dist/*
 ./dist-wp/
 ./dist-wp/*
+
+#
+package-lock.json
+./package-lock.json
+*/package-lock.json
