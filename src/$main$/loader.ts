@@ -3,7 +3,6 @@ import TS from "../$core$/Library/Utils/Alias";
 
 /*@__MANGLE_PROP__*/ /*@__PURE__*/ 
 const loadWorker = (WX: any): Worker|null =>{
-    console.log(WX);
     /*@__PURE__*/ if (WX instanceof Worker) { return WX; } else
     /*@__PURE__*/ if (typeof WX == "function") { try { return new WX(); } catch(e) { return WX(); }; } else
     /*@__PURE__*/ if (typeof WX == "string") {
