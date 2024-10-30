@@ -4,6 +4,7 @@ import typescript from '@rollup/plugin-typescript';
 import { compression } from 'vite-plugin-compression2';
 import optimizer from 'vite-plugin-optimizer';
 import {resolve} from "node:path";
+import createExternal from "vite-plugin-external";
 
 //
 export const __dirname = resolve(import.meta.dirname, "../../");
@@ -41,6 +42,14 @@ export const plugins = [
     terser(terserOptions),
     optimizer({}),
     compression(),
+    createExternal({
+        interop: 'auto',
+        externals: {externals: "externals", dist: "dist"},
+        externalizeDeps: [
+            "externals", "/externals", "./externals",
+            "dist", "/dist", "./dist"
+        ]
+    }),
 ];
 
 //
@@ -48,7 +57,10 @@ export const NAME = "worker";
 export const rollupOptions = {
     plugins: [...plugins],
     treeshake: 'smallest',
-    external: [],
+    external: [
+        "externals", "/externals", "./externals",
+        "dist", "/dist", "./dist"
+    ],
     input: "./src/Workers/ModuleWorker.ts",
     output: {
         //preserveModules: true,
