@@ -121,6 +121,9 @@ export default class ExChanger {
 
     //
     access<T extends unknown>(name = ""): IWrap<T>|null {
+        if (this.#memoryPool?.has?.(name)) {
+            return this.#memoryPool?.get?.(name) as IWrap<T>|null;
+        };
         const com = this.$request("access", {
             [ORG.type]: "ref",
             [ORG.uuid]: name

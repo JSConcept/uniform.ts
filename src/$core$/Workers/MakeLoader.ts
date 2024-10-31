@@ -1,7 +1,7 @@
 // deno-lint-ignore-file no-explicit-any
 export const makeModuleLoader = (exChanger: any, altName: string = "!!import!!")=>{
     // make import loader support
-    exChanger?.register?.((src: string = ""): Promise<any> => {
+    const $import$ = (src: string = ""): Promise<any> => {
         return import(src)?.then(async ($m)=>{
             const { wrapExChanger, transfer, doTransfer } = await import("../Library/Utils/Useful");
             if (typeof $m?.$importContext$ == "function") { $m?.$importContext$?.({
@@ -10,7 +10,21 @@ export const makeModuleLoader = (exChanger: any, altName: string = "!!import!!")
             }); }
             return $m;
         });
-    }, altName || "!!import!!");
+    };
+
+    // is direct
+    if (typeof exChanger?.register == "function") {
+        exChanger?.register?.($import$, altName || "!!import!!");
+    } else 
+
+    // is may be wrapper
+    if (typeof exChanger == "object" || typeof exChanger == "function") {
+        exChanger["!!import!!"] = $import$;
+    }
+
+    //
     return exChanger;
 }
+
+//
 export default makeModuleLoader;

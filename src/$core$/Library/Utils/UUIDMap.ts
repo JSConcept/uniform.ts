@@ -69,6 +69,14 @@ export default class UUIDMap<T=dT> {
     }
 
     //
+    has<R extends dT | string>(key: R): boolean {
+        if (typeof key == "object" || typeof key == "function") {
+            return this.#weakMap.has(<dT>(<unknown>key));
+        }
+        return hold(this.#refMap.has(<string>(<unknown>key)));
+    }
+
+    //
     get<R extends dT | string>(key: R): unknown {
         if (typeof key == "object" || typeof key == "function") {
             return this.#weakMap.get(<dT>(<unknown>key));

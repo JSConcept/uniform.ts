@@ -24,3 +24,10 @@ export const $moduleLoader = async <T extends unknown>(moduleSource: string, wor
     const module    = await (await exChanger?.access?.("!!import!!") as any)?.(moduleSource);
     return module;
 }
+
+/*@__MANGLE_PROP__*/ 
+export const $wrapChannel = async (uWorker: any)=>{
+    const { wrapExChanger } = await import("../$core$/Library/Utils/Useful");
+    const EXChanger = (await import("../$core$/Library/FLOW/ExChanger")).default;
+    return wrapExChanger(await (new EXChanger(await uWorker)?.initialize?.()));
+}
