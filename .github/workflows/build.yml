@@ -1,4 +1,4 @@
-name: Uniform.ts (Canary)
+name: gh-action-build
 
 on:
   push:
