@@ -27,7 +27,7 @@ jobs:
     - name: Install
       run: |
         git submodule sync --recursive
-        npm install --include=dev
+        npm install -D --force
         npm install -g vite
 
     - name: Build
